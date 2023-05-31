@@ -223,5 +223,5 @@ Setup the Docker Hub or any other Container Registry
 2. stats (show container stats)
 
 
-(C) Copyright 2022 - MetaArivu: Apache 2 License
+(C) Copyright 2022 : Apache 2 License
 Author: Araf Karsh Hamid
