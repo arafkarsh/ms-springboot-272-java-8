@@ -35,7 +35,7 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "uuid", columnDefinition = "char(36)", unique = true)
     @Type(type = "org.hibernate.type.UUIDCharType")
-    // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
+    // @Size(min = 36, max = 36, message = "The length of ID Name must be 36 characters.")
     // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
     private UUID uuid;
 

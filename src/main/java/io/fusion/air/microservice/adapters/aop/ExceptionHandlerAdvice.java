@@ -156,8 +156,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
             ase.setErrorCode(errorCode);
         }
         logException(errorCode,  _exception);
-        StandardResponse stdResponse = Utils.createErrorResponse(
-                null, errorPrefix, _errorCode, _httpStatus,  _message);
+        StandardResponse stdResponse = Utils.createErrorResponse(null, errorPrefix, _errorCode, _httpStatus,  _message);
         if(_headers != null) {
             return new ResponseEntity<>(stdResponse, _headers, _httpStatus);
         }
@@ -208,7 +207,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
 
-    /**v
+    /**
      * Exception if the Resource NOT Available!
      * @param _rnfEx
      * @param _request
@@ -219,7 +218,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_rnfEx,  "404", _request);
     }
 
-    /**v
+    /**
      * Exception if the Resource IS NOT FOUND!
      * @param _rnfEx
      * @param _request
