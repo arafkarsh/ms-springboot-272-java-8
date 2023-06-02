@@ -167,12 +167,9 @@ public class AuthorizeRequestAspect {
         logTime(startTime, "Validating", request.getRequestURI(), joinPoint);
         final String token = getToken(startTime, request.getHeader(tokenKey), joinPoint);
         final String user = getUser(startTime, token, joinPoint);
-        System.out.println("Step 0: User Extracted... "+user);
-        // System.out.println("Step 0: Security Context. "+SecurityContextHolder.getContext().getAuthentication());
-        // System.out.println("Step 0: Principal....... "+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
         // Validate the Token when User is NOT Null
         if (user != null) {
-            // System.out.println("Step 1: Extract Tokens...");
             // Validate Token
             UserDetails userDetails = validateToken(startTime, singleToken, user, tokenKey, token, joinPoint, tokenCtg);
             // Create Authorize Token
@@ -267,7 +264,6 @@ public class AuthorizeRequestAspect {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user);
         String msg = null;
         try {
-            // System.out.println("Step 2: Validate Token...");
             // Validate the Token
             if (jwtUtil.validateToken(userDetails.getUsername(), token)) {
                 String role = jwtUtil.getUserRoleFromToken(token);
@@ -291,9 +287,9 @@ public class AuthorizeRequestAspect {
                         //    annotation = signature.getMethod().getAnnotation(ValidateRefreshToken.class);
                     }
                 } catch (Exception ignored) {
-                    // System.out.println("ROLE NOT FOUND: "+ignored.getMessage());
+                    log.warn("Role Not Found > "+ignored.getMessage());
                 }
-                System.out.println("Step 3: Role Check @Role = "+annotationRole+" Claims Role = "+role);
+                log.debug("Step 3: Role Check @Role = "+annotationRole+" Claims Role = "+role);
                 // If the Role in the Token is User and Required is Admin then Reject the request
 
                 if(role.trim().equalsIgnoreCase(UserRole.User.toString())

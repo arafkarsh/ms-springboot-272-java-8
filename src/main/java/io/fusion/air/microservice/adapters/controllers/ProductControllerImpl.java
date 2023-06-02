@@ -98,6 +98,8 @@ public class ProductControllerImpl extends AbstractController {
 	@PostMapping("/create")
 	public ResponseEntity<StandardResponse> createProduct(@Valid @RequestBody Product _product) {
 		log.debug("|"+name()+"|Request to Create Product... "+_product);
+		log.info(getClaims().getSubject());
+
 		ProductEntity prodEntity = productServiceImpl.createProduct(_product);
 		StandardResponse stdResponse = createSuccessResponse("Product Created");
 		stdResponse.setPayload(prodEntity);
