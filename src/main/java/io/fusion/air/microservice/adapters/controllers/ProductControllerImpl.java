@@ -126,8 +126,7 @@ public class ProductControllerImpl extends AbstractController {
 														HttpServletRequest request,
 														HttpServletResponse response) throws Exception {
 		log.debug("|"+name()+"|Request to Get Product Status.. "+_productId);
-		//  response.setHeader("Cache-Control", "no-cache");
-		// response.addCookie(new Cookie("SameSite", "Strict"));
+
 		ProductEntity product = productServiceImpl.getProductById(_productId);
 		StandardResponse stdResponse = createSuccessResponse("Data Fetch Success!");
 		stdResponse.setPayload(product);

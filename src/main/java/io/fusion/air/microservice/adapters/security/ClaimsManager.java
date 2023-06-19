@@ -21,6 +21,9 @@ import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -61,7 +64,7 @@ public class ClaimsManager {
             throw new AuthorizationException("Tx-Token: Un-Authorized Access by user - Claims Not Initialized!");
         }
         String subject = this.getSubject();
-        if(subject == null) {
+        if(subject == null || subject.trim().length() <= 0) {
             throw new AuthorizationException("Tx-Token: Un-Authorized Access by user - Subject Not Found!");
         }
         return claimsInitialized;
@@ -81,7 +84,7 @@ public class ClaimsManager {
      * @return
      */
     public String getAudience() {
-        return (String) claims.get("aud");
+        return  (claims != null) ? (String) claims.get("aud") : "";
     }
 
     /**
@@ -89,7 +92,7 @@ public class ClaimsManager {
      * @return
      */
     public String getSubject() {
-        return (String) claims.get("sub");
+        return (claims != null) ? (String) claims.get("sub") : "";
     }
 
     /**
@@ -97,6 +100,6 @@ public class ClaimsManager {
      * @return
      */
     public String getUserRole() {
-        return (String) claims.get("rol");
+        return (claims != null) ? (String) claims.get("rol") : "";
     }
 }

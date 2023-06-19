@@ -34,10 +34,10 @@ import java.math.BigDecimal;
 public class Product implements Serializable {
 
     // This Field is ONLY to Show the Regex patterns and other Validations Features
-    @NotBlank(message = "The Product ID is  required.")
-    @Size(min = 36, max = 36, message = "The length of Product ID must be 36 characters.")
-    @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid Product UUID")
-    private String productId;
+    // @NotBlank(message = "The Product ID is  required.")
+    // @Size(min = 36, max = 36, message = "The length of Product ID must be 36 characters.")
+    // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid Product UUID")
+    // private String productId;
 
     @NotBlank(message = "The Product Name is  required.")
     @Size(min = 3, max = 32, message = "The length of Product Name must be between 3 and 32 characters.")
@@ -67,7 +67,7 @@ public class Product implements Serializable {
      * @param _prodPr
      */
     public Product(String _pid, String _prodNm, String _prodDt, BigDecimal _prodPr)  {
-        productId   = _pid;
+        // productId   = _pid;
         productName = _prodNm;
         productDetails = _prodDt;
         productPrice   = _prodPr;
@@ -77,9 +77,9 @@ public class Product implements Serializable {
      * Get Product ID
      * @return
      */
-    public String getProductId() {
-        return productId;
-    }
+    // public String getProductId() {
+    //     return productId;
+    // }
 
     /**
      * Get Product Name
