@@ -16,8 +16,9 @@ service.license=Apache 2 License
 # Microservice Server Properties
 # =======================================================================
 server.port=9090
-server.version=0.5.2
+server.version=0.5.3
 server.restart=false
+server.leak.test=5
 server.resources.url=${service.url}${service.api.path}
 # ------------------------------------------------------------------------
 # Security & JWT Token  (Type 1 = secret key, 2 = public / private key)

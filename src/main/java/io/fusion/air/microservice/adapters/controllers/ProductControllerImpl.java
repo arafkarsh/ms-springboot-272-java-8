@@ -26,6 +26,7 @@ import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.ProductService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
+import io.fusion.air.microservice.utils.CPU;
 import io.fusion.air.microservice.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +84,14 @@ public class ProductControllerImpl extends AbstractController {
 
 	@Autowired
 	ProductService productServiceImpl;
+
+	// For Testing JVisualVM ONLY To Understand GC (Eden, S0, S1, Tenured, MetaSpace)
+	private static ArrayList<ProductEntity> memoryLeakList = new ArrayList<ProductEntity>();
+
+	// Leak Counter = server.leak.test
+	@Value("${server.leak.test:13}")
+	private int leakNumber;
+
 
 	/**
 	 * Create the Product
@@ -163,6 +173,57 @@ public class ProductControllerImpl extends AbstractController {
 		}
 		stdResponse.setPayload(productList);
 		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * GET Method Call to Get All the Products
+	 *
+	 * @return
+	 */
+	@Operation(summary = "Get All the Products")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "List All the Product",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Invalid Product Reference No.",
+					content = @Content)
+	})
+	@GetMapping("/all/leak")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> getAllProductsWithLeak(HttpServletRequest request,
+														   HttpServletResponse response) throws Exception {
+		log.debug("|"+name()+"|Request to get All Products ... ");
+		List<ProductEntity> productList = productServiceImpl.getAllProduct();
+		StandardResponse stdResponse = null;
+		log.info("Products List = "+productList.size());
+		if(productList == null || productList.isEmpty()) {
+			productList = createFallBackProducts();
+			stdResponse = createSuccessResponse("201","Fallback Data!");
+		} else {
+			stdResponse = createSuccessResponse("Data Fetch Success!");
+		}
+		stdResponse.setPayload(productList);
+
+		// For Memory Leak Testing
+		leakMemory( productList);
+
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Create a Memory leak for to Demo the JVisualVM
+	 * And Garbage Collection (Eden, S0, S1, Tenured and MetaSpace)
+	 *
+	 * @param productList
+	 */
+	private void leakMemory(List<ProductEntity> productList) {
+		for(int x=0; x<leakNumber; x++) {
+			for (ProductEntity product : productList) {
+				memoryLeakList.add(product);
+			}
+		}
+		log.info("LEAK NUMBER = "+leakNumber+" IN = "+productList.size()+" TT = "+memoryLeakList.size()+ CPU.printCpuStats());
 	}
 
 	/**
