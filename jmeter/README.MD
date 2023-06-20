@@ -23,6 +23,6 @@ When you run the command (shell script) "run" you will get the following output
 
 ## JMeter Output
 
-![JMeter RUN](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/jmeter/diagrams/Jmeter-Result.jpg)
+![JMeter RUN](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/jmeter/diagrams/Jmeter-Result.png)
 
 
