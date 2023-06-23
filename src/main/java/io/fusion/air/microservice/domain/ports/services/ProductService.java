@@ -32,11 +32,29 @@ import java.util.UUID;
  */
 public interface ProductService {
 
+
+    /**
+     * Create a Memory leak for to Demo the JVisualVM
+     * And Garbage Collection (Eden, S0, S1, Tenured and MetaSpace)
+     *
+     * @param productList
+     */
+    public void leakMemory(List<ProductEntity> productList);
+
     /**
      * Get All the Products
      * @return
      */
     public List<ProductEntity> getAllProduct();
+
+    /**
+     * Find Products Based on Product Name, Price and Location
+     * @param _productName
+     * @param _price
+     * @param _zipCode
+     * @return
+     */
+    public List<ProductEntity> findProducts(String _productName, BigDecimal _price, String _zipCode);
 
     /**
      * Get Product By Product ID

@@ -85,14 +85,6 @@ public class ProductControllerImpl extends AbstractController {
 	@Autowired
 	ProductService productServiceImpl;
 
-	// For Testing JVisualVM ONLY To Understand GC (Eden, S0, S1, Tenured, MetaSpace)
-	private static ArrayList<ProductEntity> memoryLeakList = new ArrayList<ProductEntity>();
-
-	// Leak Counter = server.leak.test
-	@Value("${server.leak.test:13}")
-	private int leakNumber;
-
-
 	/**
 	 * Create the Product
 	 */
@@ -206,24 +198,9 @@ public class ProductControllerImpl extends AbstractController {
 		stdResponse.setPayload(productList);
 
 		// For Memory Leak Testing
-		leakMemory( productList);
+		productServiceImpl.leakMemory( productList);
 
 		return ResponseEntity.ok(stdResponse);
-	}
-
-	/**
-	 * Create a Memory leak for to Demo the JVisualVM
-	 * And Garbage Collection (Eden, S0, S1, Tenured and MetaSpace)
-	 *
-	 * @param productList
-	 */
-	private void leakMemory(List<ProductEntity> productList) {
-		for(int x=0; x<leakNumber; x++) {
-			for (ProductEntity product : productList) {
-				memoryLeakList.add(product);
-			}
-		}
-		log.info("LEAK NUMBER = "+leakNumber+" IN = "+productList.size()+" TT = "+memoryLeakList.size()+ CPU.printCpuStats());
 	}
 
 	/**
@@ -242,7 +219,32 @@ public class ProductControllerImpl extends AbstractController {
 	public ResponseEntity<StandardResponse> searchProductsByName(@PathVariable("productName") String _productName) {
 		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
 		List<ProductEntity> products = productServiceImpl.fetchProductsByName(_productName);
-		StandardResponse stdResponse = createSuccessResponse("Products Found For Search Term = "+_productName);
+		StandardResponse stdResponse = createSuccessResponse("Products Found  ("+products.size()+") For Search Term = "+_productName);
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Specification Pattern Example
+	 * Search the Product by Product Name and Product Price
+	 */
+	@Operation(summary = "Search Product By Product Name")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/product/{productName}/price/{productPrice}")
+	public ResponseEntity<StandardResponse> searchProductsByNameAndPrice(
+			@PathVariable("productName") String _productName,
+			@PathVariable("productPrice") BigDecimal _productPrice) {
+		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
+		List<ProductEntity> products = productServiceImpl.findProducts(_productName, _productPrice, "");
+		StandardResponse stdResponse = createSuccessResponse("Products Found ("+products.size()+") For Search Keys: Phone = "
+				+_productName + " Price = "+_productPrice);
 		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}
@@ -423,8 +425,11 @@ public class ProductControllerImpl extends AbstractController {
 	 */
 	private List<ProductEntity> createFallBackProducts() {
 		List<ProductEntity> productList = new ArrayList<ProductEntity>();
-		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB", new BigDecimal(60000), "12345"));
+		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB RED", new BigDecimal(60000), "12345"));
+		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB BLACK", new BigDecimal(60000), "12345"));
+		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB GOLD", new BigDecimal(60000), "12345"));
 		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 128 GB", new BigDecimal(70000), "12345"));
+		productList.add(new ProductEntity("iPhone 12", "iPhone 12, 128 GB", new BigDecimal(80000), "12345"));
 		productList.add(new ProductEntity("Samsung Galaxy s20", "Samsung Galaxy s20, 256 GB", new BigDecimal(80000), "12345"));
 
 		try {

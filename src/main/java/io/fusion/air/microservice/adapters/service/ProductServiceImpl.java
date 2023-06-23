@@ -16,21 +16,27 @@
 package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.adapters.repository.ProductRepository;
+import io.fusion.air.microservice.adapters.repository.ProductSpecification;
+
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 
 import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.ProductService;
 
+import io.fusion.air.microservice.utils.CPU;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +62,29 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    // For Testing JVisualVM ONLY To Understand GC (Eden, S0, S1, Tenured, MetaSpace)
+    private static ArrayList<ProductEntity> memoryLeakList = new ArrayList<ProductEntity>();
+
+    // Leak Counter = server.leak.test
+    @Value("${server.leak.test:13}")
+    private int leakNumber;
+
+    /**
+     * Create a Memory leak for to Demo the JVisualVM
+     * And Garbage Collection (Eden, S0, S1, Tenured and MetaSpace)
+     *
+     * @param productList
+     */
+    public void leakMemory(List<ProductEntity> productList) {
+        for(int x=0; x<leakNumber; x++) {
+            for (ProductEntity product : productList) {
+                memoryLeakList.add(product);
+            }
+        }
+        log.info("LEAK NUMBER = "+leakNumber+" IN = "+productList.size()+" TT = "+memoryLeakList.size()+ CPU.printCpuStats());
+    }
+
+
     /**
      * WARNING:
      * This Method is ONLY For Demo Purpose. In Real World Scenario there should NOT be any
@@ -79,6 +108,23 @@ public class ProductServiceImpl implements ProductService {
         String name = _name != null ? _name.trim() : "%";
         List<ProductEntity> products = productRepository.findByProductNameContains(name);
         return checkProducts(products, name);
+    }
+
+    /**
+     * Find Products Based on Product Name, Price and Location
+     * @param _productName
+     * @param _price
+     * @param _zipCode
+     * @return
+     */
+    public List<ProductEntity> findProducts(String _productName, BigDecimal _price, String _zipCode) {
+        Specification<ProductEntity> spec = Specification
+                .where(ProductSpecification.hasProductName(_productName))
+                .and(ProductSpecification.hasProductPrice(_price));
+                // .and(ProductSpecification.hasZipCode(_zipCode));
+        Sort sort = Sort.by(Sort.Direction.ASC, "productName");
+
+        return productRepository.findAll(spec, sort);
     }
 
     /**

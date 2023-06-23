@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.repository;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -34,7 +35,7 @@ import java.util.UUID;
  */
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
+public interface ProductRepository extends JpaRepository<ProductEntity, UUID>, JpaSpecificationExecutor<ProductEntity> {
 
     /**
      * Find By Product ID

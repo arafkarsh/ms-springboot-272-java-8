@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fusion.air</groupId>
 	<artifactId>ms-cache-service</artifactId>
-	<version>0.5.3</version>
+	<version>0.5.4</version>
 	<packaging>jar</packaging>
 	<name>msCacheService</name>
 	<description>Microservice Cache Kafka Template</description>
