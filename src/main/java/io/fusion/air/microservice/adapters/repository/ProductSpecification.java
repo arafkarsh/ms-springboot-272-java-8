@@ -69,12 +69,12 @@ public class ProductSpecification {
      * 3. By Price Greater than the Input Price
      *
      * @param _productName
-     * @param _price
      * @param _location
+     * @param _price
      * @return
      */
     public static Specification<ProductEntity> hasProductAndLocationAndPriceGreaterThan(
-            String _productName, BigDecimal _price, String _location){
+            String _productName,  String _location, BigDecimal _price){
         return (Specification<ProductEntity>) (product, cq, cb) -> {
             // 1st Predicate
             Predicate equalPredicate = cb.and(

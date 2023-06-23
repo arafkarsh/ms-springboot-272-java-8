@@ -65,6 +65,20 @@ public interface ProductService {
     public List<ProductEntity> findProducts(String _productName, BigDecimal _price, String _zipCode);
 
     /**
+     * Select Product
+     *
+     * 1. By Product Name and
+     * 2. By Location and
+     * 3. By Price Greater than the Input Price
+     *
+     * @param _productName
+     * @param _zipCode
+     * @param _price
+     * @return
+     */
+    public List<ProductEntity> findProductsAndPriceGreaterThan(String _productName,  String _zipCode, BigDecimal _price);
+
+    /**
      * Get Product By Product ID
      * @param productId
      * @return

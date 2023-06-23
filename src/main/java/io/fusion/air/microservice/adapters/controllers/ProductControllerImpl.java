@@ -253,7 +253,7 @@ public class ProductControllerImpl extends AbstractController {
 	 * Specification Pattern Example
 	 * Search the Product by Product Name, Product Price & Location
 	 */
-	@Operation(summary = "Search Product By Product Name")
+	@Operation(summary = "Search Product By Product Name, Location and Price Equal To")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Product(s) Found!",
@@ -271,6 +271,33 @@ public class ProductControllerImpl extends AbstractController {
 		List<ProductEntity> products = productServiceImpl.findProducts(_productName, _productPrice, _location);
 		StandardResponse stdResponse = createSuccessResponse("Products Found ("+products.size()+") For Search Keys: Phone = "
 				+_productName + " Price = "+_productPrice + " Location = "+_location);
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Specification Pattern Example
+	 * Search the Product by Product Name & Location and Price Greater Than
+	 */
+	@Operation(summary = "Search Product By Product Name & Location and Price Greater Than")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/product/{productName}/location/{location}/price/{productPrice}")
+	public ResponseEntity<StandardResponse> findProductsAndPriceGreaterThan(
+			@PathVariable("productName") String _productName,
+			@PathVariable("location") String _location,
+			@PathVariable("productPrice") BigDecimal _productPrice) {
+		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
+		List<ProductEntity> products = productServiceImpl.findProductsAndPriceGreaterThan(
+																_productName, _location, _productPrice);
+		StandardResponse stdResponse = createSuccessResponse("Products Found ("+products.size()
+				+") For Search Keys: Phone = " +_productName + " Price = "+_productPrice + " Location = "+_location);
 		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}
@@ -454,6 +481,8 @@ public class ProductControllerImpl extends AbstractController {
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB RED", new BigDecimal(60000), "12345"));
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB BLACK", new BigDecimal(60000), "12345"));
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB GOLD", new BigDecimal(60000), "12345"));
+		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 128 GB GOLD", new BigDecimal(65000), "12345"));
+		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 1256 GB GOLD", new BigDecimal(75000), "12345"));
 		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 128 GB", new BigDecimal(70000), "12345"));
 		productList.add(new ProductEntity("iPhone 12", "iPhone 12, 128 GB", new BigDecimal(80000), "12345"));
 		productList.add(new ProductEntity("Samsung Galaxy s20", "Samsung Galaxy s20, 256 GB", new BigDecimal(80000), "12345"));

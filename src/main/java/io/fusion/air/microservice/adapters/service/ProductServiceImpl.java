@@ -143,6 +143,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
+     * Select Product
+     *
+     * 1. By Product Name and
+     * 2. By Location and
+     * 3. By Price Greater than the Input Price
+     *
+     * @param _productName
+     * @param _zipCode
+     * @param _price
+     * @return
+     */
+    public List<ProductEntity> findProductsAndPriceGreaterThan(String _productName,  String _zipCode, BigDecimal _price) {
+        Specification<ProductEntity> spec = Specification
+                .where(ProductSpecification.hasProductAndLocationAndPriceGreaterThan(_productName, _zipCode, _price));
+        Sort sort = Sort.by(Sort.Direction.ASC, "productName");
+
+        return productRepository.findAll(spec, sort);
+    }
+
+    /**
      * Search for the Product By Price Greater Than or Equal To
      * @param price
      * @return
