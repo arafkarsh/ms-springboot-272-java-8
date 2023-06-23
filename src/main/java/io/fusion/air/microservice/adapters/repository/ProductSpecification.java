@@ -20,6 +20,11 @@ import java.time.LocalDate;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.domain.Specification;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
 
 
 /**
@@ -29,15 +34,59 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public class ProductSpecification {
 
+    /**
+     * Search Product by Product Name
+     * @param _productName
+     * @return
+     */
     public static Specification<ProductEntity> hasProductName(String _productName){
         return (product, cq, cb) -> cb.equal(product.get("productName"), _productName);
     }
 
-    public static Specification<ProductEntity> hasProductPrice(BigDecimal _pricec){
-        return (product, cq, cb) -> cb.equal(product.get("productPrice"), _pricec);
+    /**
+     * Search Product By Product Price
+     * @param _price
+     * @return
+     */
+    public static Specification<ProductEntity> hasProductPrice(BigDecimal _price){
+        return (product, cq, cb) -> cb.equal(product.get("productPrice"), _price);
     }
 
+    /**
+     * Search Product By Product Location
+     * @param _zipCode
+     * @return
+     */
     public static Specification<ProductEntity> hasZipCode(String _zipCode){
         return (product, cq, cb) -> cb.equal(product.get("productLocationZipCode"), _zipCode);
+    }
+
+    /**
+     * Select Product
+     *
+     * 1. By Product Name and
+     * 2. By Location and
+     * 3. By Price Greater than the Input Price
+     *
+     * @param _productName
+     * @param _price
+     * @param _location
+     * @return
+     */
+    public static Specification<ProductEntity> hasProductAndLocationAndPriceGreaterThan(
+            String _productName, BigDecimal _price, String _location){
+        return (Specification<ProductEntity>) (product, cq, cb) -> {
+            // 1st Predicate
+            Predicate equalPredicate = cb.and(
+                    cb.equal(product.get("productName"), _productName),
+                    cb.equal(product.get("productLocationZipCode"), _location)
+            );
+            // 2nd Predicate
+            Predicate greaterThanPredicate = cb.greaterThan(product.get("productPrice"), _price);
+            // Criteria Query - Order By
+            cq.orderBy(cb.desc(product.get("productDetails")));
+            // Return combined Predicate
+            return cb.and(equalPredicate, greaterThanPredicate);
+        };
     }
 }

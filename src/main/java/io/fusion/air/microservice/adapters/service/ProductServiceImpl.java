@@ -111,6 +111,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
+     * Find Products Based on Product Name, Price
+     * @param _productName
+     * @param _price
+     * @return
+     */
+    public List<ProductEntity> findProducts(String _productName, BigDecimal _price) {
+        Specification<ProductEntity> spec = Specification
+                .where(ProductSpecification.hasProductName(_productName))
+                .and(ProductSpecification.hasProductPrice(_price));
+        Sort sort = Sort.by(Sort.Direction.ASC, "productName");
+
+        return productRepository.findAll(spec, sort);
+    }
+
+    /**
      * Find Products Based on Product Name, Price and Location
      * @param _productName
      * @param _price
@@ -120,8 +135,8 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductEntity> findProducts(String _productName, BigDecimal _price, String _zipCode) {
         Specification<ProductEntity> spec = Specification
                 .where(ProductSpecification.hasProductName(_productName))
-                .and(ProductSpecification.hasProductPrice(_price));
-                // .and(ProductSpecification.hasZipCode(_zipCode));
+                .and(ProductSpecification.hasProductPrice(_price))
+                .and(ProductSpecification.hasZipCode(_zipCode));
         Sort sort = Sort.by(Sort.Direction.ASC, "productName");
 
         return productRepository.findAll(spec, sort);

@@ -66,6 +66,4 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID>, J
      */
     public List<ProductEntity> findByProductNameContains(String name);
 
-    // Added remark
-
 }

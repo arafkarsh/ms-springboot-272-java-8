@@ -242,9 +242,35 @@ public class ProductControllerImpl extends AbstractController {
 			@PathVariable("productName") String _productName,
 			@PathVariable("productPrice") BigDecimal _productPrice) {
 		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
-		List<ProductEntity> products = productServiceImpl.findProducts(_productName, _productPrice, "");
+		List<ProductEntity> products = productServiceImpl.findProducts(_productName, _productPrice);
 		StandardResponse stdResponse = createSuccessResponse("Products Found ("+products.size()+") For Search Keys: Phone = "
 				+_productName + " Price = "+_productPrice);
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Specification Pattern Example
+	 * Search the Product by Product Name, Product Price & Location
+	 */
+	@Operation(summary = "Search Product By Product Name")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/product/{productName}/price/{productPrice}/location/{location}")
+	public ResponseEntity<StandardResponse> searchProductsByNameAndPriceAndLocation(
+			@PathVariable("productName") String _productName,
+			@PathVariable("productPrice") BigDecimal _productPrice,
+			@PathVariable("location") String _location) {
+		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
+		List<ProductEntity> products = productServiceImpl.findProducts(_productName, _productPrice, _location);
+		StandardResponse stdResponse = createSuccessResponse("Products Found ("+products.size()+") For Search Keys: Phone = "
+				+_productName + " Price = "+_productPrice + " Location = "+_location);
 		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}

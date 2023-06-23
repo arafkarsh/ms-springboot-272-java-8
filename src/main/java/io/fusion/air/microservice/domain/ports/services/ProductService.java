@@ -48,6 +48,14 @@ public interface ProductService {
     public List<ProductEntity> getAllProduct();
 
     /**
+     * Find Products Based on Product Name, Price
+     * @param _productName
+     * @param _price
+     * @return
+     */
+    public List<ProductEntity> findProducts(String _productName, BigDecimal _price);
+
+    /**
      * Find Products Based on Product Name, Price and Location
      * @param _productName
      * @param _price
