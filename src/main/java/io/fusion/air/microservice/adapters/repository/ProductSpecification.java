@@ -16,16 +16,15 @@
 package io.fusion.air.microservice.adapters.repository;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+// import java.time.LocalDate;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-
 
 /**
  * @author: Araf Karsh Hamid
@@ -44,12 +43,35 @@ public class ProductSpecification {
     }
 
     /**
+     * Search for Product Thast Contains Product Name
+     * @param _productName
+     * @return
+     */
+    public static Specification<ProductEntity> hasProductNameLike(String _productName) {
+        String productName = (_productName != null) ? "%" + _productName.toLowerCase() + "%" : "%";
+        return (Root<ProductEntity> product, CriteriaQuery<?> cq, CriteriaBuilder cb) -> {
+            return cb.like(cb.lower(product.get("productName")), productName);
+        };
+    }
+
+    /**
      * Search Product By Product Price
      * @param _price
      * @return
      */
     public static Specification<ProductEntity> hasProductPrice(BigDecimal _price){
         return (product, cq, cb) -> cb.equal(product.get("productPrice"), _price);
+    }
+
+    /**
+     * Search Product For a Price Greater Than and Equal To
+     * @param _price
+     * @return
+     */
+    public static Specification<ProductEntity> hasProductPriceGreaterThanEqualTo(BigDecimal _price) {
+        return (Root<ProductEntity> product, CriteriaQuery<?> cq, CriteriaBuilder cb) -> {
+            return cb.greaterThanOrEqualTo(product.get("productPrice"), _price);
+        };
     }
 
     /**
@@ -68,23 +90,27 @@ public class ProductSpecification {
      * 2. By Location and
      * 3. By Price Greater than the Input Price
      *
+     *  Order By Price (Ascending order)
+     *
      * @param _productName
      * @param _location
      * @param _price
      * @return
      */
     public static Specification<ProductEntity> hasProductAndLocationAndPriceGreaterThan(
-            String _productName,  String _location, BigDecimal _price){
+            String _productName,  String _location, BigDecimal _price) {
+        String productName = (_productName != null) ? "%" + _productName.toLowerCase() + "%" : "%";
+        String location = (_location != null) ? "%" + _location.toLowerCase() + "%" : "%";
         return (Specification<ProductEntity>) (product, cq, cb) -> {
             // 1st Predicate
             Predicate equalPredicate = cb.and(
-                    cb.equal(product.get("productName"), _productName),
-                    cb.equal(product.get("productLocationZipCode"), _location)
+                    cb.like(cb.lower(product.get("productName")), productName),
+                    cb.like(cb.lower(product.get("productLocationZipCode")), location)
             );
             // 2nd Predicate
-            Predicate greaterThanPredicate = cb.greaterThan(product.get("productPrice"), _price);
+            Predicate greaterThanPredicate = cb.greaterThanOrEqualTo(product.get("productPrice"), _price);
             // Criteria Query - Order By
-            cq.orderBy(cb.desc(product.get("productDetails")));
+            cq.orderBy(cb.desc(product.get("productPrice")));
             // Return combined Predicate
             return cb.and(equalPredicate, greaterThanPredicate);
         };

@@ -35,8 +35,8 @@ import java.util.UUID;
  */
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, UUID>, JpaSpecificationExecutor<ProductEntity> {
-
+public interface ProductRepository extends JpaRepository<ProductEntity, UUID>,
+                                                JpaSpecificationExecutor<ProductEntity> {
     /**
      * Find By Product ID
      * @param productId
