@@ -159,9 +159,9 @@ public class ProductControllerImpl extends AbstractController {
 		log.info("Products List = "+productList.size());
 		if(productList == null || productList.isEmpty()) {
 			productList = createFallBackProducts();
-			stdResponse = createSuccessResponse("201","Fallback Data!");
+			stdResponse = createSuccessResponse("201","Fallback Data! Records = "+productList.size());
 		} else {
-			stdResponse = createSuccessResponse("Data Fetch Success!");
+			stdResponse = createSuccessResponse("Data Fetch Success! Records = "+productList.size());
 		}
 		stdResponse.setPayload(productList);
 		return ResponseEntity.ok(stdResponse);
@@ -191,9 +191,9 @@ public class ProductControllerImpl extends AbstractController {
 		log.info("Products List = "+productList.size());
 		if(productList == null || productList.isEmpty()) {
 			productList = createFallBackProducts();
-			stdResponse = createSuccessResponse("201","Fallback Data!");
+			stdResponse = createSuccessResponse("201","Fallback Data! Records = "+productList.size());
 		} else {
-			stdResponse = createSuccessResponse("Data Fetch Success!");
+			stdResponse = createSuccessResponse("Data Fetch Success! Records = "+productList.size());
 		}
 		stdResponse.setPayload(productList);
 
@@ -484,8 +484,12 @@ public class ProductControllerImpl extends AbstractController {
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 128 GB GOLD", new BigDecimal(65000), "12345"));
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 1256 GB GOLD", new BigDecimal(75000), "12345"));
 		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 128 GB", new BigDecimal(70000), "12345"));
+		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 256 GB", new BigDecimal(80000), "12345"));
 		productList.add(new ProductEntity("iPhone 12", "iPhone 12, 128 GB", new BigDecimal(80000), "12345"));
+		productList.add(new ProductEntity("iPhone 12", "iPhone 12, 256 GB", new BigDecimal(90000), "12345"));
 		productList.add(new ProductEntity("Samsung Galaxy s20", "Samsung Galaxy s20, 256 GB", new BigDecimal(80000), "12345"));
+		productList.add(new ProductEntity("Samsung Galaxy s21", "Samsung Galaxy s21, 256 GB", new BigDecimal(90000), "12345"));
+
 
 		try {
 			productServiceImpl.createProductsEntity(productList);

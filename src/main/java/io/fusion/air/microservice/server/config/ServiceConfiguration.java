@@ -280,6 +280,26 @@ public class ServiceConfiguration implements Serializable {
 	@JsonIgnore
 	@Value("#{${app.property.map}}")
 	private HashMap<String, String> appPropertyMap;
+
+
+
+	@JsonIgnore
+	@Value("${kafka.servers:127.0.0.1:9092}")
+	private String kafkaServers;
+
+	@JsonIgnore
+	@Value("${kafka.consumer.group:fusionAirId}")
+	private String kafkaConsumerGroup;
+
+	@JsonIgnore
+	// Kafka Configurations
+	@Value("${kafka.topic.1}")
+	private String kafkaTopic1;
+
+	@JsonIgnore
+	// Kafka Configurations
+	@Value("${kafka.topic.2}")
+	private String kafkaTopic2;
 	
 	/**
 	 * To be used outside SpringBoot Context
@@ -717,5 +737,37 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getServerResourceUrl() {
 		return serverResourceUrl;
+	}
+
+	/**
+	 * Returns the Kafka Servers
+	 * @return
+	 */
+	public String getKafkaServers() {
+		return kafkaServers;
+	}
+
+	/**
+	 * Returns the Kafka Consumer Group ID
+	 * @return
+	 */
+	public String getKafkaConsumerGroup() {
+		return kafkaConsumerGroup;
+	}
+
+	/**
+	 * Returns Kafka Topic 1
+	 * @return
+	 */
+	public String getKafkaTopic1() {
+		return kafkaTopic1;
+	}
+
+	/**
+	 * Returns Kafka Topic 2
+	 * @return
+	 */
+	public String getKafkaTopic2() {
+		return kafkaTopic2;
 	}
 }
