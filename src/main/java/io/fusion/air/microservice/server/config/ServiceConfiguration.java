@@ -281,7 +281,7 @@ public class ServiceConfiguration implements Serializable {
 	@Value("#{${app.property.map}}")
 	private HashMap<String, String> appPropertyMap;
 
-
+	// KAFKA Configurations
 
 	@JsonIgnore
 	@Value("${kafka.servers:127.0.0.1:9092}")
@@ -292,14 +292,36 @@ public class ServiceConfiguration implements Serializable {
 	private String kafkaConsumerGroup;
 
 	@JsonIgnore
-	// Kafka Configurations
+	// Kafka Topic 1
 	@Value("${kafka.topic.1}")
 	private String kafkaTopic1;
 
 	@JsonIgnore
-	// Kafka Configurations
+	// Kafka Topic 1 and its Partitions
+	@Value("${kafka.topic.1.partitions:5}")
+	private int kafkaTopic1Partitions;
+
+	@JsonIgnore
+	// Kafka Topic 1 and its Replicas
+	@Value("${kafka.topic.1.replica:1}")
+	private short kafkaTopic1Replica;
+
+	@JsonIgnore
+	// Kafka Topic 2
 	@Value("${kafka.topic.2}")
 	private String kafkaTopic2;
+
+	@JsonIgnore
+	// Kafka Topic 2 and its Partitions
+	@Value("${kafka.topic.2.partitions:7}")
+	private int kafkaTopic2Partitions;
+
+	@JsonIgnore
+	// Kafka Topic 2 and its Replicas
+	@Value("${kafka.topic.2.replica:1}")
+	private short kafkaTopic2Replica;
+
+
 	
 	/**
 	 * To be used outside SpringBoot Context
@@ -764,10 +786,42 @@ public class ServiceConfiguration implements Serializable {
 	}
 
 	/**
+	 * Returns the No. of Partitions for Topic 1
+	 * @return
+	 */
+	public int getKafkaTopic1Partitions() {
+		return kafkaTopic1Partitions;
+	}
+
+	/**
+	 * Returns the No. of Replicas for Topic 1
+	 * @return
+	 */
+	public short getKafkaTopic1Replica() {
+		return kafkaTopic1Replica;
+	}
+
+	/**
 	 * Returns Kafka Topic 2
 	 * @return
 	 */
 	public String getKafkaTopic2() {
 		return kafkaTopic2;
+	}
+
+	/**
+	 * Returns the No. of Partitions for Topic 2
+	 * @return
+	 */
+	public int getKafkaTopic2Partitions() {
+		return kafkaTopic2Partitions;
+	}
+
+	/**
+	 * Returns the No. of Replicas for Topic 2
+	 * @return
+	 */
+	public short getKafkaTopic2Replica() {
+		return kafkaTopic2Replica;
 	}
 }

@@ -27,13 +27,13 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaConsumer {
+public class KafkaConsumerTopic2 {
 
     @Autowired
     private ServiceConfiguration serviceConfiguration;
 
     /**
-     * Kafka Consumer for Topic 1 (As per the Configuration in the Properties file)
+     * Kafka Consumer for Topic 2 (As per the Configuration in the Properties file)
      * AutoStart is disabled to testing purpose ONLY.
      * In a real world scenario autostart will be TRUE
      *
@@ -42,8 +42,8 @@ public class KafkaConsumer {
      * @see KafkaRestController
      * @param message
      */
-    @KafkaListener(id = "fusionListenerT1", autoStartup = "false",
-            topics = "#{serviceConfiguration.getKafkaTopic1()}",
+    @KafkaListener(id = "fusionListenerT2", autoStartup = "false",
+            topics = "#{serviceConfiguration.getKafkaTopic2()}",
             groupId = "#{serviceConfiguration.getKafkaConsumerGroup()}")
     public void consume(String message) {
         System.out.println("Consumed message: " + message);

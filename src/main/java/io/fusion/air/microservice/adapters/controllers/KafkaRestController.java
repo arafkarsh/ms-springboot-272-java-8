@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
+import io.fusion.air.microservice.adapters.messaging.core.KafkaPartitionManager;
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,12 +25,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author: Araf Karsh Hamid
@@ -39,16 +42,19 @@ import org.springframework.web.context.annotation.RequestScope;
 @Configuration
 @RestController
 // "/ms-cache/api/v1"
-@RequestMapping("${service.api.path}/kafka/topic1")
+@RequestMapping("${service.api.path}/kafka")
 @RequestScope
 @Tag(name = "Kafka Listener Controller", description = "Ex. io.f.a.m.adapters.controllers.KafkaRestController")
 public class KafkaRestController extends AbstractController {
 
     private final KafkaListenerEndpointRegistry registry;
 
+    private final KafkaPartitionManager partitionManager;
+
     @Autowired
-    public KafkaRestController(KafkaListenerEndpointRegistry registry) {
-        this.registry = registry;
+    public KafkaRestController(KafkaListenerEndpointRegistry _registry, KafkaPartitionManager _partitionManager) {
+        this.registry = _registry;
+        this.partitionManager = _partitionManager;
     }
 
     @Operation(summary = "Start the Kafka Fusion Listener for Topic 1")
@@ -60,9 +66,17 @@ public class KafkaRestController extends AbstractController {
                     description = "Kafka Listener for Topic 1 Failed to start!",
                     content = @Content)
     })
-    @PostMapping("/start")
-    public void start() {
+    @PostMapping("/start/all")
+    public ResponseEntity<StandardResponse> start() {
         registry.getListenerContainer("fusionListenerT1").start();
+        registry.getListenerContainer("fusionListenerT2").start();
+        StandardResponse stdResponse = createSuccessResponse("Listeners Started!");
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("fusionListenerT1", "Started");
+        data.put("fusionListenerT2", "Started");
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+
     }
 
     @Operation(summary = "Stop the Kafka Fusion Listener for Topic 1")
@@ -74,9 +88,78 @@ public class KafkaRestController extends AbstractController {
                     description = "Kafka Listener for Topic 1 Failed to stop!",
                     content = @Content)
     })
-    @PostMapping("/stop")
-    public void stop() {
+    @PostMapping("/stop/all")
+    public ResponseEntity<StandardResponse>  stop() {
         registry.getListenerContainer("fusionListenerT1").stop();
+        registry.getListenerContainer("fusionListenerT2").stop();
+        StandardResponse stdResponse = createSuccessResponse("Listeners Stopped!");
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("fusionListenerT1", "Stopped");
+        data.put("fusionListenerT2", "Stopped");
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+    }
+
+    @Operation(summary = "Start the Kafka Fusion Listener for Topic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Kafka Listener for Topic started!",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Kafka Listener for Topic Failed to start!",
+                    content = @Content)
+    })
+    @PostMapping("/start/{listenerId}")
+    public ResponseEntity<StandardResponse>  start(@PathVariable("listenerId") String _listenerId) {
+        registry.getListenerContainer(_listenerId).start();
+        StandardResponse stdResponse = createSuccessResponse("Listeners Started!");
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put(_listenerId, "Started");
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+    }
+
+    @Operation(summary = "Stop the Kafka Fusion Listener for Topic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Kafka Listener for Topic stopped!",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Kafka Listener for Topic Failed to stop!",
+                    content = @Content)
+    })
+    @PostMapping("/stop/{listenerId}")
+    public ResponseEntity<StandardResponse>  stop(@PathVariable("listenerId") String _listenerId) {
+        registry.getListenerContainer(_listenerId).stop();
+        StandardResponse stdResponse = createSuccessResponse("Listeners Stopped!");
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put(_listenerId, "Stopped");
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+    }
+
+    @Operation(summary = "Update the Partitions for a Kafka Topic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Kafka Listener for Topic 1 stopped!",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Kafka Listener for Topic 1 Failed to stop!",
+                    content = @Content)
+    })
+    @PutMapping("/topic/{topicName}/partitions/{partitionNumber}")
+    public ResponseEntity<StandardResponse>  updatePartitions(
+            @PathVariable("topicName") String _topicName,
+            @PathVariable("partitionNumber") int _partitionNumber) {
+
+        partitionManager.increasePartitions(_topicName, _partitionNumber);
+        StandardResponse stdResponse = createSuccessResponse("Topic ="+_topicName
+                                                +" Partitions = "+_partitionNumber+" Updated!");
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("Topic", _topicName);
+        data.put("Partitions", ""+_partitionNumber);
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
     }
 
 }
