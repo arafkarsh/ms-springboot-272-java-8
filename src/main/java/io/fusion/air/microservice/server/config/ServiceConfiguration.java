@@ -307,6 +307,11 @@ public class ServiceConfiguration implements Serializable {
 	private short kafkaTopic1Replica;
 
 	@JsonIgnore
+	// Kafka Topic 1 with Ack Type (All, 1 & 0)
+	@Value("${kafka.topic.1.acks:1}")
+	private String kafkaTopic1AckType;
+
+	@JsonIgnore
 	// Kafka Topic 2
 	@Value("${kafka.topic.2}")
 	private String kafkaTopic2;
@@ -321,6 +326,10 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${kafka.topic.2.replica:1}")
 	private short kafkaTopic2Replica;
 
+	@JsonIgnore
+	// Kafka Topic 1 with Ack Type (All, 1 & 0)
+	@Value("${kafka.topic.2.acks:1}")
+	private String kafkaTopic2AckType;
 
 	
 	/**
@@ -802,6 +811,19 @@ public class ServiceConfiguration implements Serializable {
 	}
 
 	/**
+	 * Returns the Ack Type for Topic 1
+	 * Ack Types = All, 1, 0
+	 * All = Acknowledgement By All the Replicas
+	 * 1 = Acknowledgement By the Leader
+	 * 0 = Acknowledgement By None
+	 *
+	 * @return
+	 */
+	public String getKafkaTopic1AckType() {
+		return kafkaTopic1AckType;
+	}
+
+	/**
 	 * Returns Kafka Topic 2
 	 * @return
 	 */
@@ -823,5 +845,18 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public short getKafkaTopic2Replica() {
 		return kafkaTopic2Replica;
+	}
+
+	/**
+	 * Returns the Ack Type for Topic 1
+	 * Ack Types = All, 1, 0
+	 * All = Acknowledgement By All the Replicas
+	 * 1 = Acknowledgement By the Leader
+	 * 0 = Acknowledgement By None
+	 *
+	 * @return
+	 */
+	public String getKafkaTopic2AckType() {
+		return kafkaTopic2AckType;
 	}
 }

@@ -34,6 +34,21 @@ public class KafkaProducerAcksByAll {
         this.kafkaTemplate = kafkaTemplateAcksAll;
     }
 
+    /**
+     * Send the Message (data) to the Topic
+     * @param topic
+     * @param data
+     */
+    public void sendMessage(String topic,  String data) {
+        this.kafkaTemplate.send(topic, null, data);
+    }
+
+    /**
+     * Send the Message (data) to the Topic with Partition Key
+     * @param topic
+     * @param key
+     * @param data
+     */
     public void sendMessage(String topic, String key, String data) {
         this.kafkaTemplate.send(topic, key, data);
     }
