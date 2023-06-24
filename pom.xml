@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fusion.air</groupId>
 	<artifactId>ms-cache-service</artifactId>
-	<version>0.5.4</version>
+	<version>0.5.5</version>
 	<packaging>jar</packaging>
 	<name>msCacheService</name>
 	<description>Microservice Cache Kafka Template</description>
@@ -56,7 +56,7 @@
 		<spring.security.version>5.7.2</spring.security.version>
 
 		<!-- Spring Kafka ================================================= -->
-		<spring.kafka.version>2.9.0</spring.kafka.version>
+		<spring.kafka.version>2.9.9</spring.kafka.version>
 
 		<!-- Open API v3 - Swagger UI ===================================== -->
 		<openapi.version>1.6.9</openapi.version>
