@@ -15,32 +15,20 @@
  */
 package io.fusion.air.microservice.adapters.messaging.core;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
-
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
-@Service
-public class KafkaProducerAcksByLeader  implements  KafkaProducerService {
+public interface KafkaProducerService {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public KafkaProducerAcksByLeader(@Qualifier("kafkaTemplateAcksOne")
-                                KafkaTemplate<String, String> kafkaTemplateAcksOne) {
-        this.kafkaTemplate = kafkaTemplateAcksOne;
-    }
     /**
      * Send the Message (data) to the Topic
      * @param topic
      * @param data
      */
-    public void sendMessage(String topic,  String data) {
-        this.kafkaTemplate.send(topic, null, data);
-    }
+    public void sendMessage(String topic,  String data);
+
 
     /**
      * Send the Message (data) to the Topic with Partition Key
@@ -48,7 +36,5 @@ public class KafkaProducerAcksByLeader  implements  KafkaProducerService {
      * @param key
      * @param data
      */
-    public void sendMessage(String topic, String key, String data) {
-        this.kafkaTemplate.send(topic, key, data);
-    }
+    public void sendMessage(String topic, String key, String data);
 }

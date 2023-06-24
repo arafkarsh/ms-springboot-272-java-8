@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaProducerAcksByAll {
+public class KafkaProducerAcksByAll implements  KafkaProducerService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 

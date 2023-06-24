@@ -15,7 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.messaging.services;
 
-import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerAcksByLeader;
+import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerTemplate;
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,10 @@ import org.springframework.stereotype.Service;
 public class KafkaProducer {
 
     @Autowired
-    private KafkaProducerAcksByLeader kafkaTemplate;
+    private KafkaProducerTemplate kafkaTemplate;
+
+    @Autowired
+    private ServiceConfiguration serviceConfiguration;
 
     /**
      * Send Message to Kafka Topic With Ack by the Leader ONLY
@@ -37,7 +41,7 @@ public class KafkaProducer {
      * @param _message
      */
     public void sendMessage(String _topic, String _message) {
-        this.kafkaTemplate.sendMessage(_topic, null, _message);
+        this.kafkaTemplate.getKafkaTemplate("all").sendMessage(_topic, null, _message);
     }
 
     /**
@@ -48,6 +52,6 @@ public class KafkaProducer {
      * @param _message
      */
     public void sendMessage(String _topic, String _key, String _message) {
-        this.kafkaTemplate.sendMessage(_topic, _key, _message);
+        this.kafkaTemplate.getKafkaTemplate("all").sendMessage(_topic, _key, _message);
     }
 }
