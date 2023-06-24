@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.messaging.core;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +25,16 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaProducer {
+public class KafkaProducerAcksByNone {
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    /**
-     * Send Message to Kafka Topic
-     * @param _topic
-     * @param _message
-     */
-    public void sendMessage(String _topic, String _message) {
-        this.kafkaTemplate.send(_topic, _message);
+    public KafkaProducerAcksByNone(@Qualifier("kafkaTemplateAcksZero")
+                                KafkaTemplate<String, String> kafkaTemplateAcksZero) {
+        this.kafkaTemplate = kafkaTemplateAcksZero;
+    }
+
+    public void sendMessage(String topic, String key, String data) {
+        this.kafkaTemplate.send(topic, key, data);
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.core;
+package io.fusion.air.microservice.adapters.messaging.services;
 
 import io.fusion.air.microservice.adapters.controllers.KafkaRestController;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
@@ -27,13 +27,13 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaConsumerTopic2 {
+public class KafkaConsumerTopic1 {
 
     @Autowired
     private ServiceConfiguration serviceConfiguration;
 
     /**
-     * Kafka Consumer for Topic 2 (As per the Configuration in the Properties file)
+     * Kafka Consumer for Topic 1 (As per the Configuration in the Properties file)
      * AutoStart is disabled to testing purpose ONLY.
      * In a real world scenario autostart will be TRUE
      *
@@ -42,8 +42,8 @@ public class KafkaConsumerTopic2 {
      * @see KafkaRestController
      * @param message
      */
-    @KafkaListener(id = "fusionListenerT2", autoStartup = "false",
-            topics = "#{serviceConfiguration.getKafkaTopic2()}",
+    @KafkaListener(id = "fusionListenerT1", autoStartup = "false",
+            topics = "#{serviceConfiguration.getKafkaTopic1()}",
             groupId = "#{serviceConfiguration.getKafkaConsumerGroup()}")
     public void consume(String message) {
         System.out.println("Consumed message: " + message);
