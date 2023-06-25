@@ -15,18 +15,21 @@
  */
 package io.fusion.air.microservice.adapters.messaging.services;
 
+import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerService;
 import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerTemplate;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ * Kafka Producer for Topic 1
+ *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
 @Service
-public class KafkaProducer {
+public class KafkaProducerTopic1 {
 
     @Autowired
     private KafkaProducerTemplate kafkaTemplate;
@@ -34,24 +37,31 @@ public class KafkaProducer {
     @Autowired
     private ServiceConfiguration serviceConfiguration;
 
-    /**
-     * Send Message to Kafka Topic With Ack by the Leader ONLY
-     *
-     * @param _topic
-     * @param _message
-     */
-    public void sendMessage(String _topic, String _message) {
-        this.kafkaTemplate.getKafkaTemplate("all").sendMessage(_topic, null, _message);
+
+    private KafkaProducerService getKafkaTemplate(String _ackType) {
+        return  kafkaTemplate.getKafkaTemplate(_ackType);
     }
 
     /**
-     * Send Message to the Kafka Topic with Ack By the Leader with Partition Key
+     * Send Message to Kafka Topic 1 by AckType
+     *
+     * @param _message
+     */
+    public void sendMessage(String _message) {
+        getKafkaTemplate(serviceConfiguration.getKafkaTopic1AckType())
+                .sendMessage(serviceConfiguration.getKafkaTopic1(), null, _message);
+    }
+
+
+    /**
+     * Send Message to the Kafka Topic 1 By theAck Type with Partition Key
      *
      * @param
      * @param _key
      * @param _message
      */
-    public void sendMessage(String _topic, String _key, String _message) {
-        this.kafkaTemplate.getKafkaTemplate("all").sendMessage(_topic, _key, _message);
+    public void sendMessage(String _key, String _message) {
+        getKafkaTemplate(serviceConfiguration.getKafkaTopic1AckType())
+                .sendMessage(serviceConfiguration.getKafkaTopic1(), _key, _message);
     }
 }

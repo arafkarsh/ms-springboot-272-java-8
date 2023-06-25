@@ -72,7 +72,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/product")
 @RequestScope
-@Tag(name = "Product API", description = "Ex. io.f.a.m.adapters.controllers.ProductControllerImpl")
+@Tag(name = "Product API", description = "To Manage (Add/Update/Delete/Search) Products.(io.f.a.m.adapters.controllers.ProductControllerImpl)")
 public class ProductControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.

@@ -62,7 +62,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/payment")
 @RequestScope
-@Tag(name = "Secured Payments API", description = "Ex. io.f.a.m.adapters.controllers.secured.PaymentControllerImpl")
+@Tag(name = "Secured Payments API", description = "To Manage (Process/Status) Payments. (io.f.a.m.adapters.controllers.secured.PaymentControllerImpl)")
 public class PaymentControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.

@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
+import io.fusion.air.microservice.adapters.messaging.core.KafkaConsumerService;
+import io.fusion.air.microservice.adapters.messaging.core.KafkaMemberDTO;
 import io.fusion.air.microservice.adapters.messaging.core.KafkaPartitionManager;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.kafka.clients.admin.MemberDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +34,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.HashMap;
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Araf Karsh Hamid
@@ -44,17 +48,37 @@ import java.util.UUID;
 // "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/kafka")
 @RequestScope
-@Tag(name = "Kafka Listener Controller", description = "Ex. io.f.a.m.adapters.controllers.KafkaRestController")
-public class KafkaRestController extends AbstractController {
+@Tag(name = "Kafka Listener Controller", description = "To Manage Partitions & Start/Stop Listeners (io.f.a.m.adapters.controllers.KafkaListenerController)")
+public class KafkaListenerController extends AbstractController {
+
+    @Autowired
+    private KafkaConsumerService kafkaConsumerService;
 
     private final KafkaListenerEndpointRegistry registry;
 
     private final KafkaPartitionManager partitionManager;
 
     @Autowired
-    public KafkaRestController(KafkaListenerEndpointRegistry _registry, KafkaPartitionManager _partitionManager) {
+    public KafkaListenerController(KafkaListenerEndpointRegistry _registry, KafkaPartitionManager _partitionManager) {
         this.registry = _registry;
         this.partitionManager = _partitionManager;
+    }
+
+    @Operation(summary = "Start the Kafka Fusion Listener for Topic 1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Kafka Listener for Topic 1 started!",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Kafka Listener for Topic 1 Failed to start!",
+                    content = @Content)
+    })
+    @GetMapping("/consumers/topic/{topic}")
+    public ResponseEntity<StandardResponse> getConsumers(@PathVariable("topic") String _topic) {
+        Map<String, List<KafkaMemberDTO>> consumers = kafkaConsumerService.getConsumersAcrossGroups(_topic);
+        StandardResponse stdResponse = createSuccessResponse("Consumers List Fetched! = "+consumers.size());
+        stdResponse.setPayload(consumers);
+        return ResponseEntity.ok(stdResponse);
     }
 
     @Operation(summary = "Start the Kafka Fusion Listener for Topic 1")
