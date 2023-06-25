@@ -1,0 +1,1 @@
+psql -h localhost -p 5433 ms_cache_272 < ms-sb272.sql

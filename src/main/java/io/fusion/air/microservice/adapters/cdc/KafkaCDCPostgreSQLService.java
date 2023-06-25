@@ -108,23 +108,23 @@ public class KafkaCDCPostgreSQLService {
         config.put("database.hostname", "localhost");               // replace with your DB hostname
         config.put("database.port", "5433");                        // replace with your DB port
         config.put("database.user", "postgres");                    // replace with your DB user
-        config.put("database.password", "");                        // replace with your DB password
-        config.put("database.dbname", "ms_cache");                  // replace with your DB name
+        config.put("database.password", "2023.Sigma");              // replace with your DB password
+        config.put("database.dbname", "ms_cache_272");              // replace with your DB name
         config.put("database.server.name", "ms_cache");
-        config.put("table.include.list", "public.products_m");
+        config.put("table.include.list", "ms_schema.products_m");
         config.put("topic.creation.default.replication.factor", "1");
         config.put("topic.creation.default.partitions", "1");
-        config.put("slot.name", "debezium_slot");
+        config.put("slot.name", "ms_272_slot");
         config.put("plugin.name", "pgoutput");
         config.put("snapshot.mode", "initial");
         config.put("decimal.handling.mode", "string");
-        config.put("topic.prefix", "ms_cache");                       // adding the topic.prefix value
+        config.put("topic.prefix", "ms_cache_272");                  // adding the topic.prefix value
         config.put("transforms", "unwrap");
         config.put("transforms.unwrap.type", "io.debezium.transforms.ExtractNewRecordState");
         config.put("transforms.unwrap.drop.tombstones", "false");
 
         Map<String, Object> connectorPayload = new HashMap<>();
-        connectorPayload.put("name", "products-connector");
+        connectorPayload.put("name", "ms-272-products");
         connectorPayload.put("config", config);
 
         HttpHeaders headers = new HttpHeaders();

@@ -65,7 +65,7 @@ public class KafkaCDCController extends AbstractController {
         String[] response = kafkaDBConnectService.listAllConnectors();
         StandardResponse stdResponse = null;
         if(response != null && response.length > 0) {
-            stdResponse= createSuccessResponse("Connect List Retrieved = "+response.length);
+            stdResponse= createSuccessResponse("Kafka Connector List Retrieved = "+response.length);
             stdResponse.setPayload(response);
         } else {
             stdResponse= createSuccessResponse("No Connectors Found!");
@@ -86,7 +86,7 @@ public class KafkaCDCController extends AbstractController {
     @DeleteMapping(path = "/{connectorName}")
     public ResponseEntity<StandardResponse> deleteConnector(@PathVariable("connectorName") String _connectorName) throws IOException {
         String response = kafkaDBConnectService.deleteConnector(_connectorName);
-        StandardResponse stdResponse = createSuccessResponse("Connect List Retrieved!");
+        StandardResponse stdResponse = createSuccessResponse("Kafka Connector deleted.");
         stdResponse.setPayload(response);
         return ResponseEntity.ok(stdResponse);
     }
