@@ -15,28 +15,22 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.messaging.core.KafkaPartitionManager;
-import io.fusion.air.microservice.adapters.messaging.services.KafkaConsumerTopic1;
-import io.fusion.air.microservice.adapters.messaging.services.KafkaConsumerTopic2;
-import io.fusion.air.microservice.domain.models.core.StandardResponse;
+import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaConsumerTopic1;
+import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaConsumerTopic2;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Kafka SSE (Server Sent Event) Controller

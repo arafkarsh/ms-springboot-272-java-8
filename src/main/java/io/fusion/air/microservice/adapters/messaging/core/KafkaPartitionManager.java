@@ -16,7 +16,7 @@
 package io.fusion.air.microservice.adapters.messaging.core;
 
 import io.fusion.air.microservice.domain.exceptions.MessagingException;
-import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import io.fusion.air.microservice.server.config.KafkaConfig;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -38,12 +38,12 @@ import java.util.Properties;
 public class KafkaPartitionManager {
 
     @Autowired
-    private ServiceConfiguration serviceConfiguration;
+    private KafkaConfig kafkaConfig;
 
     public void increasePartitions(String topicName, int newPartitionCount) {
         // Configure the AdminClient with your bootstrap servers
         Properties config = new Properties();
-        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, serviceConfiguration.getKafkaServers());
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
 
         try (AdminClient adminClient = AdminClient.create(config)) {
             // Create a NewPartitions instance with newPartitionCount

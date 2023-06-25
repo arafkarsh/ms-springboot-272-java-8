@@ -22,7 +22,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 // Spring Kafka
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -41,34 +41,43 @@ import java.util.Map;
 @Configuration
 public class KafkaSetup {
 
-    @Value("${kafka.servers:127.0.0.1:9092}")
-    private String kafkaServers;
+    @Autowired
+    private KafkaConfig kafkaConfig;
 
-    @Value("${kafka.consumer.group.1:fusionGroup1}")
-    private String kafkaConsumerGroup1;
-
+    /**
+     * Create Kafka Producer Factory
+     * @return
+     */
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * Craate the Default Kafka Template
+     * @return
+     */
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
+    /**
+     * Create the Kafka Consumer Factory for Consumer Group 1
+     * @return
+     */
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroup1);
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.getKafkaConsumerGroup1());
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -76,6 +85,10 @@ public class KafkaSetup {
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
+    /**
+     * Create the Concurrent Kafka Listener Container Factory
+     * @return
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();

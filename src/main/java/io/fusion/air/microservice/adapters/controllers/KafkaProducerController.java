@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.messaging.services.KafkaProducerTopic1;
-import io.fusion.air.microservice.adapters.messaging.services.KafkaProducerTopic2;
+import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaProducerTopic1;
+import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaProducerTopic2;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;

@@ -90,7 +90,7 @@ public class ServiceEventListener {
 
 	/**
 	 * WARNING:
-	 * These tokens can be generated only in an Auth Service. All the services need not generate these tokens
+	 * These tokens can be generated only in an Auth Service. All the pubsub need not generate these tokens
 	 * unless for the developers to test it out. In a real world scenario, disable (Comment out the function
 	 * generateTestToken()) this feature for production environment.
 	 * THIS IS ONLY FOR TESTING PURPOSES.

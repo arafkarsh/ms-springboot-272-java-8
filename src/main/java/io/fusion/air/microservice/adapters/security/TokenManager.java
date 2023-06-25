@@ -90,7 +90,7 @@ public class TokenManager {
     public String createTXToken(String _subject, String _type, HttpHeaders headers) {
 
         Map<String, Object> claims = new LinkedHashMap<>();
-        claims.put("aud", "tx-services");
+        claims.put("aud", "tx-pubsub");
         claims.put("sub", _subject);
         claims.put("type",_type);
         claims.put("iss", serviceConfig.getServiceOrg());

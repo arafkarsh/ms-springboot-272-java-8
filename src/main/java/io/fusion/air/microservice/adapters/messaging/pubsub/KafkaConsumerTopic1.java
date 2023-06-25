@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.services;
+package io.fusion.air.microservice.adapters.messaging.pubsub;
 
 import io.fusion.air.microservice.adapters.controllers.KafkaListenerController;
 import io.fusion.air.microservice.domain.exceptions.MessagingException;
-import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import io.fusion.air.microservice.server.config.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -28,7 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Topic 2
+ * Topic 1
  * Kafka Consumer with Server Sent Event (SSE) Emitter
  *
  * @author: Araf Karsh Hamid
@@ -36,15 +37,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @date:
  */
 @Service
-public class KafkaConsumerTopic2 {
+public class KafkaConsumerTopic1 {
 
     @Autowired
-    private ServiceConfiguration serviceConfiguration;
+    private KafkaConfig kafkaConfig;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
     /**
-     * Kafka Consumer for Topic 2 (As per the Configuration in the Properties file)
+     * Kafka Consumer for Topic 1 (As per the Configuration in the Properties file)
      * AutoStart is disabled to testing purpose ONLY.
      * In a real world scenario autostart will be TRUE
      *
@@ -55,11 +56,11 @@ public class KafkaConsumerTopic2 {
      * @param record
      * @param acknowledgment
      */
-    @KafkaListener(id = "fusionListenerT2", autoStartup = "false",
-            topics = "#{serviceConfiguration.getKafkaTopic2()}",
-            groupId = "#{serviceConfiguration.getKafkaConsumerGroup1()}",
+    @KafkaListener(id = "fusionListenerT1", autoStartup = "false",
+            topics = "#{kafkaConfig.getKafkaTopic1()}",
+            groupId = "#{kafkaConfig.getKafkaConsumerGroup1()}",
             containerFactory = "kafkaListenerContainerFactory")
-    public void consume(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
+    public void listen(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         try {
             // 1. Read The message
             System.out.println("Received message: " + record.value() + ", from partition/offset: " + record.partition() + "/" + record.offset());
