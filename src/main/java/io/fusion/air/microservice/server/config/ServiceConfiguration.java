@@ -26,8 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import io.fusion.air.microservice.server.config.ConfigMap;
-
 /**
  * Service Configuration
  *
@@ -288,8 +286,12 @@ public class ServiceConfiguration implements Serializable {
 	private String kafkaServers;
 
 	@JsonIgnore
-	@Value("${kafka.consumer.group:fusionAirId}")
-	private String kafkaConsumerGroup;
+	@Value("${kafka.consumer.group.1:fusionGroup1}")
+	private String kafkaConsumerGroup1;
+
+	@JsonIgnore
+	@Value("${kafka.consumer.group.2:fusionGroup2}")
+	private String kafkaConsumerGroup2;
 
 	@JsonIgnore
 	// Kafka Topic 1
@@ -782,8 +784,8 @@ public class ServiceConfiguration implements Serializable {
 	 * Returns the Kafka Consumer Group ID
 	 * @return
 	 */
-	public String getKafkaConsumerGroup() {
-		return kafkaConsumerGroup;
+	public String getKafkaConsumerGroup1() {
+		return kafkaConsumerGroup1;
 	}
 
 	/**

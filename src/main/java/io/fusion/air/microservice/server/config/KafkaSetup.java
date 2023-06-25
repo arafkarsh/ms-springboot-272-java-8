@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,13 +39,13 @@ import java.util.Map;
  */
 
 @Configuration
-public class KafkaConfiguration {
+public class KafkaSetup {
 
     @Value("${kafka.servers:127.0.0.1:9092}")
     private String kafkaServers;
 
-    @Value("${kafka.consumer.group:fusionAirId}")
-    private String kafkaConsumerGroup;
+    @Value("${kafka.consumer.group.1:fusionGroup1}")
+    private String kafkaConsumerGroup1;
 
     @Bean
     public ProducerFactory<String, String> producerFactory() {
@@ -67,9 +68,10 @@ public class KafkaConfiguration {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroup);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroup1);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         return new DefaultKafkaConsumerFactory<>(config);
     }
@@ -78,7 +80,7 @@ public class KafkaConfiguration {
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 }
