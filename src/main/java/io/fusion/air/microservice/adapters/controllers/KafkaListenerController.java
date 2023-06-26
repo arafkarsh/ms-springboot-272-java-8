@@ -64,13 +64,13 @@ public class KafkaListenerController extends AbstractController {
         this.partitionManager = _partitionManager;
     }
 
-    @Operation(summary = "Start the Kafka Fusion Listener for Topic 1")
+    @Operation(summary = "Start the Kafka Fusion Listener for a Topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Kafka Listener for Topic 1 started!",
+                    description = "Kafka Listener for a Topic started!",
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400",
-                    description = "Kafka Listener for Topic 1 Failed to start!",
+                    description = "Kafka Listener for a Topic Failed to start!",
                     content = @Content)
     })
     @GetMapping("/consumers/topic/{topic}")
@@ -81,13 +81,13 @@ public class KafkaListenerController extends AbstractController {
         return ResponseEntity.ok(stdResponse);
     }
 
-    @Operation(summary = "Start the Kafka Fusion Listener for Topic 1")
+    @Operation(summary = "Start the Kafka Fusion Listener for ALL Topics")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Kafka Listener for Topic 1 started!",
+                    description = "Kafka Listener for ALL Topic started!",
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400",
-                    description = "Kafka Listener for Topic 1 Failed to start!",
+                    description = "Kafka Listener for ALL Topic Failed to start!",
                     content = @Content)
     })
     @PostMapping("/start/all")
@@ -103,13 +103,13 @@ public class KafkaListenerController extends AbstractController {
 
     }
 
-    @Operation(summary = "Stop the Kafka Fusion Listener for Topic 1")
+    @Operation(summary = "Stop the Kafka Fusion Listener for ALL Topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Kafka Listener for Topic 1 stopped!",
+                    description = "Kafka Listener for ALL Topic stopped!",
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400",
-                    description = "Kafka Listener for Topic 1 Failed to stop!",
+                    description = "Kafka Listener for ALL Topic Failed to stop!",
                     content = @Content)
     })
     @PostMapping("/stop/all")
