@@ -52,6 +52,21 @@ CREATE TABLE ms_schema.carts_tx (
 ALTER TABLE ms_schema.carts_tx OWNER TO postgres;
 
 --
+-- Name: country_m; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.country_m (
+    countryuuid character(36) NOT NULL,
+    countrycode character varying(255) NOT NULL,
+    countryid integer NOT NULL,
+    countryname character varying(255) NOT NULL,
+    countryofficialname character varying(255)
+);
+
+
+ALTER TABLE ms_schema.country_m OWNER TO postgres;
+
+--
 -- Name: country_t; Type: TABLE; Schema: ms_schema; Owner: arafkarsh
 --
 
@@ -94,6 +109,14 @@ ALTER TABLE ms_schema.products_m OWNER TO postgres;
 COPY ms_schema.carts_tx (uuid, createdby, createdtime, updatedby, updatedtime, isactive, version, customerid, productid, productname, price, quantity) FROM stdin;
 22273a09-ee9e-4e5a-98fa-6bcfcfa97b49	john.doe	2023-05-28 20:26:12.919	john.doe	2023-05-28 20:26:12.919	t	0	123	789	Pencil	10.00	3.00
 7b54e398-711a-4820-a32c-81c7dfab1ab1	john.doe	2023-05-28 20:26:12.919	john.doe	2023-05-28 20:26:12.919	t	0	123	678	Pen	30.00	2.00
+\.
+
+
+--
+-- Data for Name: country_m; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.country_m (countryuuid, countrycode, countryid, countryname, countryofficialname) FROM stdin;
 \.
 
 
@@ -143,6 +166,12 @@ eef67186-ff2a-42b9-809e-93536d0c1076	john.doe	2023-05-28 23:11:41.662	john.doe	2
 434ca819-4d11-4965-a88a-c087681414a8	john.doe	2023-06-25 22:26:09.847	john.doe	2023-06-25 22:26:09.847	t	0	Google Pixel 5 32 GB	12345	Google Pixel 5	35000.00
 6c4bd74b-fb0a-4988-b83d-531744e4f8bf	john.doe	2023-06-25 22:26:21.592	john.doe	2023-06-25 22:26:21.592	t	0	Google Pixel 5 64 GB	12345	Google Pixel 5	40000.00
 fd3288ef-2d49-4ea1-9a58-bb2f280fc2bd	john.doe	2023-06-25 22:44:10.901	john.doe	2023-06-25 22:44:10.901	t	0	Google Pixel 5 128 GB	12345	Google Pixel 5	50000.00
+75383383-8ed7-4c28-a79c-7ca1cd6713e8	john.doe	2023-06-25 23:05:11.667	john.doe	2023-06-25 23:05:11.667	t	0	iPhone 10, 128GB BLACK	12345	iPhone 10	65000.00
+adff3e12-d019-49fe-bfd1-f8634ccec604	john.doe	2023-06-25 23:05:57.463	john.doe	2023-06-25 23:05:57.463	t	0	iPhone 10, 128GB WHITE	12345	iPhone 10	65000.00
+8b1458b1-5aa9-437f-a3de-ea8050ba0e05	john.doe	2023-06-25 23:06:09.566	john.doe	2023-06-25 23:06:09.566	t	0	iPhone 10, 128GB GOLD	12345	iPhone 10	65000.00
+d5e3fa1d-86c7-4bf5-985b-af865bea9c07	john.doe	2023-06-25 23:07:23.325	john.doe	2023-06-25 23:07:23.325	t	0	iPhone 11, 256GB BLACK	12345	iPhone 11	75000.00
+b7277469-cb79-4746-abae-e595b32a3666	john.doe	2023-06-25 23:07:38.454	john.doe	2023-06-25 23:07:38.454	t	0	iPhone 11, 512GB BLACK	12345	iPhone 11	85000.00
+f2cc6216-9d04-4f3f-882f-4f1567a1a449	john.doe	2023-06-25 23:09:04.734	john.doe	2023-06-25 23:09:04.734	t	0	iPhone 12, 512GB BLACK	12345	iPhone 12	95000.00
 \.
 
 
@@ -152,6 +181,14 @@ fd3288ef-2d49-4ea1-9a58-bb2f280fc2bd	john.doe	2023-06-25 22:44:10.901	john.doe	2
 
 ALTER TABLE ONLY ms_schema.carts_tx
     ADD CONSTRAINT carts_tx_pkey PRIMARY KEY (uuid);
+
+
+--
+-- Name: country_m country_m_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.country_m
+    ADD CONSTRAINT country_m_pkey PRIMARY KEY (countryuuid);
 
 
 --

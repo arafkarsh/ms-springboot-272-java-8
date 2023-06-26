@@ -32,7 +32,7 @@ import java.io.Serializable;
 @Component
 @Configuration
 @PropertySource(
-		name = "serviceConfig",
+		name = "kafkaConfig",
 		// Expects file in the directory the jar is executed
 		value = "file:./application.properties")
 		// Expects the file in src/main/resources folder

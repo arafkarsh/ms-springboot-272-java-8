@@ -32,7 +32,7 @@ import java.time.Duration;
  * @date:
  */
 @Configuration
-public class CacheConfig {
+public class CacheSetup {
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {

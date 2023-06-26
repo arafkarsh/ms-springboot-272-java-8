@@ -277,6 +277,21 @@
 			<version>2.3.0.Final</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+			<version>3.2.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.confluent.ksql/ksqldb-api-client -->
+		<dependency>
+			<groupId>io.confluent.ksql</groupId>
+			<artifactId>ksqldb-api-client</artifactId>
+			<version>7.4.0</version>
+		</dependency>
+
+
 
 		<!-- ================================================================= -->
 		<!-- Spring Cache - Redis / H2 DB / JPA -->

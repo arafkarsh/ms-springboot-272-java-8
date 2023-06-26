@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author arafkarsh
  *
  */
-public class ConfigMap  implements Serializable {
+public class StandardConfig implements Serializable {
 
     private String serviceOrg;
     private String serviceName;
@@ -45,7 +45,7 @@ public class ConfigMap  implements Serializable {
     private ArrayList<String> appPropertyList;
     private HashMap<String, String> appPropertyMap;
 
-    public ConfigMap() {
+    public StandardConfig() {
     }
 
     public ArrayList<String> getAppPropertyList() {
@@ -58,7 +58,7 @@ public class ConfigMap  implements Serializable {
 
     @Override
     public String toString() {
-        return "ConfigMap{" +
+        return "StandardConfig{" +
                 "serviceName='" + getServiceName() + '\'' +
                 '}';
     }
@@ -67,7 +67,7 @@ public class ConfigMap  implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ConfigMap configMap = (ConfigMap) o;
+        StandardConfig configMap = (StandardConfig) o;
         return getServiceName().equals(configMap.getServiceName());
     }
 

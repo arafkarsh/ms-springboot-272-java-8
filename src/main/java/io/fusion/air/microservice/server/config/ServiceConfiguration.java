@@ -55,13 +55,13 @@ public class ServiceConfiguration implements Serializable {
 	public static final String DB_ORACLE 	= "Oracle";
 
 	@JsonIgnore
-	private ConfigMap configMap = new ConfigMap();
+	private StandardConfig configMap = new StandardConfig();
 
 	/**
-	 * Returns the ConfigMap
+	 * Returns the StandardConfig
 	 * @return
 	 */
-	public ConfigMap getConfigMap() {
+	public StandardConfig getConfigMap() {
 		configMap.setServiceOrg(serviceOrg);
 		configMap.setServiceName( serviceName);
 		configMap.setServiceApiPrefix( serviceApiPrefix);

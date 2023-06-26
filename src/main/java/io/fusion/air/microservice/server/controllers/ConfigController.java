@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
-import io.fusion.air.microservice.server.config.ConfigMap;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +36,6 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -53,7 +51,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 //  "/service-name/api/v1/config"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.CONFIG_PATH)
 @RequestScope
-@Tag(name = "System - Config", description = "Config (Environment, Secrets, ConfigMap.. etc)")
+@Tag(name = "System - Config", description = "Config (Environment, Secrets, StandardConfig.. etc)")
 public class ConfigController extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
@@ -101,13 +99,13 @@ public class ConfigController extends AbstractController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Operation(summary = "Show the ConfigMap Settings ")
+	@Operation(summary = "Show the StandardConfig Settings ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "Show the ConfigMap Settings",
+					description = "Show the StandardConfig Settings",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Service ConfigMap is not ready.",
+					description = "Service StandardConfig is not ready.",
 					content = @Content)
 	})
 	@GetMapping("/map")
