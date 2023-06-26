@@ -68,15 +68,16 @@ logging.file.total-size-cap=3GB
 # =======================================================================
 # Kafka Pub / Sub Configuration (Possible Ack Values > All, 1, 0)
 # =======================================================================
-kafka.servers=127.0.0.1:9092
+spring.application.name=ms-cache
+spring.kafka.bootstrap-servers=127.0.0.1:9092
 kafka.consumer.group.1=fusionGroup1
 kafka.consumer.group.2=fusionGroup2
-// Topic 1 (Name, Partitions, Replicas, Ack Type)
+# Topic 1 (Name, Partitions, Replicas, Ack Type)
 kafka.topic.1=fusionTopic1
 kafka.topic.1.partitions=3
 kafka.topic.1.replica=1
 kafka.topic.1.acks=1
-// Topic 2 (Name, Partitions, Replicas, Ack Type)
+# Topic 2 (Name, Partitions, Replicas, Ack Type)
 kafka.topic.2=fusionTopic2
 kafka.topic.2.partitions=5
 kafka.topic.2.replica=1
@@ -85,7 +86,13 @@ kafka.topic.2.acks=1
 # Kafka Connect Configuration
 # =======================================================================
 # =======================================================================
-# H2 DB Properties
+# Kafka Streams Configuration
+# =======================================================================
+spring.kafka.streams.auto-startup=false
+kafka.streams.input.topic=ms_cache_272.ms_schema.products_m
+kafka.streams.output.topic=ms_cache_272.ms_schema.products_data
+# =======================================================================
+# Database Properties
 # =======================================================================
 db.server=mem
 db.port=5432

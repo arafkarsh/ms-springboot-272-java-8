@@ -41,8 +41,12 @@ import java.io.Serializable;
 public class KafkaConfig implements Serializable {
 
 	// KAFKA Configurations
+
+	@Value("${spring.application.name:ms-cache}")
+	private String springAppName;
+
 	@JsonIgnore
-	@Value("${kafka.servers:127.0.0.1:9092}")
+	@Value("${spring.kafka.bootstrap-servers:127.0.0.1:9092}")
 	private String kafkaServers;
 
 	@JsonIgnore
@@ -189,5 +193,13 @@ public class KafkaConfig implements Serializable {
 	 */
 	public String getKafkaTopic2AckType() {
 		return kafkaTopic2AckType;
+	}
+
+	/**
+	 * Returns Spring App Name
+	 * @return
+	 */
+	public String getSpringAppName() {
+		return springAppName;
 	}
 }

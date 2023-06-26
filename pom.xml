@@ -263,6 +263,7 @@
 		<!-- Spring Apache Kafka -->
 		<!-- ================================================================= -->
 
+		<!-- Kafka Pub/Sub =================================================== -->
 		<!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
@@ -270,6 +271,7 @@
 			<version>${spring.kafka.version}</version>
 		</dependency>
 
+		<!-- Kafka Connect =================================================== -->
 		<!-- https://mvnrepository.com/artifact/io.debezium/debezium-connector-postgres -->
 		<dependency>
 			<groupId>io.debezium</groupId>
@@ -277,6 +279,7 @@
 			<version>2.3.0.Final</version>
 		</dependency>
 
+		<!-- Kafka Streams =================================================== -->
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -284,14 +287,20 @@
 			<version>3.2.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.2.3</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/io.confluent.ksql/ksqldb-api-client -->
+		<!--
 		<dependency>
 			<groupId>io.confluent.ksql</groupId>
 			<artifactId>ksqldb-api-client</artifactId>
-			<version>7.4.0</version>
+			<version>7.0.0</version>
 		</dependency>
-
-
+		-->
 
 		<!-- ================================================================= -->
 		<!-- Spring Cache - Redis / H2 DB / JPA -->

@@ -172,6 +172,8 @@ adff3e12-d019-49fe-bfd1-f8634ccec604	john.doe	2023-06-25 23:05:57.463	john.doe	2
 d5e3fa1d-86c7-4bf5-985b-af865bea9c07	john.doe	2023-06-25 23:07:23.325	john.doe	2023-06-25 23:07:23.325	t	0	iPhone 11, 256GB BLACK	12345	iPhone 11	75000.00
 b7277469-cb79-4746-abae-e595b32a3666	john.doe	2023-06-25 23:07:38.454	john.doe	2023-06-25 23:07:38.454	t	0	iPhone 11, 512GB BLACK	12345	iPhone 11	85000.00
 f2cc6216-9d04-4f3f-882f-4f1567a1a449	john.doe	2023-06-25 23:09:04.734	john.doe	2023-06-25 23:09:04.734	t	0	iPhone 12, 512GB BLACK	12345	iPhone 12	95000.00
+df4d78c5-9730-45c4-9480-4c8b6dd20a04	john.doe	2023-06-26 15:35:13.336	john.doe	2023-06-26 15:35:13.336	t	0	Samsung Galaxy s19 64GB	12345	Samsung Galaxy s19	45000.00
+bc97cbbb-1bea-480f-b29d-c5cbe649fcd8	john.doe	2023-06-26 15:56:30.649	john.doe	2023-06-26 15:56:30.649	t	0	Samsung Galaxy s19 32GB	12345	Samsung Galaxy s19	35000.00
 \.
 
 
