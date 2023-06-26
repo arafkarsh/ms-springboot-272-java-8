@@ -1,8 +1,7 @@
-package io.fusion.air.microservice.adapters.messaging.core;
+package io.fusion.air.microservice.adapters.events.core;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.TopicPartition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaAdmin;

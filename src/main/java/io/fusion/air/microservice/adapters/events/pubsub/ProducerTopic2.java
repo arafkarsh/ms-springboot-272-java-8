@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.pubsub;
+package io.fusion.air.microservice.adapters.events.pubsub;
 
-import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerService;
-import io.fusion.air.microservice.adapters.messaging.core.KafkaProducerTemplate;
+import io.fusion.air.microservice.adapters.events.core.KafkaProducerService;
+import io.fusion.air.microservice.adapters.events.core.KafkaProducerTemplate;
 import io.fusion.air.microservice.server.config.KafkaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaProducerTopic2 {
+public class ProducerTopic2 {
 
     @Autowired
     private KafkaProducerTemplate kafkaTemplate;

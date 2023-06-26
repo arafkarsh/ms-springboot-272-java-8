@@ -1,4 +1,4 @@
-package io.fusion.air.microservice.adapters.messaging.core;
+package io.fusion.air.microservice.adapters.events.core;
 
 /**
  * Kafka Member DTO

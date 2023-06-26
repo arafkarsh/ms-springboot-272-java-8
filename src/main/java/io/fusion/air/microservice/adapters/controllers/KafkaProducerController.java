@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaProducerTopic1;
-import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaProducerTopic2;
+import io.fusion.air.microservice.adapters.events.pubsub.ProducerTopic1;
+import io.fusion.air.microservice.adapters.events.pubsub.ProducerTopic2;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,10 +47,10 @@ import org.springframework.web.context.annotation.RequestScope;
 public class KafkaProducerController extends AbstractController {
 
     @Autowired
-    private KafkaProducerTopic1 kafkaProducerTopic1;
+    private ProducerTopic1 kafkaProducerTopic1;
 
     @Autowired
-    private KafkaProducerTopic2 kafkaProducerTopic2;
+    private ProducerTopic2 producerTopic2;
 
 
     @Operation(summary = "Send the Message to Kafka Fusion Topic 1")
@@ -80,7 +80,7 @@ public class KafkaProducerController extends AbstractController {
     })
     @PostMapping("/topic2/{message}")
     public ResponseEntity<StandardResponse>  sendMessage2Topic2(@PathVariable("message") String _message) {
-        kafkaProducerTopic2.sendMessage(_message);
+        producerTopic2.sendMessage(_message);
         StandardResponse stdResponse = createSuccessResponse("Message Send to Topic 2");
         return ResponseEntity.ok(stdResponse);
     }

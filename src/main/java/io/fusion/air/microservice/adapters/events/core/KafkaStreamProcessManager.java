@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.streams;
+package io.fusion.air.microservice.adapters.events.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class ProductStreamProcessManager {
+public class KafkaStreamProcessManager {
 
     @Autowired
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;

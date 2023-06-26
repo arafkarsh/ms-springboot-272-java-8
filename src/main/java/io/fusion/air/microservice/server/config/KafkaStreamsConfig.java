@@ -47,12 +47,16 @@ public class KafkaStreamsConfig extends KafkaConfig implements Serializable {
 	private boolean streamsAutoStart;
 
 	@JsonIgnore
-	@Value("${kafka.streams.input.topic:inputTopic}")
-	private String streamInputTopic;
+	@Value("${kafka.streams.topic.1:topic1}")
+	private String streamTopic1;
 
 	@JsonIgnore
-	@Value("${kafka.streams.output.topic:outputTopic}")
-	private String streamOutputTopic;
+	@Value("${kafka.streams.topic.2:topic2}")
+	private String streamTopic2;
+
+	@JsonIgnore
+	@Value("${kafka.streams.topic.3:topic3}")
+	private String streamTopic3;
 
 	/**
 	 * Returns True if Auto Start is enabled
@@ -66,15 +70,19 @@ public class KafkaStreamsConfig extends KafkaConfig implements Serializable {
 	 * Streams Input Topic
 	 * @return
 	 */
-	public String getStreamInputTopic() {
-		return streamInputTopic;
+	public String getStreamTopic1() {
+		return streamTopic1;
 	}
 
 	/**
 	 * Streams Output Topic
 	 * @return
 	 */
-	public String getStreamOutputTopic() {
-		return streamOutputTopic;
+	public String getStreamTopic2() {
+		return streamTopic2;
+	}
+
+	public String getStreamTopic3() {
+		return streamTopic3;
 	}
 }

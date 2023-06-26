@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.streams;
+package io.fusion.air.microservice.adapters.events.streams;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,15 +24,13 @@ import io.fusion.air.microservice.server.config.KafkaStreamsConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.KStream;
 // Spring Framework
+import org.apache.kafka.streams.kstream.Materialized;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.kafka.config.KafkaStreamsConfiguration;
-import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -47,19 +45,18 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @Component
-public class ProductStreamProcessor {
+public class ProductDBStreamProcessor {
 
     @Autowired
     private KafkaStreamsConfig kafkaStreamsConfig;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // ** @Qualifier("productTransformer")
     @Bean
     public KStream<String, String> kStream(StreamsBuilder streamsBuilder) {
 
         KStream<String, String> inputStream = streamsBuilder
-                .stream(kafkaStreamsConfig.getStreamInputTopic(),
+                .stream(kafkaStreamsConfig.getStreamTopic1(),
                 Consumed.with(Serdes.String(), Serdes.String()));
 
         KStream<String, String> outputStream = inputStream.mapValues(value -> {
@@ -75,10 +72,9 @@ public class ProductStreamProcessor {
                 throw new StreamException("Unable to Parse Raw Product JSON > ",e);
             }
         });
-        outputStream.to(kafkaStreamsConfig.getStreamOutputTopic());
+        outputStream.to(kafkaStreamsConfig.getStreamTopic2());
 
         return outputStream;
     }
-    // */
 
 }

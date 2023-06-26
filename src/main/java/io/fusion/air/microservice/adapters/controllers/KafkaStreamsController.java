@@ -15,8 +15,9 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.cdc.KafkaCDCPostgreSQLService;
-import io.fusion.air.microservice.adapters.messaging.streams.ProductStreamProcessManager;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.fusion.air.microservice.adapters.events.core.KafkaStreamProcessManager;
+import io.fusion.air.microservice.adapters.events.streams.ProductGTQueryService;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,19 +25,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StoreQueryParameters;
-import org.apache.kafka.streams.state.QueryableStoreTypes;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * Kafka Streams Processing Controller
@@ -55,7 +51,44 @@ import java.util.HashMap;
 public class KafkaStreamsController extends AbstractController {
 
     @Autowired
-    private ProductStreamProcessManager productStreamProcessManager;
+    private KafkaStreamProcessManager productKafkaStreamProcessManager;
+
+    @Autowired
+    private ProductGTQueryService productGTQueryService;
+
+    @Operation(summary = "Query a product by uuid")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Query Product By UUID Success",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Query Product By UUID Failed!",
+                    content = @Content)
+    })
+    @GetMapping(path = "/product/{uuid}")
+    public ResponseEntity<StandardResponse> queryProduct(@PathVariable String uuid) throws IOException {
+        JsonNode data = productGTQueryService.queryByUUID(uuid);
+        StandardResponse stdResponse = createSuccessResponse("Product Retrieved from GT! For UUID = "+uuid);
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+    }
+
+    @Operation(summary = "Query a product by uuid")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Query Product By UUID Success",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                    description = "Query Product By UUID Failed!",
+                    content = @Content)
+    })
+    @GetMapping(path = "/product/all")
+    public ResponseEntity<StandardResponse> queryProductAll() throws IOException {
+        List<JsonNode> data = productGTQueryService.queryAllRecords();
+        StandardResponse stdResponse = createSuccessResponse("Product Retrieved from GT! Size = "+data.size());
+        stdResponse.setPayload(data);
+        return ResponseEntity.ok(stdResponse);
+    }
 
     @Operation(summary = "Start Product Transformer - Stream Processing")
     @ApiResponses(value = {
@@ -68,7 +101,7 @@ public class KafkaStreamsController extends AbstractController {
     })
     @PostMapping(path = "/start")
     public ResponseEntity<StandardResponse> startProductStream() throws IOException {
-        productStreamProcessManager.startKafkaStreams();
+        productKafkaStreamProcessManager.startKafkaStreams();
         StandardResponse stdResponse = createSuccessResponse("Product Transformer Stream Processing Started.");
         return ResponseEntity.ok(stdResponse);
     }
@@ -84,7 +117,7 @@ public class KafkaStreamsController extends AbstractController {
     })
     @PostMapping(path = "/stop")
     public ResponseEntity<StandardResponse> stopProductStream() throws IOException {
-        productStreamProcessManager.stopKafkaStreams();
+        productKafkaStreamProcessManager.stopKafkaStreams();
         StandardResponse stdResponse = createSuccessResponse("Product Transformer Stream Processing Stopped.");
         return ResponseEntity.ok(stdResponse);
     }

@@ -15,9 +15,9 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.messaging.core.KafkaConsumerService;
-import io.fusion.air.microservice.adapters.messaging.core.KafkaMemberDTO;
-import io.fusion.air.microservice.adapters.messaging.core.KafkaPartitionManager;
+import io.fusion.air.microservice.adapters.events.core.KafkaConsumerService;
+import io.fusion.air.microservice.adapters.events.core.KafkaMemberDTO;
+import io.fusion.air.microservice.adapters.events.core.KafkaPartitionManager;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.kafka.clients.admin.MemberDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;

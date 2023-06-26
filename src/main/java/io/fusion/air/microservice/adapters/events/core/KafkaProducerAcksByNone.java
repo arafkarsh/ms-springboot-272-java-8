@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.core;
+package io.fusion.air.microservice.adapters.events.core;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -25,14 +25,15 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
-public class KafkaProducerAcksByLeader  implements  KafkaProducerService {
+public class KafkaProducerAcksByNone  implements  KafkaProducerService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public KafkaProducerAcksByLeader(@Qualifier("kafkaTemplateAcksOne")
-                                KafkaTemplate<String, String> kafkaTemplateAcksOne) {
-        this.kafkaTemplate = kafkaTemplateAcksOne;
+    public KafkaProducerAcksByNone(@Qualifier("kafkaTemplateAcksZero")
+                                KafkaTemplate<String, String> kafkaTemplateAcksZero) {
+        this.kafkaTemplate = kafkaTemplateAcksZero;
     }
+
     /**
      * Send the Message (data) to the Topic
      * @param topic

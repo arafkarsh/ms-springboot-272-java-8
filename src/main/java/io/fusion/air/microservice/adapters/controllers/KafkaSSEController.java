@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaConsumerTopic1;
-import io.fusion.air.microservice.adapters.messaging.pubsub.KafkaConsumerTopic2;
+import io.fusion.air.microservice.adapters.events.pubsub.ConsumerTopic1;
+import io.fusion.air.microservice.adapters.events.pubsub.ConsumerTopic2;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,11 +48,11 @@ import java.io.IOException;
 @Tag(name = "Kafka SSE Controller", description = "To Stream Events from topics. (io.f.a.m.adapters.controllers.KafkaSSEController)")
 public class KafkaSSEController extends AbstractController {
 
-    private final KafkaConsumerTopic1 consumerTopic1;
-    private final KafkaConsumerTopic2 consumerTopic2;
+    private final ConsumerTopic1 consumerTopic1;
+    private final ConsumerTopic2 consumerTopic2;
 
     @Autowired
-    public KafkaSSEController(KafkaConsumerTopic1 consumer1, KafkaConsumerTopic2 consumer2) {
+    public KafkaSSEController(ConsumerTopic1 consumer1, ConsumerTopic2 consumer2) {
         this.consumerTopic1 = consumer1;
         this.consumerTopic2 = consumer2;
     }

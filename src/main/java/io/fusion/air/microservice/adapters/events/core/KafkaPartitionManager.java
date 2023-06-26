@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.messaging.core;
+package io.fusion.air.microservice.adapters.events.core;
 
 import io.fusion.air.microservice.domain.exceptions.MessagingException;
 import io.fusion.air.microservice.server.config.KafkaConfig;
