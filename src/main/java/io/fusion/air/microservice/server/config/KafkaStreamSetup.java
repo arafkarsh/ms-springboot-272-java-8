@@ -18,6 +18,7 @@ package io.fusion.air.microservice.server.config;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serdes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,10 @@ public class KafkaStreamSetup {
      * Creates Streams Settings with Kafka Cluster Details
      * @return
      */
+    @ConditionalOnProperty(
+            name = "spring.kafka.streams.auto-startup",
+            havingValue = "true",
+            matchIfMissing = false)
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public KafkaStreamsConfiguration kafkaStreamsSettings() {
         Map<String, Object> settings = new HashMap<>();
@@ -67,6 +72,10 @@ public class KafkaStreamSetup {
      * @param streamsBuilderFactoryBean
      * @return
      */
+    @ConditionalOnProperty(
+            name = "spring.kafka.streams.auto-startup",
+            havingValue = "true",
+            matchIfMissing = false)
     @Bean
     public SmartLifecycle autoStartKStreams(StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
         return new SmartLifecycle() {
@@ -85,13 +94,5 @@ public class KafkaStreamSetup {
                 return streamsBuilderFactoryBean.isRunning();
             }
         };
-    }
-
-    @Bean
-    NewTopic inputTopic() {
-        return TopicBuilder.name("input-topic")
-                .partitions(1)
-                .replicas(1)
-                .build();
     }
 }

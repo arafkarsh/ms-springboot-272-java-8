@@ -104,7 +104,6 @@ public class DatabaseSetup {
     public EntityManagerFactory entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
-        // vendorAdapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect");
         vendorAdapter.setDatabasePlatform(dbConfig.getDataSourceDialect());
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();

@@ -13,41 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.ports.services;
+package io.fusion.air.microservice.adapters.repository;
 
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
 import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
-import org.springframework.data.domain.Page;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Country Service
- *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
-public interface CountryService {
-
-
-    /**
-     * Get All Geo Countries
-     * @return
-     */
-    public Page<CountryGeoEntity> getAllGeoCountries();
+@Repository
+public interface CountryGeoRepository extends PagingAndSortingRepository<CountryGeoEntity, Integer> {
 
     /**
-     * Get All Geo Countries by Page Number and No. of Records (Size)
-     * @param page
-     * @param size
+     * Find By Country Geo Name ID
+     * @param cid
      * @return
      */
-    public Page<CountryGeoEntity> getAllGeoCountries(int page, int size);
+    public Optional<CountryGeoEntity> findByGeoNameId(int cid);
 
     /**
-     * Returns all the Countries
+     * List All Countries by Continent
+     * @param continent
      * @return
      */
-    public List<CountryEntity> getAllCountries();
+    public List<CountryGeoEntity> findByContinentName(String continent);
 }

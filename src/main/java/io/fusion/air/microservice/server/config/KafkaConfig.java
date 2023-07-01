@@ -58,6 +58,11 @@ public class KafkaConfig implements Serializable {
 	private String kafkaConsumerGroup2;
 
 	@JsonIgnore
+	// Create Kafka Topic 1
+	@Value("${kafka.topic.1.create:false}")
+	private boolean createKafkaTopic1;
+
+	@JsonIgnore
 	// Kafka Topic 1
 	@Value("${kafka.topic.1}")
 	private String kafkaTopic1;
@@ -76,6 +81,11 @@ public class KafkaConfig implements Serializable {
 	// Kafka Topic 1 with Ack Type (All, 1 & 0)
 	@Value("${kafka.topic.1.acks:1}")
 	private String kafkaTopic1AckType;
+
+	@JsonIgnore
+	// Create Kafka Topic 2
+	@Value("${kafka.topic.2.create:false}")
+	private boolean createKafkaTopic2;
 
 	@JsonIgnore
 	// Kafka Topic 2
@@ -201,5 +211,13 @@ public class KafkaConfig implements Serializable {
 	 */
 	public String getSpringAppName() {
 		return springAppName;
+	}
+
+	public boolean isCreateKafkaTopic1() {
+		return createKafkaTopic1;
+	}
+
+	public boolean isCreateKafkaTopic2() {
+		return createKafkaTopic2;
 	}
 }

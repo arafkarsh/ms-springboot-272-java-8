@@ -29,6 +29,7 @@ import org.apache.kafka.streams.kstream.KStream;
 // Spring Framework
 import org.apache.kafka.streams.kstream.Materialized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,10 @@ public class ProductDBStreamProcessor {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    @ConditionalOnProperty(
+            name = "spring.kafka.streams.auto-startup",
+            havingValue = "true",
+            matchIfMissing = false)
     @Bean
     public KStream<String, String> kStream(StreamsBuilder streamsBuilder) {
 

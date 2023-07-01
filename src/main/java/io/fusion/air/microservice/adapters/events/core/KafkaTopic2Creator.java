@@ -55,10 +55,12 @@ public class KafkaTopic2Creator {
      */
     @PostConstruct
     public void initialize() {
-        Properties config = new Properties();
-        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
-        this.adminClient = AdminClient.create(config);
-        createTopic();
+        if(kafkaConfig.isCreateKafkaTopic2()) {
+            Properties config = new Properties();
+            config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+            this.adminClient = AdminClient.create(config);
+            createTopic();
+        }
     }
 
     /**

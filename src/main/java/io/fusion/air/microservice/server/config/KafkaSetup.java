@@ -45,19 +45,60 @@ public class KafkaSetup {
     private KafkaConfig kafkaConfig;
 
     /**
-     * Create Kafka Producer Factory
+     * Create Kafka Producer Factory ACK By Leader
      * @return
      */
     @Bean
     public ProducerFactory<String, String> producerFactory() {
+        return producerFactoryByLeader();
+    }
+
+    /**
+     * Create Kafka Producer Factory with ACK by ALL (Leader + Followers)
+     * @return
+     */
+    public ProducerFactory<String, String> producerFactoryAckByAll() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.ACKS_CONFIG, "all"); // ACKS By ALL (Leader + Followers
 
         return new DefaultKafkaProducerFactory<>(config);
     }
+
+    /**
+     * Create Kafka Producer Factory with ACK by NONE
+     * @return
+     */
+    public ProducerFactory<String, String> producerFactoryByLeader() {
+        Map<String, Object> config = new HashMap<>();
+
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.ACKS_CONFIG, "1"); // ACKS By Leader
+
+        return new DefaultKafkaProducerFactory<>(config);
+    }
+
+
+    /**
+     * Create Kafka Producer Factory with ACK by NONE
+     * @return
+     */
+    public ProducerFactory<String, String> producerFactoryByNone() {
+        Map<String, Object> config = new HashMap<>();
+
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.ACKS_CONFIG, "0"); // ACKS By NONE
+
+        return new DefaultKafkaProducerFactory<>(config);
+    }
+
 
     /**
      * Craate the Default Kafka Template
@@ -69,7 +110,7 @@ public class KafkaSetup {
     }
 
     /**
-     * Create the Kafka Consumer Factory for Consumer Group 1
+     * Create the Kafka Consumer Factory for Consumer Group
      * @return
      */
     @Bean

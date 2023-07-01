@@ -23,6 +23,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
@@ -41,6 +42,10 @@ public class ProductGlobalTableProcessor {
     @Autowired
     private  ObjectMapper objectMapper;
 
+    @ConditionalOnProperty(
+            name = "spring.kafka.streams.auto-startup",
+            havingValue = "true",
+            matchIfMissing = false)
     @Bean
     public GlobalKTable<String, String> incrementVersionAndCreateGlobalTable(StreamsBuilder streamsBuilder) {
         String inputTopic2 = kafkaStreamsConfig.getStreamTopic2();

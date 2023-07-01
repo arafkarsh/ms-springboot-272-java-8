@@ -15,12 +15,8 @@
  */
 package io.fusion.air.microservice.domain.entities.example;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -30,15 +26,19 @@ import javax.validation.constraints.NotNull;
  * @date:
  */
 @Entity
-@Table(name = "country_m")
+// @Table(name = "country_m")
+@Table(name = "country_t")
 public class CountryEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "countryUUID", columnDefinition = "char(36)", unique = true)
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    private UUID countryUUID;
+    // @GeneratedValue(generator = "UUID")
+    // @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    // @Column(name = "countryUUID", columnDefinition = "char(36)", unique = true)
+    // @Type(type = "org.hibernate.type.UUIDCharType")
+    // private UUID countryUUID;
+
+    @Column(name = "cid", unique = true)
+    private int cid;
 
     @NotNull
     @Column(name = "countryId")

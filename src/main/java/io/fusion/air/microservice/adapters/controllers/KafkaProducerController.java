@@ -84,6 +84,4 @@ public class KafkaProducerController extends AbstractController {
         StandardResponse stdResponse = createSuccessResponse("Message Send to Topic 2");
         return ResponseEntity.ok(stdResponse);
     }
-
-
 }

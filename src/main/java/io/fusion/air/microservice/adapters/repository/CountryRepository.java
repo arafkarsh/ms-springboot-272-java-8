@@ -19,11 +19,15 @@ import io.fusion.air.microservice.domain.entities.example.CountryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
 @Repository
-public interface CountryRepository extends JpaRepository<CountryEntity, Long> {
+public interface CountryRepository extends JpaRepository<CountryEntity, Integer> {
+
+    public Optional<CountryEntity> findById(int cid);
 }

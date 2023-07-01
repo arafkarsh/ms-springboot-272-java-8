@@ -18,6 +18,7 @@ package io.fusion.air.microservice.adapters.events.core;
 // SpringBoot
 import io.fusion.air.microservice.server.config.KafkaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -48,6 +49,7 @@ public class KafkaProducerConfig {
      * @return
      */
     @Bean
+    @Qualifier("kafkaTemplateAcksAll")
     public KafkaTemplate<String, String> kafkaTemplateAcksAll() {
         return new KafkaTemplate<>(producerFactoryAcksAll());
     }
