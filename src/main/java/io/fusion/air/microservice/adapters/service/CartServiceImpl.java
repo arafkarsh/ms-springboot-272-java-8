@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2021 Araf Karsh Hamid
+ * (C) Copyright 2023 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
  */
 package io.fusion.air.microservice.adapters.service;
 
-import io.fusion.air.microservice.adapters.repository.CountryGeoRepository;
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
-import io.fusion.air.microservice.adapters.repository.CountryRepository;
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
-import io.fusion.air.microservice.domain.ports.services.CountryService;
+import io.fusion.air.microservice.adapters.repository.CartRepository;
+import io.fusion.air.microservice.domain.entities.example.CartEntity;
+import io.fusion.air.microservice.domain.ports.services.CartService;
+import io.fusion.air.microservice.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The @Transactional annotation is used in Spring to define the scope of a single logical transaction.
@@ -57,43 +57,89 @@ import java.util.List;
  * @date:
  */
 @Service
-public class CountryServiceImpl implements CountryService {
+public class CartServiceImpl implements CartService {
 
     @Autowired
-    private CountryRepository countryRepositoryImpl;
-
-    @Autowired
-    private CountryGeoRepository countryGeoRepositoryImpl;
+    private CartRepository cartRepository;
 
     /**
-     * Get All Geo Countries
+     * Find Cart by Customer ID
+     * @param customerId
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<CountryGeoEntity> getAllGeoCountries() {
-        return getAllGeoCountries(1, 10);
+    public Optional<CartEntity> findByCustomerId(String customerId) {
+        return cartRepository.findByCustomerId(customerId);
     }
 
     /**
-     * Get All Geo Countries by Page Number and No. of Records (Size)
+     * Find by Item by ID
      *
-     * @param page
-     * @param size
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public Page<CountryGeoEntity> getAllGeoCountries(int page, int size) {
-        return countryGeoRepositoryImpl.findAll(PageRequest.of(page, size));
-    }
-
-    /**
-     * Returns all the Countries
+     * @param itemId
      * @return
      */
     @Override
     @Transactional(readOnly = true)
-    public List<CountryEntity> getAllCountries() {
-        return (List<CountryEntity>) countryRepositoryImpl.findAll();
+    public Optional<CartEntity> findById(String itemId, String customerId) {
+        return cartRepository.findByuuidAndCustomerId(Utils.getUUID(itemId), customerId);
     }
 
+    /**
+     * Find By Item ID
+     *
+     * @param itemId
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<CartEntity> findById(UUID itemId, String customerId) {
+        return cartRepository.findByuuidAndCustomerId(itemId, customerId);
+    }
+
+    /**
+     * Search for the Item By Price Greater Than or Equal To
+     *
+     * @param price
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CartEntity> fetchProductsByPriceGreaterThan(String customerId, BigDecimal price) {
+        return cartRepository.fetchProductsByPriceGreaterThan(customerId, price);
+    }
+
+    /**
+     * Returns Active Products Only
+     *
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CartEntity> fetchActiveItems(String customerId) {
+        return cartRepository.fetchActiveItems(customerId);
+    }
+
+    /**
+     * Search for the Item By the Item Names Like 'name'
+     *
+     * @param name
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CartEntity> findByItemNameContains(String customerId, String name) {
+        return cartRepository.findByCustomerIdAndProductNameContains(customerId, name);
+    }
+
+    /**
+     * Save the Cart
+     *
+     * @param cart
+     * @return
+     */
+    @Override
+    @Transactional
+    public CartEntity save(CartEntity cart) {
+        return cartRepository.save(cart);
+    }
 }

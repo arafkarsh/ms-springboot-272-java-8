@@ -18,7 +18,7 @@
 
  * This program and the accompanying materials are licensed based on Apache 2 License.
  */
-package io.fusion.air.microservice.domain.entities.core;
+package io.fusion.air.microservice.domain.entities.core.mdc;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.MDC;

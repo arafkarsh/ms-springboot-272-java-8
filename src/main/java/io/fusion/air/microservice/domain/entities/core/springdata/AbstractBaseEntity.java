@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2021 Araf Karsh Hamid
+ * (C) Copyright 2023 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.entities.core;
+package io.fusion.air.microservice.domain.entities.core.springdata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author: Araf Karsh Hamid
@@ -27,7 +31,24 @@ import java.util.Date;
  * @date:
  */
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class AbstractBaseEntity {
+
+    @JsonIgnore
+    @CreatedBy
+    private String createdBy;
+
+    @JsonIgnore
+    @CreatedDate
+    private LocalDateTime creationDate;
+
+    @JsonIgnore
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @JsonIgnore
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     @Column(name = "isActive")
     private boolean isActive;
@@ -36,27 +57,6 @@ public class AbstractBaseEntity {
     @Column(name = "version")
     private int version;
 
-    @Embedded
-    private AuditLog auditLog = new AuditLog();
-
-    /**
-     * Init Audit Log
-     */
-    @JsonIgnore
-    @PrePersist()
-    public void initAudit() {
-        this.isActive = true;
-        this.auditLog.initAudit();
-    }
-
-    /**
-     * Set the Updated By User and Updated By Time (Current Time)
-     */
-    @JsonIgnore
-    @PreUpdate()
-    public void setUpdatedBy() {
-        this.auditLog.setUpdatedBy();
-    }
 
     /**
      * De-Activate Record
@@ -91,15 +91,34 @@ public class AbstractBaseEntity {
     }
 
     /**
-     * Returns the Audit Log for the following fields
-     * 1. Created Time
-     * 2. Created By
-     * 3. Updated Time
-     * 4. Updated By
+     * Returns The User Who created the record
      * @return
      */
-    @JsonIgnore
-    public AuditLog getAuditLog() {
-        return auditLog;
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * Returns the Record Creation Date
+     * @return
+     */
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Returns Last Modified By User
+     * @return
+     */
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    /**
+     * Returns Last Modified Date
+     * @return
+     */
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
     }
 }

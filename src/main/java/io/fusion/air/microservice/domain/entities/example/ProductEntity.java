@@ -16,7 +16,7 @@
 package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntityWithUUID;
+import io.fusion.air.microservice.domain.entities.core.mdc.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.models.example.Product;
 
 import javax.persistence.*;
