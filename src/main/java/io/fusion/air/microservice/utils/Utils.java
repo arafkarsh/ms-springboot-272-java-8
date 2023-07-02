@@ -423,6 +423,13 @@ public final class Utils {
 		return sb.toString();
 	}
 
+	public static void generateUUIDs() {
+		for(int x=0; x<10; x++) {
+			System.out.println(x+" UUID = "+UUID.randomUUID());
+		}
+	}
+
+
 	/**
 	 * For Testing ONLY
 	 * @param args
@@ -430,6 +437,7 @@ public final class Utils {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		System.out.println("Utils.toJsonString() = "+Utils.toJsonString(new ServiceConfiguration("localhost", 9090)));
+		generateUUIDs();
+		// System.out.println("Utils.toJsonString() = "+Utils.toJsonString(new ServiceConfiguration("localhost", 9090)));
 	}
 }

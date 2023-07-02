@@ -13,62 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.entities.example;
+package io.fusion.air.microservice.domain.models.example;
 
-import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
-import io.fusion.air.microservice.domain.models.example.Cart;
-// import io.fusion.air.microservice.domain.entities.core.mdc.AbstractBaseEntityWithUUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 /**
- * Cart Entity with Abstract UUID with Spring Data
+ * Cart item Request
  *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
+public class Cart  {
 
-@Entity
-@Table(name = "carts_tx")
-public class CartEntity extends AbstractBaseEntityWithUUID {
-
-    @NotNull
-    @Column(name = "customerId")
+    @NotBlank(message = "The Customer ID is required.")
     private String customerId;
 
-    @NotNull
-    @Column(name = "productId")
+    @NotBlank(message = "The Product ID is required.")
     private String productId;
 
-    @Column(name = "productName")
     private String productName;
 
-    @NotNull
-    @Column(name = "price")
     private BigDecimal price;
 
-    @NotNull
-    @Column(name = "quantity")
     private BigDecimal quantity;
 
-    public CartEntity() {}
-
-    /**
-     * Create Cart Entity from Cart Request
-     * @param cart
-     */
-    public CartEntity(Cart cart) {
-        this.customerId = cart.getCustomerId();
-        this.productId = cart.getProductId();
-        this.productName = cart.getProductName();
-        this.price = cart.getPrice();
-        this.quantity = cart.getQuantity();
-    }
+    public Cart() {}
 
     /**
      * Get Customer ID

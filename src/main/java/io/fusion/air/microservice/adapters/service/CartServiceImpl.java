@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.adapters.repository.CartRepository;
 import io.fusion.air.microservice.domain.entities.example.CartEntity;
+import io.fusion.air.microservice.domain.models.example.Cart;
 import io.fusion.air.microservice.domain.ports.services.CartService;
 import io.fusion.air.microservice.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +64,22 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
 
     /**
+     * ONLY FOR TESTING PURPOSE
+     *
+     * @return
+     */
+    @Override
+    public List<CartEntity> findAll() {
+        return cartRepository.findAll();
+    }
+
+    /**
      * Find Cart by Customer ID
      * @param customerId
      * @return
      */
     @Transactional(readOnly = true)
-    public Optional<CartEntity> findByCustomerId(String customerId) {
+    public List<CartEntity> findByCustomerId(String customerId) {
         return cartRepository.findByCustomerId(customerId);
     }
 
@@ -139,7 +150,7 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     @Transactional
-    public CartEntity save(CartEntity cart) {
-        return cartRepository.save(cart);
+    public CartEntity save(Cart cart) {
+        return cartRepository.save(new CartEntity(cart));
     }
 }

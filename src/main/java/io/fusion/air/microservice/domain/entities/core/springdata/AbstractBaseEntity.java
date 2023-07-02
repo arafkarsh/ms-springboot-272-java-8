@@ -40,15 +40,15 @@ public class AbstractBaseEntity {
 
     @JsonIgnore
     @CreatedDate
-    private LocalDateTime creationDate;
+    private LocalDateTime createdTime;
 
     @JsonIgnore
     @LastModifiedBy
-    private String lastModifiedBy;
+    private String updatedBy;
 
     @JsonIgnore
     @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
+    private LocalDateTime updatedTime;
 
     @Column(name = "isActive")
     private boolean isActive;
@@ -57,6 +57,10 @@ public class AbstractBaseEntity {
     @Column(name = "version")
     private int version;
 
+    @PrePersist()
+    public void initAudit() {
+        this.isActive = true;
+    }
 
     /**
      * De-Activate Record
@@ -102,23 +106,23 @@ public class AbstractBaseEntity {
      * Returns the Record Creation Date
      * @return
      */
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
     }
 
     /**
      * Returns Last Modified By User
      * @return
      */
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
     /**
      * Returns Last Modified Date
      * @return
      */
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
     }
 }

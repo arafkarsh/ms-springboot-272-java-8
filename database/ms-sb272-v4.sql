@@ -30,11 +30,36 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: cart_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.cart_tx (
+    uuid character(36) NOT NULL,
+    createdby character varying(255),
+    creationdate timestamp without time zone,
+    isactive boolean,
+    lastmodifiedby character varying(255),
+    lastmodifieddate timestamp without time zone,
+    version integer,
+    customerid character varying(255) NOT NULL,
+    price numeric(19,2) NOT NULL,
+    productid character varying(255) NOT NULL,
+    productname character varying(255),
+    quantity numeric(19,2) NOT NULL,
+    createdtime timestamp without time zone NOT NULL,
+    updatedby character varying(255) NOT NULL,
+    updatedtime timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE ms_schema.cart_tx OWNER TO postgres;
+
+--
 -- Name: carts_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
 --
 
 CREATE TABLE ms_schema.carts_tx (
-    uuid bpchar NOT NULL,
+    uuid uuid NOT NULL,
     createdby character varying(255) NOT NULL,
     createdtime timestamp(6) without time zone NOT NULL,
     updatedby character varying(255) NOT NULL,
@@ -67,6 +92,21 @@ CREATE TABLE ms_schema.country_geolite_m (
 
 
 ALTER TABLE ms_schema.country_geolite_m OWNER TO postgres;
+
+--
+-- Name: country_m; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.country_m (
+    countryuuid character(36) NOT NULL,
+    countrycode character varying(255) NOT NULL,
+    countryid integer NOT NULL,
+    countryname character varying(255) NOT NULL,
+    countryofficialname character varying(255)
+);
+
+
+ALTER TABLE ms_schema.country_m OWNER TO postgres;
 
 --
 -- Name: country_t; Type: TABLE; Schema: ms_schema; Owner: arafkarsh
@@ -105,6 +145,14 @@ CREATE TABLE ms_schema.products_m (
 ALTER TABLE ms_schema.products_m OWNER TO postgres;
 
 --
+-- Data for Name: cart_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.cart_tx (uuid, createdby, creationdate, isactive, lastmodifiedby, lastmodifieddate, version, customerid, price, productid, productname, quantity, createdtime, updatedby, updatedtime) FROM stdin;
+\.
+
+
+--
 -- Data for Name: carts_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
 --
 
@@ -113,9 +161,6 @@ COPY ms_schema.carts_tx (uuid, createdby, createdtime, updatedby, updatedtime, i
 7b54e398-711a-4820-a32c-81c7dfab1ab1	john.doe	2023-05-28 20:26:12.919	john.doe	2023-05-28 20:26:12.919	t	0	123	678	Pen	30.00	2.00
 b1edfc2d-a907-4806-b51f-28c7bd3cdd3f	john.doe	2023-05-28 20:26:12.919	john.doe	2023-05-28 20:26:12.919	t	0	123	902	Paper 100 Bundle	50.00	5.00
 bbef5710-e7ba-4bc9-9c01-353dbd82dd6e	john.doe	2023-05-28 20:26:12.919	john.doe	2023-05-28 20:26:12.919	t	0	123	902	Book Lined	30.00	3.00
-a43e9fd2-a3bd-4281-91e9-96f5e130f032	anonymousUser	2023-07-02 10:30:12.991269	anonymousUser	2023-07-02 10:30:12.991269	t	0	123	1542	Lunch Box	35.00	1.00
-faca053a-b4af-4a31-aa15-bf2dbf2102e1	anonymousUser	2023-07-02 10:30:53.952645	anonymousUser	2023-07-02 10:30:53.952645	t	0	123	1543	School Bag	45.00	1.00
-f9e9c861-e48c-4485-ac7d-5f6c29beeb37	anonymousUser	2023-07-02 10:35:50.113237	anonymousUser	2023-07-02 10:35:50.113237	t	0	123	1544	Umbrella	32.00	1.00
 \.
 
 
@@ -380,6 +425,14 @@ COPY ms_schema.country_geolite_m (geoname_id, locale_code, continent_code, conti
 
 
 --
+-- Data for Name: country_m; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.country_m (countryuuid, countrycode, countryid, countryname, countryofficialname) FROM stdin;
+\.
+
+
+--
 -- Data for Name: country_t; Type: TABLE DATA; Schema: ms_schema; Owner: arafkarsh
 --
 
@@ -439,6 +492,14 @@ f14b2e2e-7212-471f-8e95-cf1a37e9544d	john.doe	2023-06-28 10:21:29.626	john.doe	2
 
 
 --
+-- Name: cart_tx cart_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.cart_tx
+    ADD CONSTRAINT cart_tx_pkey PRIMARY KEY (uuid);
+
+
+--
 -- Name: carts_tx carts_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
 --
 
@@ -452,6 +513,14 @@ ALTER TABLE ONLY ms_schema.carts_tx
 
 ALTER TABLE ONLY ms_schema.country_geolite_m
     ADD CONSTRAINT country_geolite_m_pk PRIMARY KEY (geoname_id);
+
+
+--
+-- Name: country_m country_m_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.country_m
+    ADD CONSTRAINT country_m_pkey PRIMARY KEY (countryuuid);
 
 
 --

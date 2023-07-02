@@ -16,10 +16,10 @@
 package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.domain.entities.example.CartEntity;
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
-import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
+import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
+import io.fusion.air.microservice.domain.models.example.Cart;
+import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.CartService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
@@ -31,15 +31,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -70,12 +68,37 @@ public class CartControllerImpl extends AbstractController {
 	@Autowired
 	private CartService cartService;
 
+
 	/**
-	 * GET Method Call to Get All the Geo Countries with Page and Size
+	 * GET Method Call to ALL CARTS
+	 *
+	 * @return
+	 */
+	@Operation(summary = "Get The Carts")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Cart Retrieved!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Invalid Cart ID",
+					content = @Content)
+	})
+	@GetMapping("/all")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> fetchCarts() throws Exception {
+		log.debug("|"+name()+"|Request to Get Cart For the Customers ");
+		List<CartEntity> cart = cartService.findAll();
+		StandardResponse stdResponse = createSuccessResponse("Cart Retrieved. Items =  "+cart.size());
+		stdResponse.setPayload(cart);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * GET Method Call to Get Cart for the Customer
 	 * 
 	 * @return
 	 */
-    @Operation(summary = "Get The Cart")
+    @Operation(summary = "Get The Cart for the Customer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Cart Retrieved!",
@@ -88,14 +111,58 @@ public class CartControllerImpl extends AbstractController {
 	@ResponseBody
 	public ResponseEntity<StandardResponse> fetchCart(@PathVariable("customerId") String customerId) throws Exception {
 		log.debug("|"+name()+"|Request to Get Cart For the Customer "+customerId);
+		List<CartEntity> cart = cartService.findByCustomerId(customerId);
+		StandardResponse stdResponse = createSuccessResponse("Cart Retrieved. Items =  "+cart.size());
+		stdResponse.setPayload(cart);
+		return ResponseEntity.ok(stdResponse);
+	}
 
-		Optional<CartEntity> cart = cartService.findByCustomerId(customerId);
-		if(cart.isPresent()) {
-			StandardResponse stdResponse = createSuccessResponse("Data Fetch Success!");
-			stdResponse.setPayload(cart.get());
-			return ResponseEntity.ok(stdResponse);
-		}
-		throw new DataNotFoundException(("Cart is Empty!"));
+	/**
+	 * GET Method Call to Get Cart for the Customer for the Price Greater Than
+	 *
+	 * @param customerId
+	 * @return
+	 * @throws Exception
+	 */
+	@Operation(summary = "Get The Cart For Items Price Greater Than")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Cart Retrieved!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Invalid Cart ID",
+					content = @Content)
+	})
+	@GetMapping("/customer/{customerId}/price/{price}")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> fetchCartForItems(@PathVariable("customerId") String customerId,
+															  @PathVariable("price") BigDecimal price) throws Exception {
+		log.debug("|"+name()+"|Request to Get Cart For the Customer "+customerId);
+		List<CartEntity> cart = cartService.fetchProductsByPriceGreaterThan(customerId, price);
+		StandardResponse stdResponse = createSuccessResponse("Cart Retrieved. Items =  "+cart.size());
+		stdResponse.setPayload(cart);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Add Cart Item to Cart
+	 */
+	@Operation(summary = "Add Item to Cart")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Add the Cart Item",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to Add the Cart Item",
+					content = @Content)
+	})
+	@PostMapping("/add")
+	public ResponseEntity<StandardResponse> addToCart(@Valid @RequestBody Cart _cart) {
+		log.debug("|"+name()+"|Request to Add Cart Item... "+_cart.getProductName());
+		CartEntity cartItem = cartService.save(_cart);
+		StandardResponse stdResponse = createSuccessResponse("Cart Item Added!");
+		stdResponse.setPayload(cartItem);
+		return ResponseEntity.ok(stdResponse);
 	}
 
  }

@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.domain.ports.services;
 
 import io.fusion.air.microservice.domain.entities.example.CartEntity;
+import io.fusion.air.microservice.domain.models.example.Cart;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,12 +32,19 @@ import java.util.UUID;
  */
 public interface CartService {
 
+
+    /**
+     * ONLY FOR TESTING PURPOSE
+     * @return
+     */
+    public List<CartEntity> findAll();
+
     /**
      * Find Cart by Customer ID
      * @param customerId
      * @return
      */
-    public Optional<CartEntity> findByCustomerId(String customerId);
+    public List<CartEntity> findByCustomerId(String customerId);
 
     /**
      * Find by Item by ID
@@ -73,10 +81,10 @@ public interface CartService {
     public List<CartEntity> findByItemNameContains(String customerId, String name);
 
     /**
-     * Save the Cart
+     * Save the Cart Item
      * @param cart
      * @return
      */
-    public CartEntity save(CartEntity cart);
+    public CartEntity save(Cart cart);
 
 }

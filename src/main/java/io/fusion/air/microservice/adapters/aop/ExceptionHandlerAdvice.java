@@ -394,6 +394,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_pEx,  "Query Timed out!", "449", _request);
     }
 
+    // DataIntegrityViolationException
+
     /**
      * Unable to Save Exception
      * @param _utEx
