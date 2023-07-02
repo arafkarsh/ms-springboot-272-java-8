@@ -32,22 +32,26 @@ import java.time.LocalDateTime;
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class AbstractBaseEntity {
+public abstract class AbstractBaseEntity {
 
     @JsonIgnore
     @CreatedBy
+    @Column(nullable = false, updatable = false)
     private String createdBy;
 
     @JsonIgnore
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdTime;
 
     @JsonIgnore
     @LastModifiedBy
+    @Column(nullable = false)
     private String updatedBy;
 
     @JsonIgnore
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updatedTime;
 
     @Column(name = "isActive")

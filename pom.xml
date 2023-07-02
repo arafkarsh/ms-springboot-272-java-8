@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fusion.air</groupId>
 	<artifactId>ms-cache-service</artifactId>
-	<version>0.5.7</version>
+	<version>0.5.8</version>
 	<packaging>jar</packaging>
 	<name>msCacheService</name>
 	<description>Microservice Cache Kafka Template</description>
@@ -260,6 +260,18 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
+
+		<!-- ================================================================= -->
+		<!-- Spring State Machine -->
+		<!-- ================================================================= -->
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.statemachine/spring-statemachine-core -->
+		<dependency>
+			<groupId>org.springframework.statemachine</groupId>
+			<artifactId>spring-statemachine-core</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
 
 		<!-- ================================================================= -->
 		<!-- Spring Apache Kafka -->

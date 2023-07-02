@@ -16,69 +16,51 @@
 package io.fusion.air.microservice.domain.entities.example;
 
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
-import io.fusion.air.microservice.domain.models.example.Cart;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
- * Cart Entity with Abstract UUID with Spring Data
- *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
 
 @Entity
-@Table(name = "carts_tx")
-public class CartEntity extends AbstractBaseEntityWithUUID {
+@Table(name = "order_item_tx")
+public class OrderItemEntity extends AbstractBaseEntityWithUUID {
 
-    @NotNull
-    @Column(name = "customerId")
-    private String customerId;
-
-    @NotNull
     @Column(name = "productId")
     private String productId;
 
     @Column(name = "productName")
     private String productName;
 
-    @NotNull
-    @Column(name = "price")
-    private BigDecimal price;
-
-    @NotNull
     @Column(name = "quantity")
     private BigDecimal quantity;
 
-    public CartEntity() {}
+    @Column(name = "price")
+    private BigDecimal price;
+
+    public OrderItemEntity() {}
 
     /**
-     * Create Cart Entity from Cart Request
-     * @param cart
+     * Create Order Item Entity
+     *
+     * @param _productId
+     * @param _productName
+     * @param _quantity
+     * @param _price
      */
-    public CartEntity(Cart cart) {
-        this.customerId = cart.getCustomerId();
-        this.productId = cart.getProductId();
-        this.productName = cart.getProductName();
-        this.price = cart.getPrice();
-        this.quantity = cart.getQuantity();
+    public OrderItemEntity(String _productId, String _productName, BigDecimal _quantity, BigDecimal _price) {
+        this.productId = _productId;
+        this.productName = _productName;
+        this.quantity = _quantity;
+        this.price = _price;
     }
 
     /**
-     * Get Customer ID
-     * @return
-     */
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    /**
-     * Get Product ID
+     * Returns Product ID
      * @return
      */
     public String getProductId() {
@@ -86,7 +68,7 @@ public class CartEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Get Product Name
+     * Returns Product Name
      * @return
      */
     public String getProductName() {
@@ -94,18 +76,18 @@ public class CartEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Get Price
-     * @return
-     */
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    /**
-     * Get Quantity
+     * Returns Quantity
      * @return
      */
     public BigDecimal getQuantity() {
         return quantity;
+    }
+
+    /**
+     * Returns the Price
+     * @return
+     */
+    public BigDecimal getPrice() {
+        return price;
     }
 }

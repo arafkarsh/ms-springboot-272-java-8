@@ -84,6 +84,75 @@ CREATE TABLE ms_schema.country_t (
 ALTER TABLE ms_schema.country_t OWNER TO arafkarsh;
 
 --
+-- Name: order_item_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.order_item_tx (
+    uuid character(36) NOT NULL,
+    createdby character varying(255) NOT NULL,
+    createdtime timestamp without time zone NOT NULL,
+    isactive boolean,
+    updatedby character varying(255) NOT NULL,
+    updatedtime timestamp without time zone NOT NULL,
+    version integer,
+    price numeric(19,2),
+    productid character varying(255),
+    productname character varying(255),
+    quantity numeric(19,2),
+    order_id character(36)
+);
+
+
+ALTER TABLE ms_schema.order_item_tx OWNER TO postgres;
+
+--
+-- Name: order_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.order_tx (
+    uuid character(36) NOT NULL,
+    createdby character varying(255) NOT NULL,
+    createdtime timestamp without time zone NOT NULL,
+    isactive boolean,
+    updatedby character varying(255) NOT NULL,
+    updatedtime timestamp without time zone NOT NULL,
+    version integer,
+    currency character varying(255),
+    customer_id character varying(255),
+    city character varying(255),
+    country character varying(255),
+    landmark character varying(255),
+    phone character varying(255),
+    state character varying(255),
+    street character varying(255),
+    zip_code character varying(255),
+    totalordervalue numeric(19,2),
+    payment_id character(36)
+);
+
+
+ALTER TABLE ms_schema.order_tx OWNER TO postgres;
+
+--
+-- Name: payment_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.payment_tx (
+    uuid character(36) NOT NULL,
+    createdby character varying(255) NOT NULL,
+    createdtime timestamp without time zone NOT NULL,
+    isactive boolean,
+    updatedby character varying(255) NOT NULL,
+    updatedtime timestamp without time zone NOT NULL,
+    version integer,
+    status character varying(255),
+    transaction_id character varying(255)
+);
+
+
+ALTER TABLE ms_schema.payment_tx OWNER TO postgres;
+
+--
 -- Name: products_m; Type: TABLE; Schema: ms_schema; Owner: postgres
 --
 
@@ -411,6 +480,30 @@ COPY ms_schema.country_t (cid, countryid, countrycode, countryname, countryoffic
 
 
 --
+-- Data for Name: order_item_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.order_item_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, price, productid, productname, quantity, order_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: order_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, currency, customer_id, city, country, landmark, phone, state, street, zip_code, totalordervalue, payment_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: payment_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.payment_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, status, transaction_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: products_m; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
 --
 
@@ -463,11 +556,51 @@ ALTER TABLE ONLY ms_schema.country_t
 
 
 --
+-- Name: order_item_tx order_item_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_item_tx
+    ADD CONSTRAINT order_item_tx_pkey PRIMARY KEY (uuid);
+
+
+--
+-- Name: order_tx order_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_tx
+    ADD CONSTRAINT order_tx_pkey PRIMARY KEY (uuid);
+
+
+--
+-- Name: payment_tx payment_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.payment_tx
+    ADD CONSTRAINT payment_tx_pkey PRIMARY KEY (uuid);
+
+
+--
 -- Name: products_m products_m_pkey1; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
 --
 
 ALTER TABLE ONLY ms_schema.products_m
     ADD CONSTRAINT products_m_pkey1 PRIMARY KEY (uuid);
+
+
+--
+-- Name: order_tx fk17hk2k77tycbvnfa968wayqhd; Type: FK CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_tx
+    ADD CONSTRAINT fk17hk2k77tycbvnfa968wayqhd FOREIGN KEY (payment_id) REFERENCES ms_schema.payment_tx(uuid);
+
+
+--
+-- Name: order_item_tx fkb3heb7c2x68gtl42n66w217vl; Type: FK CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_item_tx
+    ADD CONSTRAINT fkb3heb7c2x68gtl42n66w217vl FOREIGN KEY (order_id) REFERENCES ms_schema.order_tx(uuid);
 
 
 --
