@@ -15,7 +15,6 @@
  */
 package io.fusion.air.microservice.domain.ports.services;
 
-import io.fusion.air.microservice.domain.entities.example.CartEntity;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 
 import java.util.List;
@@ -65,6 +64,6 @@ public interface OrderService {
      * @param order
      * @return
      */
-    public CartEntity save(OrderEntity order);
+    public OrderEntity save(OrderEntity order);
 
 }

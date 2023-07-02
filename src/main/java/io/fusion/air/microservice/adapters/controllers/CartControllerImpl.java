@@ -16,19 +16,20 @@
 package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.domain.entities.example.CartEntity;
-import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.domain.models.example.Cart;
-import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.CartService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Country Controller for the Service
+ * Cart Controller for the Service
  *
  * @author arafkarsh
  * @version 1.0

@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.domain.entities.example;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
 
 import javax.persistence.*;
@@ -56,6 +57,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     private OrderEntity() {
     }
 
+    @JsonIgnore
     public BigDecimal calculateTotalOrderValue() {
         /**
         if(orderItems != null && orderItems.size() > 0) {
@@ -64,13 +66,37 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
             }
         }
          */
-        if(orderItems != null) {
-            totalOrderValue = orderItems.stream()
+        if(getOrderItems() != null) {
+            totalOrderValue = getOrderItems().stream()
                     .map(OrderItemEntity::getPrice)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
-        System.out.println("Order Customer ID = "+customerId+" Total Order Value = "+totalOrderValue);
+        System.out.println("Order Customer ID = "+ getCustomerId() +" Total Order Value = "+ getTotalOrderValue());
+        return getTotalOrderValue();
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public BigDecimal getTotalOrderValue() {
         return totalOrderValue;
+    }
+
+    public List<OrderItemEntity> getOrderItems() {
+        return orderItems;
+    }
+
+    public ShippingAddress getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public PaymentEntity getPayment() {
+        return payment;
     }
 
     public static Builder builder() {
@@ -91,6 +117,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
 
         public Builder addOrderItems(List<OrderItemEntity> orderItems) {
             order.orderItems = orderItems;
+            order.calculateTotalOrderValue();
             return this;
         }
 

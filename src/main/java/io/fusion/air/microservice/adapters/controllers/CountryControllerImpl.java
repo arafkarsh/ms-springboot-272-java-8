@@ -15,30 +15,21 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.entities.example.CountryEntity;
 import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
-import io.fusion.air.microservice.domain.entities.example.ProductEntity;
-import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
-import io.fusion.air.microservice.domain.models.example.PaymentDetails;
-import io.fusion.air.microservice.domain.models.example.PaymentStatus;
-import io.fusion.air.microservice.domain.models.example.PaymentType;
-import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.CountryService;
-import io.fusion.air.microservice.domain.ports.services.ProductService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
+
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
@@ -48,12 +39,8 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;

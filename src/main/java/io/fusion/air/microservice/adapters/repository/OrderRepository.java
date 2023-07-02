@@ -31,6 +31,15 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<OrderEntity, UUID> {
 
+
+    /**
+     * Find Cart by Customer ID
+     *
+     * @param customerId
+     * @return
+     */
+    public List<OrderEntity> findByCustomerId(String customerId);
+
     /**
      * Find Order By Customer ID
      *
