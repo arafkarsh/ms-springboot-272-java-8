@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.statemachine;
 
-import io.fusion.air.microservice.domain.statemachine.OrderEventTypes;
-import io.fusion.air.microservice.domain.statemachine.OrderStates;
+import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderState;
 
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
 @EnableStateMachine
-public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderStates, OrderEventTypes> {
+public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderState, OrderEvent> {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
@@ -55,17 +55,21 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
      * @throws Exception
      */
     @Override
-    public void configure(StateMachineStateConfigurer<OrderStates, OrderEventTypes> states) throws Exception {
-        states
-                .withStates()
-                .initial(OrderStates.ORDER_INITIALIZED)
-                .state(OrderStates.CREDIT_CHECKING)
-                .state(OrderStates.PAYMENT_PROCESSING)
-                .state(OrderStates.PAYMENT_CONFIRMED)
-                .state(OrderStates.SHIPPED)
-                .end(OrderStates.CANCELLED)
-                .end(OrderStates.RETURNED)
-                .end(OrderStates.DELIVERED);
+    public void configure(StateMachineStateConfigurer<OrderState, OrderEvent> states) throws Exception {
+        states.withStates()
+                .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
+                .state(OrderState.CREDIT_CHECKING)         // Credit Check
+                .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
+                .state(OrderState.PAYMENT_CONFIRMED)
+                .state(OrderState.PACKING_IN_PROCESS)      // Packing Process
+                .state(OrderState.READY_FOR_SHIPMENT)      // Ready For Shipment
+                .state(OrderState.SHIPPED)                 // Shipping Process
+                .state(OrderState.IN_TRANSIT)
+                .state(OrderState.CREDIT_DENIED)           // :-( Sad Path
+                .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
+                .end(OrderState.CANCELLED)                 // :-( Sad Path
+                .end(OrderState.RETURNED)                  // :-( Sad Path
+                .end(OrderState.DELIVERED);                // :-) Happy Path
 
     }
 
@@ -77,21 +81,21 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
      * @throws Exception
      */
     @Override
-    public void configure(StateMachineTransitionConfigurer<OrderStates, OrderEventTypes> transitions) throws Exception {
+    public void configure(StateMachineTransitionConfigurer<OrderState, OrderEvent> transitions) throws Exception {
         transitions
                 .withExternal()
-                    .source(OrderStates.ORDER_INITIALIZED).target(OrderStates.CREDIT_CHECKING)
-                    .event(OrderEventTypes.CREDIT_CHECKING_EVENT)
+                    .source(OrderState.ORDER_INITIALIZED).target(OrderState.CREDIT_CHECKING)
+                    .event(OrderEvent.CREDIT_CHECKING_EVENT)
                     .guard(creditCheckGuard())
                     .action(creditCheckAction())
                 .and()
                 .withExternal()
-                    .source(OrderStates.PAYMENT_PROCESSING).target(OrderStates.PAYMENT_CONFIRMED)
-                    .event(OrderEventTypes.CONFIRM_PAYMENT_EVENT)
+                    .source(OrderState.PAYMENT_PROCESSING).target(OrderState.PAYMENT_CONFIRMED)
+                    .event(OrderEvent.CONFIRM_PAYMENT_EVENT)
                 .and()
                 .withExternal()
-                    .source(OrderStates.PAYMENT_CONFIRMED).target(OrderStates.SHIPPED)
-                    .event(OrderEventTypes.SEND_FOR_DELIVERY_EVENT);
+                    .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.SHIPPED)
+                    .event(OrderEvent.SEND_FOR_DELIVERY_EVENT);
     }
 
     // ==============================================================================================================
@@ -99,7 +103,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     // ==============================================================================================================
 
     @Bean
-    public Guard<OrderStates, OrderEventTypes> creditCheckGuard() {
+    public Guard<OrderState, OrderEvent> creditCheckGuard() {
         return context -> {
             // Add condition here
             return true;
@@ -107,10 +111,10 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     }
 
     @Bean
-    public Action<OrderStates, OrderEventTypes> creditCheckAction() {
+    public Action<OrderState, OrderEvent> creditCheckAction() {
         return context -> {
-            OrderStates sourceState = context.getSource().getId();
-            OrderStates targetState = context.getTarget().getId();
+            OrderState sourceState = context.getSource().getId();
+            OrderState targetState = context.getTarget().getId();
             log.info("Transitioning from {} to {}", sourceState, targetState);
         };
     }

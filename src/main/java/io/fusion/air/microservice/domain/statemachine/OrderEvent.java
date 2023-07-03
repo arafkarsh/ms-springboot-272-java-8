@@ -20,7 +20,7 @@ package io.fusion.air.microservice.domain.statemachine;
  * @version:
  * @date:
  */
-public enum OrderEventTypes {
+public enum OrderEvent {
 
     CREDIT_CHECKING_EVENT,
 

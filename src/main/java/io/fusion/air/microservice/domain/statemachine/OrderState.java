@@ -20,15 +20,19 @@ package io.fusion.air.microservice.domain.statemachine;
  * @version:
  * @date:
  */
-public enum OrderStates {
+public enum OrderState {
 
     ORDER_INITIALIZED,
 
     CREDIT_CHECKING,
 
+    CREDIT_DENIED,
+
     PAYMENT_PROCESSING,
 
     PAYMENT_CONFIRMED,
+
+    PAYMENT_DECLINED,
 
     PACKING_IN_PROCESS,
 
@@ -40,10 +44,10 @@ public enum OrderStates {
 
     REACHED_DESTINATION,
 
-    DELIVERED,
+    CANCELLED,
 
     RETURNED,
 
-    CANCELLED
+    DELIVERED
 
 }
