@@ -22,7 +22,7 @@ package io.fusion.air.microservice.domain.statemachine;
  */
 public enum OrderStates {
 
-    ORDER_PLACED,
+    ORDER_INITIALIZED,
 
     CREDIT_CHECKING,
 

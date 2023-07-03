@@ -18,11 +18,18 @@ package io.fusion.air.microservice.adapters.statemachine;
 import io.fusion.air.microservice.domain.statemachine.OrderEventTypes;
 import io.fusion.air.microservice.domain.statemachine.OrderStates;
 
+import org.slf4j.Logger;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
+import org.springframework.statemachine.guard.Guard;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -37,6 +44,9 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 @EnableStateMachine
 public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderStates, OrderEventTypes> {
 
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
+
     /**
      * Order Processing
      * State Machine - State Configuration
@@ -48,12 +58,15 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineStateConfigurer<OrderStates, OrderEventTypes> states) throws Exception {
         states
                 .withStates()
-                .initial(OrderStates.ORDER_PLACED)
+                .initial(OrderStates.ORDER_INITIALIZED)
                 .state(OrderStates.CREDIT_CHECKING)
                 .state(OrderStates.PAYMENT_PROCESSING)
                 .state(OrderStates.PAYMENT_CONFIRMED)
                 .state(OrderStates.SHIPPED)
+                .end(OrderStates.CANCELLED)
+                .end(OrderStates.RETURNED)
                 .end(OrderStates.DELIVERED);
+
     }
 
     /**
@@ -67,9 +80,39 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineTransitionConfigurer<OrderStates, OrderEventTypes> transitions) throws Exception {
         transitions
                 .withExternal()
-                .source(OrderStates.ORDER_PLACED).target(OrderStates.PAYMENT_CONFIRMED).event(OrderEventTypes.CONFIRM_PAYMENT_EVENT)
+                    .source(OrderStates.ORDER_INITIALIZED).target(OrderStates.CREDIT_CHECKING)
+                    .event(OrderEventTypes.CREDIT_CHECKING_EVENT)
+                    .guard(creditCheckGuard())
+                    .action(creditCheckAction())
                 .and()
                 .withExternal()
-                .source(OrderStates.PAYMENT_CONFIRMED).target(OrderStates.SHIPPED).event(OrderEventTypes.SEND_FOR_DELIVERY_EVENT);
+                    .source(OrderStates.PAYMENT_PROCESSING).target(OrderStates.PAYMENT_CONFIRMED)
+                    .event(OrderEventTypes.CONFIRM_PAYMENT_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderStates.PAYMENT_CONFIRMED).target(OrderStates.SHIPPED)
+                    .event(OrderEventTypes.SEND_FOR_DELIVERY_EVENT);
     }
+
+    // ==============================================================================================================
+    // ORDER INITIALIZED
+    // ==============================================================================================================
+
+    @Bean
+    public Guard<OrderStates, OrderEventTypes> creditCheckGuard() {
+        return context -> {
+            // Add condition here
+            return true;
+        };
+    }
+
+    @Bean
+    public Action<OrderStates, OrderEventTypes> creditCheckAction() {
+        return context -> {
+            OrderStates sourceState = context.getSource().getId();
+            OrderStates targetState = context.getTarget().getId();
+            log.info("Transitioning from {} to {}", sourceState, targetState);
+        };
+    }
+
 }
