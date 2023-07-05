@@ -86,6 +86,22 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
+     * Sets the Order State
+     * @param state
+     */
+    public void setState(OrderState state) {
+        orderState = state;
+    }
+
+    /**
+     * Returns the Order ID
+     * @return
+     */
+    public String getOrderId() {
+        return super.getIdAsString();
+    }
+
+    /**
      * Get the Customer ID
      * @return
      */

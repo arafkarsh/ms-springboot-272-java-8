@@ -127,7 +127,8 @@ CREATE TABLE ms_schema.order_tx (
     street character varying(255),
     zip_code character varying(255),
     totalordervalue numeric(19,2),
-    payment_id character(36)
+    payment_id character(36),
+    orderstatus character varying(255)
 );
 
 
@@ -484,6 +485,8 @@ COPY ms_schema.country_t (cid, countryid, countrycode, countryname, countryoffic
 --
 
 COPY ms_schema.order_item_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, price, productid, productname, quantity, order_id) FROM stdin;
+fb19e155-144c-493d-895d-ff7614e7f53f	anonymousUser	2023-07-05 11:24:30.548063	t	anonymousUser	2023-07-05 11:24:30.548063	0	90000.00	fc4bd3c5-bafa-4f8c-b4d3-cd97aa557590	iPhone 15	1.00	e5a5bb0d-6282-4072-9926-a0653095fd07
+34510d2c-663b-40da-9154-55aa3ee75118	anonymousUser	2023-07-05 11:24:30.547118	t	anonymousUser	2023-07-05 11:24:30.547118	0	80000.00	f14b2e2e-7212-471f-8e95-cf1a37e9544d	iPhone 14	1.00	e5a5bb0d-6282-4072-9926-a0653095fd07
 \.
 
 
@@ -491,7 +494,8 @@ COPY ms_schema.order_item_tx (uuid, createdby, createdtime, isactive, updatedby,
 -- Data for Name: order_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
 --
 
-COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, currency, customer_id, city, country, landmark, phone, state, street, zip_code, totalordervalue, payment_id) FROM stdin;
+COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, currency, customer_id, city, country, landmark, phone, state, street, zip_code, totalordervalue, payment_id, orderstatus) FROM stdin;
+e5a5bb0d-6282-4072-9926-a0653095fd07	anonymousUser	2023-07-05 11:24:30.537602	t	anonymousUser	2023-07-05 11:24:30.558023	1	INR	123	Edison	USA	Near Walmart	7321002010	NJ	321 Cobblestone Lan	08110	170000.00	63fd3531-ee6b-40d8-aed0-2faeebc41c87	ORDER_INITIALIZED
 \.
 
 
@@ -500,6 +504,7 @@ COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, upda
 --
 
 COPY ms_schema.payment_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, status, transaction_id) FROM stdin;
+63fd3531-ee6b-40d8-aed0-2faeebc41c87	anonymousUser	2023-07-05 11:24:30.527592	t	anonymousUser	2023-07-05 11:24:30.527592	0	string	string
 \.
 
 

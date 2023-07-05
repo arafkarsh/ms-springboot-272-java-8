@@ -48,18 +48,20 @@ public interface OrderService {
     public List<OrderEntity> findByCustomerId(String customerId);
 
     /**
-     * Find by Order by Customer ID
-     * @param itemId
+     * Find by Order by Customer ID and Order ID
+     * @param customerId
+     * @param orderId
      * @return
      */
-    public Optional<OrderEntity> findById(String itemId, String customerId);
+    public Optional<OrderEntity> findById(String customerId, String orderId);
 
     /**
-     * Find By Order by Customer ID
-     * @param itemId
+     * Find By Order by Customer ID and Order ID
+     * @param customerId
+     * @param orderId
      * @return
      */
-    public Optional<OrderEntity> findById(UUID itemId, String customerId);
+    public Optional<OrderEntity> findById( String customerId, UUID orderId);
 
 
     /**
@@ -69,6 +71,15 @@ public interface OrderService {
      */
     public OrderEntity save(OrderEntity order);
 
+
+    /**
+     * Process Credit Approval for the Order
+     *
+     * @param customerId
+     * @param orderId
+     * @return
+     */
+    public OrderEntity processCreditApproval(String customerId, String orderId);
 
     /**
      * Request for Credit Approval

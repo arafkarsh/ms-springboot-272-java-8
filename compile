@@ -12,9 +12,9 @@
 #
 # After the Successful build and Startup of the Service, It should show the Build No. & Date
 # -------------------------------------------------------------------------------------------
-SERVICE=`getServiceName`
-CONTAINER=`getServiceName 4`
-ORG=`getServiceName 1`
+SERVICE=`./getServiceName`
+CONTAINER=`./getServiceName 4`
+ORG=`./getServiceName 1`
 echo "---------------------------------------------------------------------------------------"
 echo "Compiling $ORG/$SERVICE Microservice"
 echo "---------------------------------------------------------------------------------------"
@@ -28,7 +28,7 @@ mvn clean
 # -------------------------------------------------------------------------------------------
 echo "Git Commit Count = "`git rev-list HEAD --count`
 echo "---------------------------------------------------------------------------------------"
-generateBuildNumber $SERVICE
+./generateBuildNumber $SERVICE
 # -------------------------------------------------------------------------------------------
 echo "Build the $ORG/$SERVICE Microservice : mvn -e package"
 echo "---------------------------------------------------------------------------------------"

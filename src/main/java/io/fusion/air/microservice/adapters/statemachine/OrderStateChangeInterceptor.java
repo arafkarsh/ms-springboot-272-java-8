@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.adapters.statemachine;
-
+// Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
+import io.fusion.air.microservice.adapters.service.OrderServiceImpl;
+import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
+import io.fusion.air.microservice.utils.Utils;
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
+import org.springframework.stereotype.Component;
+// Sprong State Machine
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.support.StateMachineInterceptorAdapter;
 import org.springframework.statemachine.transition.Transition;
-import org.springframework.stereotype.Component;
+// Java & SLF4J
+import java.util.Optional;
+import org.slf4j.Logger;
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Order State Change Listener
@@ -36,10 +46,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<OrderState, OrderEvent> {
 
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
+
     @Autowired
     private OrderRepository orderRepository;
 
     /**
+     * Based on the State change by the Order Event
+     * Set the new state in the Order Object and Save the State.
      * @param state
      * @param message
      * @param transition
@@ -48,10 +63,23 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
      */
     @Override
     public void preStateChange(State<OrderState, OrderEvent> state,
-                               Message<OrderEvent> message, Transition<OrderState, OrderEvent> transition,
+                               Message<OrderEvent> message,
+                               Transition<OrderState, OrderEvent> transition,
                                StateMachine<OrderState, OrderEvent> stateMachine,
                                StateMachine<OrderState, OrderEvent> rootStateMachine) {
 
-
+        Optional.ofNullable(message).ifPresent(msg -> {
+            Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(OrderServiceImpl.ORDER_ID_HEADER, "")))
+                .ifPresent(orderId -> {
+                    Optional<OrderEntity> orderOpt = orderRepository.findByOrderId(Utils.getUUID(orderId));
+                    if(orderOpt.isPresent()) {
+                        OrderEntity order = orderOpt.get();
+                        log.info("Change Order State From >> "+order.getOrderState());
+                        order.setState(state.getId());
+                        orderRepository.save(order);
+                        log.info("Order State Changed to >> "+order.getOrderState());
+                    }
+                });
+        });
     }
 }

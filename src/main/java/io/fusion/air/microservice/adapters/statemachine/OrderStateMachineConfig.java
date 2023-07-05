@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 // Spring State Machine
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
  */
 
 @Configuration
-@EnableStateMachine
+@EnableStateMachineFactory
 public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderState, OrderEvent> {
 
     // Set Logger -> Lookup will automatically determine the class name.

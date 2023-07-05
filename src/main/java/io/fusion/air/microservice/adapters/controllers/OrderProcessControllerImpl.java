@@ -32,8 +32,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -88,10 +88,30 @@ public class OrderProcessControllerImpl extends AbstractController {
 		return ResponseEntity.ok(stdResponse);
 	}
 
+	@Operation(summary = "Get The Order for the Customer by Order ID")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Order Retrieved!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Invalid Order ID",
+					content = @Content)
+	})
+	@GetMapping("/customer/{customerId}/order/{orderId}")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> fetchOrder(
+			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) throws Exception {
+		log.debug("|"+name()+"|Request to Get Order For the Customer "+customerId);
+		Optional<OrderEntity> order = orderService.findById(customerId, orderId);
+		StandardResponse stdResponse = createSuccessResponse("Order Retrieved!");
+		stdResponse.setPayload(order.get());
+		return ResponseEntity.ok(stdResponse);
+	}
+
 	/**
 	 * Save Order
 	 */
-	@Operation(summary = "Save Order")
+	@Operation(summary = "State Machine Demo 1 - Credit Approval")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Order Saved!",
@@ -100,11 +120,12 @@ public class OrderProcessControllerImpl extends AbstractController {
 					description = "Unable to Save Order",
 					content = @Content)
 	})
-	@PostMapping("/save")
-	public ResponseEntity<StandardResponse> saveOrder(@Valid @RequestBody OrderEntity _order) {
-		log.debug("|"+name()+"|Request to Save Order ... "+_order);
-		OrderEntity order = orderService.save(_order);
-		StandardResponse stdResponse = createSuccessResponse("Order Saved!");
+	@PostMapping("/credit/customer/{customerId}/order/{orderId}")
+	public ResponseEntity<StandardResponse> saveOrder(
+			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
+		log.debug("|"+name()+"|Request to Credit Approval Order ID ... "+orderId);
+		OrderEntity order = orderService.processCreditApproval(customerId, orderId);
+		StandardResponse stdResponse = createSuccessResponse("Order Retrieved after Approval Request!");
 		stdResponse.setPayload(order);
 		return ResponseEntity.ok(stdResponse);
 	}

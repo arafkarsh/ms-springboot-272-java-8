@@ -16,7 +16,9 @@
 package io.fusion.air.microservice.adapters.repository;
 
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,12 +43,23 @@ public interface OrderRepository extends PagingAndSortingRepository<OrderEntity,
     public List<OrderEntity> findByCustomerId(String customerId);
 
     /**
-     * Find Order By Customer ID
-     *
-     * @param _orderid
-     * @param _customerId
+     * Find by Order ID
+     * @param orderId
      * @return
      */
-    public Optional<OrderEntity> findByuuidAndCustomerId(UUID _orderid, String _customerId);
+    @Query("SELECT order FROM OrderEntity order WHERE order.uuid = :orderId ")
+    public Optional<OrderEntity> findByOrderId(@Param("orderId") UUID orderId);
+
+    /**
+     * Find by Customer ID and Order ID
+     * @param customerId
+     * @param orderId
+     * @return
+     */
+    @Query("SELECT order FROM OrderEntity order WHERE order.customerId = :customerId AND order.uuid = :orderId ")
+    public Optional<OrderEntity> findByCustomerIdAndOrderId(
+            @Param("customerId") String customerId,
+            @Param("orderId") UUID orderId);
+
 
 }
