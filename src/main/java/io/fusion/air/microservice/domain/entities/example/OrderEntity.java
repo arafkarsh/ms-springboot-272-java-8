@@ -17,6 +17,7 @@ package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
+import io.fusion.air.microservice.domain.statemachine.OrderState;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -54,9 +55,18 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     @JoinColumn(name = "payment_id", referencedColumnName = "uuid")
     private PaymentEntity payment;
 
+
+    @Column(name = "orderStatus")
+    @Enumerated(EnumType.STRING)
+    private OrderState orderState;
+
     private OrderEntity() {
     }
 
+    /**
+     * Calculate the Order Value
+     * @return
+     */
     @JsonIgnore
     public BigDecimal calculateTotalOrderValue() {
         /**
@@ -75,28 +85,69 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
         return getTotalOrderValue();
     }
 
+    /**
+     * Get the Customer ID
+     * @return
+     */
     public String getCustomerId() {
         return customerId;
     }
 
+    /**
+     * Get the Currency
+     * @return
+     */
     public String getCurrency() {
         return currency;
     }
 
+    /**
+     * Get the Total Order Value
+     * @return
+     */
     public BigDecimal getTotalOrderValue() {
         return totalOrderValue;
     }
 
+    /**
+     * Get the Order Items
+     * @return
+     */
     public List<OrderItemEntity> getOrderItems() {
         return orderItems;
     }
 
+    /**
+     * Get the shipping Address
+     * @return
+     */
     public ShippingAddress getShippingAddress() {
         return shippingAddress;
     }
 
+    /**
+     * Get the Payment details
+     * @return
+     */
     public PaymentEntity getPayment() {
         return payment;
+    }
+
+    /**
+     * Returns the Status of the Order
+     * @return
+     */
+    public OrderState getOrderState() {
+        return orderState;
+    }
+
+    /**
+     * Initialize the Order
+     * @return
+     */
+    public OrderEntity initializeOrder() {
+        orderState = OrderState.ORDER_INITIALIZED;
+        return this;
     }
 
     public static Builder builder() {
@@ -108,6 +159,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
 
         private Builder() {
             order = new OrderEntity();
+            order.orderState = OrderState.ORDER_INITIALIZED;
         }
 
         public Builder addCustomerId(String customerId) {

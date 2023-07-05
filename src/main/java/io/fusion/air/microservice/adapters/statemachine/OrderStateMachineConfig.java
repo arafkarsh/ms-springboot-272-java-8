@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.adapters.statemachine;
-
+// Custom
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
-
-import org.slf4j.Logger;
+// Spring
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+// Spring State Machine
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
+import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 import org.springframework.statemachine.guard.Guard;
-
+import org.springframework.statemachine.listener.StateMachineListenerAdapter;
+import org.springframework.statemachine.state.State;
+// Java &  SLF4J
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-
+import org.slf4j.Logger;
 
 /**
  * Order State Machine
@@ -97,6 +100,36 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.SHIPPED)
                     .event(OrderEvent.SEND_FOR_DELIVERY_EVENT);
     }
+
+    /**
+     * Configuration for the Entire State Machine
+     * Add a Listener to Keep Track of State Changes
+     *
+     * @param config
+     * @throws Exception
+     */
+    @Override
+    public void configure(StateMachineConfigurationConfigurer<OrderState, OrderEvent> config) throws Exception {
+        config
+                .withConfiguration()
+                .listener(getSMListenerAdapter())
+                .autoStartup(true);
+    }
+
+    /**
+     * Logs the State Changes in the State Machine
+     * @return
+     */
+    private StateMachineListenerAdapter<OrderState, OrderEvent> getSMListenerAdapter() {
+        StateMachineListenerAdapter<OrderState, OrderEvent> adapter = new StateMachineListenerAdapter<OrderState, OrderEvent>() {
+            @Override
+            public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
+                log.info(String.format(">> State Changed From: %s >> To >> %s", from, to));
+            }
+        };
+        return adapter;
+    }
+
 
     // ==============================================================================================================
     // ORDER INITIALIZED

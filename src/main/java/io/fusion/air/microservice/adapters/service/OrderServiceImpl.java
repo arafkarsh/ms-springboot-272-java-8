@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.adapters.service;
-
+// Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
+import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderState;
+// Spring State Machine
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+// Java
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Order Service
+ * Order Processing is implemented with Spring State Machine
+ * 1. Request for Credit
+ * 2. Payment Processing
+ * 3. Shipping the Product
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -39,6 +49,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    // @Autowired
+    private StateMachineFactory<OrderState, OrderEvent> stateMachineFactory;
+
 
     /**
      * ONLY FOR TESTING PURPOSE
@@ -103,5 +117,38 @@ public class OrderServiceImpl implements OrderService {
         }
         order.calculateTotalOrderValue();
         return orderRepository.save(order);
+    }
+
+    /**
+     * Request for Credit Approval
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public StateMachine<OrderState, OrderEvent> requestCreditApproval(OrderEntity order) {
+        return null;
+    }
+
+    /**
+     * Process the Payment
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public StateMachine<OrderState, OrderEvent> processPayment(OrderEntity order) {
+        return null;
+    }
+
+    /**
+     * Ship the Product
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public StateMachine<OrderState, OrderEvent> shipTheProduct(OrderEntity order) {
+        return null;
     }
 }

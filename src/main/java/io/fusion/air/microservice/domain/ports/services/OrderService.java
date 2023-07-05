@@ -16,13 +16,16 @@
 package io.fusion.air.microservice.domain.ports.services;
 
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderState;
+import org.springframework.statemachine.StateMachine;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Cart Service
+ * Order Service
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -65,5 +68,30 @@ public interface OrderService {
      * @return
      */
     public OrderEntity save(OrderEntity order);
+
+
+    /**
+     * Request for Credit Approval
+     *
+     * @param order
+     * @return
+     */
+    public StateMachine<OrderState, OrderEvent> requestCreditApproval(OrderEntity order);
+
+    /**
+     * Process the Payment
+     * @param order
+     * @return
+     */
+    public StateMachine<OrderState, OrderEvent> processPayment(OrderEntity order);
+
+    /**
+     * Ship the Product
+     * @param order
+     * @return
+     */
+    public StateMachine<OrderState, OrderEvent> shipTheProduct(OrderEntity order);
+
+
 
 }
