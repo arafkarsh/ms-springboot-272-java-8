@@ -62,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
 
     // Message Header for the Events used in the State Machine
     public static final String ORDER_ID_HEADER = "ORDER_ID";
+    public static final String ORDER_HEADER = "ORDER";
+
 
     @Autowired
     private OrderRepository orderRepository;
@@ -146,6 +148,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Reset the Order State to Initialized
+     * THIS METHOD IS ONLY FOR TESTING THE STATE MACHINE BY RESETTING THE ORDER BACK TO ITS INIT STATE.
+     * @param customerId
+     * @param orderId
+     * @return
+     */
+    @Transactional
+    public OrderEntity resetOrder(String customerId, String orderId) {
+        Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
+        log.info("Reset Order ID = "+orderId);
+        if(orderOpt.isPresent()) {
+            OrderEntity order = orderOpt.get();
+            order.setState(OrderState.ORDER_INITIALIZED);
+            orderRepository.save(order);
+            return order;
+        }
+        throw new DataNotFoundException("Order Not Found for "+orderId);
+    }
+
+    /**
      * Process Credit Approval for the Order
      *
      * @param customerId
@@ -216,6 +238,7 @@ public class OrderServiceImpl implements OrderService {
         // Create Message with the Order Event and Set the Order ID in the Header
         Message mesg = MessageBuilder.withPayload(event)
                 .setHeader(ORDER_ID_HEADER, order.getOrderId())
+                .setHeader(ORDER_HEADER, order)
                 .build();
         // Send the Message to the State Machine
         sm.sendEvent(mesg);

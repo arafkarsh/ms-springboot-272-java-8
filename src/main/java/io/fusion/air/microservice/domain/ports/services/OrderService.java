@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.domain.ports.services;
-
+// Custom
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
+// Spring State Machine
 import org.springframework.statemachine.StateMachine;
-
+// Java
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,6 +72,15 @@ public interface OrderService {
      */
     public OrderEntity save(OrderEntity order);
 
+
+    /**
+     * Reset the Order State to Initialized
+     * THIS METHOD IS ONLY FOR TESTING THE STATE MACHINE BY RESETTING THE ORDER BACK TO ITS INIT STATE.
+     * @param customerId
+     * @param orderId
+     * @return
+     */
+    public OrderEntity resetOrder(String customerId, String orderId);
 
     /**
      * Process Credit Approval for the Order

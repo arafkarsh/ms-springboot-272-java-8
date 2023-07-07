@@ -109,7 +109,7 @@ public class OrderProcessControllerImpl extends AbstractController {
 	}
 
 	/**
-	 * Save Order
+	 * Order: Initiate Credit Approval
 	 */
 	@Operation(summary = "State Machine Demo 1 - Credit Approval")
 	@ApiResponses(value = {
@@ -121,11 +121,34 @@ public class OrderProcessControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@PostMapping("/credit/customer/{customerId}/order/{orderId}")
-	public ResponseEntity<StandardResponse> saveOrder(
+	public ResponseEntity<StandardResponse> creditApproval(
 			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
 		log.debug("|"+name()+"|Request to Credit Approval Order ID ... "+orderId);
 		OrderEntity order = orderService.processCreditApproval(customerId, orderId);
 		StandardResponse stdResponse = createSuccessResponse("Order Retrieved after Approval Request!");
+		stdResponse.setPayload(order);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Order: RESET Order State
+	 * ONLY FOR TESTING THE STATE MACHINE
+	 */
+	@Operation(summary = "State Machine Demo 0 - RESET ORDER STATE")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Order State Reset!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to Reset Order State",
+					content = @Content)
+	})
+	@PostMapping("/reset/customer/{customerId}/order/{orderId}")
+	public ResponseEntity<StandardResponse> resetOrder(
+			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
+		log.debug("|"+name()+"|Request to Reset Order State. Order ID ... "+orderId);
+		OrderEntity order = orderService.resetOrder(customerId, orderId);
+		StandardResponse stdResponse = createSuccessResponse("Order State Reset!");
 		stdResponse.setPayload(order);
 		return ResponseEntity.ok(stdResponse);
 	}

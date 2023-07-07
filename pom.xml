@@ -61,6 +61,9 @@
 		<!-- Open API v3 - Swagger UI ===================================== -->
 		<openapi.version>1.6.9</openapi.version>
 
+		<!-- Lombok - DON'T OVER USE IT =================================== -->
+		<lombok.version>1.18.28</lombok.version>
+
 	</properties>
 
 	<!-- ================================================================= -->
@@ -101,6 +104,19 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
+
+		<!-- ================================================================= -->
+		<!-- Lombok Framework : Used Minimally in the project -->
+		<!-- ================================================================= -->
+
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 		<!-- ================================================================= -->
 		<!-- Utility Libraries -->
