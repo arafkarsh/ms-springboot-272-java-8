@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.statemachine;
 // Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.entities.example.OrderStateHistoryEntity;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
@@ -74,10 +75,13 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                     Optional<OrderEntity> orderOpt = orderRepository.findByOrderId(Utils.getUUID(orderId));
                     if(orderOpt.isPresent()) {
                         OrderEntity order = orderOpt.get();
-                        log.info("Change Order State From >> "+order.getOrderState());
-                        order.setState(state.getId());
+                        OrderState source = order.getOrderState();
+                        OrderState target = state.getId();
+                        OrderEvent event  = transition.getTrigger().getEvent();
+                        log.info("Change Order State From >> "+source+" To "+target+" Based on Event "+event);
+                        order.addOrderStateHistory(new OrderStateHistoryEntity(source, target, event, ""));
+                        order.setState(target);
                         orderRepository.save(order);
-                        log.info("Order State Changed to >> "+order.getOrderState());
                     }
                 });
         });

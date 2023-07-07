@@ -55,10 +55,13 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     @JoinColumn(name = "payment_id", referencedColumnName = "uuid")
     private PaymentEntity payment;
 
-
     @Column(name = "orderStatus")
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    private List<OrderStateHistoryEntity> orderHistory = new ArrayList<>();
 
     private OrderEntity() {
     }
@@ -155,6 +158,22 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      */
     public OrderState getOrderState() {
         return orderState;
+    }
+
+    /**
+     * Returns the Order State Transition History
+     * @return
+     */
+    public List<OrderStateHistoryEntity> getOrderHistory() {
+        return orderHistory;
+    }
+
+    /**
+     * Add Order History
+     * @param history
+     */
+    public void addOrderStateHistory(OrderStateHistoryEntity history) {
+        orderHistory.add(history);
     }
 
     /**
