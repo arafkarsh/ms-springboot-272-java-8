@@ -144,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Reset Order ID = "+orderId);
         if(orderOpt.isPresent()) {
             OrderEntity order = orderOpt.get();
-            order.setState(OrderState.ORDER_INITIALIZED);
+            order.resetOrderState();
             orderRepository.save(order);
             return order;
         }

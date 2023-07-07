@@ -15,12 +15,15 @@
  */
 package io.fusion.air.microservice.adapters.statemachine.config;
 // Custom
+import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineActions;
+import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineGuards;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
 import io.fusion.air.microservice.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 // Spring State Machine
@@ -55,6 +58,12 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
+    @Autowired
+    private OrderStateMachineGuards orderGuards;
+
+    @Autowired
+    private OrderStateMachineActions orderActions;
+
     /**
      * Order Processing
      * State Machine - State Configuration
@@ -67,9 +76,9 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         states.withStates()
                 .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
 
-                .choice(OrderState.CREDIT_CHOICE)        // Credit Check is a Choice based on Condition
+                .choice(OrderState.CREDIT_CHOICE)          // Credit Check is a Choice based on Condition
 
-                .state(OrderState.CREDIT_CHECKING)           // Credit Check Denied
+                .state(OrderState.CREDIT_CHECKING)         // Credit Check Denied
                 .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
                 .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
 
@@ -103,7 +112,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .and()
                 .withChoice()
                     .source(OrderState.CREDIT_CHOICE)
-                    .first(OrderState.CREDIT_CHECKING, creditCheckRequiredGuard())
+                    .first(OrderState.CREDIT_CHECKING, orderGuards.creditCheckRequiredGuard(), orderActions.creditCheckAction())
                     .last(OrderState.PAYMENT_PROCESSING)
                 .and()
                 .withExternal()
@@ -180,38 +189,4 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         };
         return adapter;
     }
-
-
-    // ==============================================================================================================
-    // ORDER INITIALIZED
-    // ==============================================================================================================
-
-    @Bean
-    public Guard<OrderState, OrderEvent> creditCheckRequiredGuard() {
-        return context -> {
-            // Following Method is Required if the OrderEntity is Send as a Message (sendMessage)
-            // As the OrderEntity is Set as an Extended State following call is NOT Required.
-            // OrderEntity order = (OrderEntity) context.getMessageHeader(OrderConstants.ORDER_HEADER);
-
-            // Extract OrderEntity from the Extended State
-            OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
-            if(order != null) {
-                log.info("Order = " + Utils.toJsonString(order));
-                // Returns TRUE if the Order Value is greater than Rs. 1,00,000/-
-                return order.getTotalOrderValue().compareTo(new BigDecimal("100000")) > 0;
-            }
-            // No CREDIT Check Required
-            return false;
-        };
-    }
-
-    @Bean
-    public Action<OrderState, OrderEvent> creditCheckAction() {
-        return context -> {
-            OrderState sourceState = context.getSource().getId();
-            OrderState targetState = context.getTarget().getId();
-            log.info("Transitioning from {} to {}", sourceState, targetState);
-        };
-    }
-
 }

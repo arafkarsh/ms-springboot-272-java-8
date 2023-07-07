@@ -15,7 +15,15 @@
  */
 package io.fusion.air.microservice.adapters.statemachine.core;
 
+import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderState;
+import org.slf4j.Logger;
+import org.springframework.context.annotation.Bean;
+import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Service;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Order State Machine Actions
@@ -27,4 +35,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderStateMachineActions {
+
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
+
+    @Bean
+    public Action<OrderState, OrderEvent> creditCheckAction() {
+        return context -> {
+            try {
+                OrderState sourceState = context.getSource().getId();
+                OrderState targetState = context.getTarget().getId();
+                log.info("Transitioning from {} to {}", sourceState, targetState);
+            } catch (Exception e) {
+
+            }
+        };
+    }
 }

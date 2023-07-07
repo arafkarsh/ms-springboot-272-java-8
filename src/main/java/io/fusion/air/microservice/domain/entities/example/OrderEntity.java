@@ -177,6 +177,14 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
+     * ONLY TO DEMO/TEST VARIOUS DOMAIN EVENTS
+     */
+    public void resetOrderState() {
+        orderState = OrderState.ORDER_INITIALIZED;
+        orderHistory.clear();
+    }
+
+    /**
      * Initialize the Order
      * @return
      */

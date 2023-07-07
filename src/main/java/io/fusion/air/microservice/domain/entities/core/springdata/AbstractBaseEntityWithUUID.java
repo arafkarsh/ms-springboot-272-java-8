@@ -65,6 +65,14 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
     }
 
     /**
+     * Returns the Updated Time as A String Value
+     * @return
+     */
+    public String getTime() {
+        return super.getUpdatedTime().toString();
+    }
+
+    /**
      *
      * @return
      */
