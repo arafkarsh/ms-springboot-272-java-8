@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.statemachine;
+package io.fusion.air.microservice.adapters.statemachine.core;
 // Custom
+import io.fusion.air.microservice.adapters.statemachine.config.OrderStateChangeInterceptor;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderStateMachineService;

@@ -161,7 +161,7 @@ public class OrderProcessControllerImpl extends AbstractController {
 			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
 		log.debug("|"+name()+"|Event Handling for Order ID ... "+orderId);
 		OrderEntity order = orderService.handleEvent(customerId, orderId, event);
-		StandardResponse stdResponse = createSuccessResponse("Order Event = !"+event);
+		StandardResponse stdResponse = createSuccessResponse("Order Event = "+event);
 		stdResponse.setPayload(order);
 		return ResponseEntity.ok(stdResponse);
 	}
