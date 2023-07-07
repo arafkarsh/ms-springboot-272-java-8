@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 // Spring State Machine
 import org.springframework.statemachine.action.Action;
-import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -63,13 +62,17 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         states.withStates()
                 .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
                 .state(OrderState.CREDIT_CHECKING)         // Credit Check
+                .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
+                .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
+
                 .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
                 .state(OrderState.PAYMENT_CONFIRMED)
+
                 .state(OrderState.PACKING_IN_PROCESS)      // Packing Process
                 .state(OrderState.READY_FOR_SHIPMENT)      // Ready For Shipment
                 .state(OrderState.SHIPPED)                 // Shipping Process
                 .state(OrderState.IN_TRANSIT)
-                .state(OrderState.CREDIT_DENIED)           // :-( Sad Path
+
                 .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
                 .end(OrderState.CANCELLED)                 // :-( Sad Path
                 .end(OrderState.RETURNED)                  // :-( Sad Path
@@ -94,8 +97,20 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .action(creditCheckAction())
                 .and()
                 .withExternal()
+                    .source(OrderState.CREDIT_DENIED).target(OrderState.CANCELLED)
+                    .event(OrderEvent.AUTO_CANCELLATION_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CREDIT_APPROVED).target(OrderState.PAYMENT_PROCESSING)
+                    .event(OrderEvent.PAYMENT_INIT_EVENT)
+                .and()
+                .withExternal()
                     .source(OrderState.PAYMENT_PROCESSING).target(OrderState.PAYMENT_CONFIRMED)
-                    .event(OrderEvent.CONFIRM_PAYMENT_EVENT)
+                    .event(OrderEvent.PAYMENT_APPROVED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.PAYMENT_PROCESSING).target(OrderState.PAYMENT_DECLINED)
+                    .event(OrderEvent.PAYMENT_DECLINED_EVENT)
                 .and()
                 .withExternal()
                     .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.SHIPPED)

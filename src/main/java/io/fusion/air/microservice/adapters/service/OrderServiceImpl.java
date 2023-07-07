@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public StateMachine<OrderState, OrderEvent> processPayment(OrderEntity order) {
         StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
-        sendEvent(sm, OrderEvent.CONFIRM_PAYMENT_EVENT, order);
+        sendEvent(sm, OrderEvent.PAYMENT_APPROVED_EVENT, order);
         return sm;
     }
 

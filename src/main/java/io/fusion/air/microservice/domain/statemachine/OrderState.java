@@ -26,6 +26,8 @@ public enum OrderState {
 
     CREDIT_CHECKING,
 
+    CREDIT_APPROVED,
+
     CREDIT_DENIED,
 
     PAYMENT_PROCESSING,
