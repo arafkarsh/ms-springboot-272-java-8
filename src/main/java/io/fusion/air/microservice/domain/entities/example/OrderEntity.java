@@ -161,6 +161,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      * Initialize the Order
      * @return
      */
+    @JsonIgnore
     public OrderEntity initializeOrder() {
         orderState = OrderState.ORDER_INITIALIZED;
         return this;

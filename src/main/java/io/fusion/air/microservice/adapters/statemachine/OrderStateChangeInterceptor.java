@@ -16,8 +16,8 @@
 package io.fusion.air.microservice.adapters.statemachine;
 // Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
-import io.fusion.air.microservice.adapters.service.OrderServiceImpl;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 import io.fusion.air.microservice.utils.Utils;
@@ -69,7 +69,7 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                                StateMachine<OrderState, OrderEvent> rootStateMachine) {
 
         Optional.ofNullable(message).ifPresent(msg -> {
-            Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(OrderServiceImpl.ORDER_ID_HEADER, "")))
+            Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(OrderConstants.ORDER_ID_HEADER, "")))
                 .ifPresent(orderId -> {
                     Optional<OrderEntity> orderOpt = orderRepository.findByOrderId(Utils.getUUID(orderId));
                     if(orderOpt.isPresent()) {

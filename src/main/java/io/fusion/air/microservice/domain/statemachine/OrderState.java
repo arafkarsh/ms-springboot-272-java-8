@@ -15,6 +15,9 @@
  */
 package io.fusion.air.microservice.domain.statemachine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -23,6 +26,8 @@ package io.fusion.air.microservice.domain.statemachine;
 public enum OrderState {
 
     ORDER_INITIALIZED,
+
+    CREDIT_CHOICE,
 
     CREDIT_CHECKING,
 
@@ -50,6 +55,25 @@ public enum OrderState {
 
     RETURNED,
 
-    DELIVERED
+    DELIVERED;
+
+    // Lookup table
+    private static final Map<String, OrderState> lookup = new HashMap<>();
+
+    // Populate the lookup table on loading time
+    static {
+        for (OrderState os : OrderState.values()) {
+            lookup.put(os.name().toLowerCase(), os);
+        }
+    }
+
+    // This method can be used for reverse lookup purpose
+    public static OrderState fromString(String state) {
+        OrderState foundState = lookup.get(state.trim().toLowerCase());
+        if (foundState == null) {
+            throw new IllegalArgumentException("No OrderState with text " + state + " found");
+        }
+        return foundState;
+    }
 
 }

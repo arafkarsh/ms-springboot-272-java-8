@@ -15,6 +15,9 @@
  */
 package io.fusion.air.microservice.domain.statemachine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -24,7 +27,9 @@ public enum OrderEvent {
 
     CREDIT_CHECKING_EVENT,
 
-    AUTO_CANCELLATION_EVENT,
+    CREDIT_APPROVED_EVENT,
+
+    CREDIT_DECLINED_EVENT,
 
     PAYMENT_INIT_EVENT,
 
@@ -35,4 +40,30 @@ public enum OrderEvent {
     ORDER_SHIPPED_EVENT,
 
     SEND_FOR_DELIVERY_EVENT,
+
+    ORDER_CANCELLED_EVENT,
+
+    ORDER_DELIVERED_EVENT,
+
+    ORDER_RETURNED_EVENT
+    ;
+
+    // Lookup table
+    private static final Map<String, OrderEvent> lookup = new HashMap<>();
+
+    // Populate the lookup table on loading time
+    static {
+        for (OrderEvent os : OrderEvent.values()) {
+            lookup.put(os.name().toLowerCase(), os);
+        }
+    }
+
+    public static OrderEvent fromString(String event) {
+        OrderEvent foundState = lookup.get(event.trim().toLowerCase());
+        if (foundState == null) {
+            throw new IllegalArgumentException("No OrderEvent with text " + event + " found");
+        }
+        return foundState;
+    }
+
 }

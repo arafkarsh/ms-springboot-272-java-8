@@ -16,10 +16,6 @@
 package io.fusion.air.microservice.domain.ports.services;
 // Custom
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
-import io.fusion.air.microservice.domain.statemachine.OrderEvent;
-import io.fusion.air.microservice.domain.statemachine.OrderState;
-// Spring State Machine
-import org.springframework.statemachine.StateMachine;
 // Java
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +29,6 @@ import java.util.UUID;
  * @date:
  */
 public interface OrderService {
-
 
     /**
      * ONLY FOR TESTING PURPOSE
@@ -92,27 +87,20 @@ public interface OrderService {
     public OrderEntity processCreditApproval(String customerId, String orderId);
 
     /**
-     * Request for Credit Approval
-     *
-     * @param order
+     * Process the Payment Request with External System
+     * @param customerId
+     * @param orderId
      * @return
      */
-    public StateMachine<OrderState, OrderEvent> requestCreditApproval(OrderEntity order);
+    public OrderEntity processPaymentRequest(String customerId, String orderId);
 
     /**
-     * Process the Payment
-     * @param order
+     * For Testing Purpose Only
+     * Handle Event - Generic Method
+     * @param customerId
+     * @param orderId
+     * @param event
      * @return
      */
-    public StateMachine<OrderState, OrderEvent> processPayment(OrderEntity order);
-
-    /**
-     * Ship the Product
-     * @param order
-     * @return
-     */
-    public StateMachine<OrderState, OrderEvent> shipTheProduct(OrderEntity order);
-
-
-
+    public OrderEntity handleEvent(String customerId, String orderId, String event);
 }

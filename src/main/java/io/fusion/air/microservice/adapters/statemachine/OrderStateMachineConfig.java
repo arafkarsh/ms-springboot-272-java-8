@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.statemachine;
 // Custom
-import io.fusion.air.microservice.adapters.service.OrderServiceImpl;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
@@ -67,8 +67,9 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         states.withStates()
                 .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
 
-                .state(OrderState.CREDIT_CHECKING)        // Credit Check is a Choice based on Condition
+                .choice(OrderState.CREDIT_CHOICE)        // Credit Check is a Choice based on Condition
 
+                .state(OrderState.CREDIT_CHECKING)           // Credit Check Denied
                 .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
                 .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
 
@@ -97,23 +98,33 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineTransitionConfigurer<OrderState, OrderEvent> transitions) throws Exception {
         transitions
                 .withExternal()
-                    .source(OrderState.ORDER_INITIALIZED).target(OrderState.CREDIT_CHECKING)
+                    .source(OrderState.ORDER_INITIALIZED).target(OrderState.CREDIT_CHOICE)
                     .event(OrderEvent.CREDIT_CHECKING_EVENT)
-                    .guard(creditCheckGuard())
-                    .action(creditCheckAction())
-                    .and()
-                    .withExternal()
-                        .source(OrderState.CREDIT_DENIED).target(OrderState.CANCELLED)
-                        .event(OrderEvent.AUTO_CANCELLATION_EVENT)
-                    .and()
-                    .withExternal()
-                        .source(OrderState.CREDIT_APPROVED).target(OrderState.PAYMENT_PROCESSING)
-                        .event(OrderEvent.PAYMENT_INIT_EVENT)
-                    .and()
+                .and()
+                .withChoice()
+                    .source(OrderState.CREDIT_CHOICE)
+                    .first(OrderState.CREDIT_CHECKING, creditCheckRequiredGuard())
+                    .last(OrderState.PAYMENT_PROCESSING)
+                .and()
                 .withExternal()
-                    .source(OrderState.ORDER_INITIALIZED).target(OrderState.PAYMENT_PROCESSING)
-                    .event(OrderEvent.CREDIT_CHECKING_EVENT)
-                    .guard(creditChecNotRequiredkGuard())
+                    .source(OrderState.CREDIT_CHECKING).target(OrderState.PAYMENT_PROCESSING)
+                    .event(OrderEvent.CREDIT_APPROVED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CREDIT_CHECKING).target(OrderState.CREDIT_APPROVED)
+                    .event(OrderEvent.CREDIT_APPROVED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CREDIT_CHECKING).target(OrderState.CREDIT_DENIED)
+                    .event(OrderEvent.CREDIT_DECLINED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CREDIT_DENIED).target(OrderState.CANCELLED)
+                    .event(OrderEvent.ORDER_CANCELLED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CREDIT_APPROVED).target(OrderState.PAYMENT_PROCESSING)
+                    .event(OrderEvent.PAYMENT_INIT_EVENT)
                 .and()
                 .withExternal()
                     .source(OrderState.PAYMENT_PROCESSING).target(OrderState.PAYMENT_CONFIRMED)
@@ -124,8 +135,21 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .event(OrderEvent.PAYMENT_DECLINED_EVENT)
                 .and()
                 .withExternal()
+                    .source(OrderState.PAYMENT_DECLINED).target(OrderState.CANCELLED)
+                    .event(OrderEvent.ORDER_CANCELLED_EVENT)
+                .and()
+                .withExternal()
                     .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.SHIPPED)
-                    .event(OrderEvent.SEND_FOR_DELIVERY_EVENT);
+                    .event(OrderEvent.SEND_FOR_DELIVERY_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.SHIPPED).target(OrderState.DELIVERED)
+                    .event(OrderEvent.ORDER_DELIVERED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.SHIPPED).target(OrderState.RETURNED)
+                    .event(OrderEvent.ORDER_RETURNED_EVENT)
+        ;
     }
 
     /**
@@ -163,27 +187,20 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     // ==============================================================================================================
 
     @Bean
-    public Guard<OrderState, OrderEvent> creditCheckGuard() {
+    public Guard<OrderState, OrderEvent> creditCheckRequiredGuard() {
         return context -> {
-            OrderEntity order = (OrderEntity) context.getMessageHeader(OrderServiceImpl.ORDER_HEADER);
+            // Following Method is Required if the OrderEntity is Send as a Message (sendMessage)
+            // As the OrderEntity is Set as an Extended State following call is NOT Required.
+            // OrderEntity order = (OrderEntity) context.getMessageHeader(OrderConstants.ORDER_HEADER);
+
+            // Extract OrderEntity from the Extended State
+            OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
             if(order != null) {
                 log.info("Order = " + Utils.toJsonString(order));
                 // Returns TRUE if the Order Value is greater than Rs. 1,00,000/-
                 return order.getTotalOrderValue().compareTo(new BigDecimal("100000")) > 0;
             }
-            return false;
-        };
-    }
-
-    @Bean
-    public Guard<OrderState, OrderEvent> creditChecNotRequiredkGuard() {
-        return context -> {
-            OrderEntity order = (OrderEntity) context.getMessageHeader(OrderServiceImpl.ORDER_HEADER);
-            if(order != null) {
-                log.info("Order = " + Utils.toJsonString(order));
-                // Returns TRUE if the Order Value is less than Rs. 1,00,000/-
-                return order.getTotalOrderValue().compareTo(new BigDecimal("100000")) < 0;
-            }
+            // No CREDIT Check Required
             return false;
         };
     }

@@ -16,30 +16,23 @@
 package io.fusion.air.microservice.adapters.service;
 // Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
-import io.fusion.air.microservice.adapters.statemachine.OrderStateChangeInterceptor;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
+import io.fusion.air.microservice.domain.ports.services.OrderStateMachineService;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
-// Spring State Machine
 import io.fusion.air.microservice.utils.Utils;
-import org.slf4j.Logger;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineFactory;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 // Java
+import org.slf4j.Logger;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -60,20 +53,11 @@ public class OrderServiceImpl implements OrderService {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    // Message Header for the Events used in the State Machine
-    public static final String ORDER_ID_HEADER = "ORDER_ID";
-    public static final String ORDER_HEADER = "ORDER";
-
-
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
-    private StateMachineFactory<OrderState, OrderEvent> stateMachineFactory;
-
-    @Autowired
-    private OrderStateChangeInterceptor orderStateChangeInterceptor;
-
+    private OrderStateMachineService orderStateMachineService;
 
     /**
      * ONLY FOR TESTING PURPOSE
@@ -177,115 +161,98 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity processCreditApproval(String customerId, String orderId) {
         Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
         log.info("[1] Process Order ID = "+orderId);
-        requestCreditApproval(orderOpt.get());
+        orderStateMachineService.requestCreditApproval(orderOpt.get());
         return orderOpt.get();
     }
 
     /**
-     * Request for Credit Approval
+     * For Testing Purpose Only
+     * Handle Event - Generic Method
      *
-     * @param order
+     * @param customerId
+     * @param orderId
+     * @param event
      * @return
      */
-    @Override
-    @Transactional
-    public StateMachine<OrderState, OrderEvent> requestCreditApproval(OrderEntity order) {
-        log.info("[2] Restoring State Machine for = "+order.getOrderId());
-        StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
-        log.info("[3] Sending Message For Order Id = "+order.getOrderId());
-        sendEvent(sm, OrderEvent.CREDIT_CHECKING_EVENT, order);
-        return sm;
+    public OrderEntity handleEvent(String customerId, String orderId, String event) {
+        OrderEvent orderEvent = OrderEvent.fromString(event);
+        return handleEvent(customerId, orderId, orderEvent);
     }
 
     /**
-     * Process the Payment
+     * For Testing Purpose Only
+     * Handle Event - Generic Method
      *
-     * @param order
+     * @param customerId
+     * @param orderId
+     * @param orderEvent
      * @return
      */
-    @Override
-    @Transactional
-    public StateMachine<OrderState, OrderEvent> processPayment(OrderEntity order) {
-        StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
-        sendEvent(sm, OrderEvent.PAYMENT_APPROVED_EVENT, order);
-        return sm;
+    public OrderEntity handleEvent(String customerId, String orderId, OrderEvent orderEvent) {
+        Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
+        log.info("Handle Event "+orderEvent+" For Order ID = "+orderId);
+        OrderEntity order = orderOpt.get();
+        switch(orderEvent) {
+            case CREDIT_CHECKING_EVENT:
+                orderStateMachineService.requestCreditApproval(order);
+                break;
+
+            case CREDIT_APPROVED_EVENT:
+                orderStateMachineService.creditApproved(order);
+                break;
+
+            case CREDIT_DECLINED_EVENT:
+                orderStateMachineService.creditDeclined(order);
+                break;
+
+            case PAYMENT_INIT_EVENT:
+                orderStateMachineService.processPayment(order);
+                break;
+
+            case PAYMENT_APPROVED_EVENT:
+                orderStateMachineService.paymentApproved(order);
+                break;
+
+            case PAYMENT_DECLINED_EVENT:
+                orderStateMachineService.paymentDeclined(order);
+                break;
+
+            case ORDER_SHIPPED_EVENT:
+                orderStateMachineService.shipTheProduct(order);
+                break;
+
+            case SEND_FOR_DELIVERY_EVENT:
+                orderStateMachineService.sendForDelivery(order);
+                break;
+
+            case ORDER_CANCELLED_EVENT:
+                orderStateMachineService.orderCancelled(order);
+                break;
+
+            case ORDER_DELIVERED_EVENT:
+                orderStateMachineService.orderDelivered(order);
+                break;
+
+            case ORDER_RETURNED_EVENT:
+                orderStateMachineService.orderReturned(order);
+                break;
+
+            default:
+                break;
+        }
+        return order;
     }
 
     /**
-     * Ship the Product
-     *
-     * @param order
-     * @return
-     */
-    @Override
-    @Transactional
-    public StateMachine<OrderState, OrderEvent> shipTheProduct(OrderEntity order) {
-        StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
-        sendEvent(sm, OrderEvent.ORDER_SHIPPED_EVENT, order);
-        return sm;
-    }
-
-    private void sendEvent(StateMachine<OrderState, OrderEvent> sm, OrderEvent event, OrderEntity order) {
-        if(sm == null) {
-            throw new InputDataException("Invalid State Machine! to Send Event");
-        }
-        if(event == null) {
-            throw new InputDataException("Invalid OrderEvent! to Send Event");
-        }
-        if(order == null) {
-            throw new InputDataException("Invalid Order! to Send Event");
-        }
-        // Create Message with the Order Event and Set the Order ID in the Header
-        Message mesg = MessageBuilder.withPayload(event)
-                .setHeader(ORDER_ID_HEADER, order.getOrderId())
-                .setHeader(ORDER_HEADER, order)
-                .build();
-        // Send the Message to the State Machine
-        sm.sendEvent(mesg);
-    }
-
-    /**
-     * Return the State Machine with Current Order State
-     *
+     * Process the Payment Request with External System
      * @param customerId
      * @param orderId
      * @return
      */
-    private StateMachine<OrderState, OrderEvent> restoreStateMachine(String customerId, String orderId) {
-        Optional<OrderEntity> orderOpt = orderRepository.findByCustomerIdAndOrderId(customerId, Utils.getUUID(orderId));
-        if(orderOpt.isPresent()) {
-            return restoreStateMachine(orderOpt.get());
-        }
-        throw new DataNotFoundException("Order ID ["+orderId+"] NOT FOUND For Customer = "+customerId);
-    }
-
-    /**
-     * Return the State Machine with Current Order State
-     *
-     * @param order
-     * @return
-     */
-    private StateMachine<OrderState, OrderEvent> restoreStateMachine(OrderEntity order) {
-        if(order == null) {
-            throw new InputDataException("Invalid Order (null) to Restore the State Machine!");
-        }
-        log.info("[2.1] Get State Machine For Order Id = "+order.getOrderId());
-        StateMachine<OrderState, OrderEvent> sm = stateMachineFactory.getStateMachine(order.getOrderId());
-        // Stop The State Machine
-        sm.stop();
-        // Set the State (Order) retrieved from the Database
-        sm.getStateMachineAccessor()
-            .doWithAllRegions(sma -> {
-                // Add State Change Interceptor
-                sma.addStateMachineInterceptor(orderStateChangeInterceptor);
-                // Set the Current Order State with State Machine
-                sma.resetStateMachine(new DefaultStateMachineContext<>(order.getOrderState(),
-                            null, null, null));
-                }
-            );
-        // Start the State Machine with new Order State (Set from DB)
-        sm.start();
-        // Return the State  Machine
-        return sm;
+    public OrderEntity processPaymentRequest(String customerId, String orderId) {
+        Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
+        log.info("Process Order ID = "+orderId);
+        orderStateMachineService.processPayment(orderOpt.get());
+        return orderOpt.get();
     }
 }

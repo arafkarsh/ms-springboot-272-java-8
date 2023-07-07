@@ -88,6 +88,13 @@ public class OrderProcessControllerImpl extends AbstractController {
 		return ResponseEntity.ok(stdResponse);
 	}
 
+	/**
+	 * Get the Order by Customer ID and Order ID
+	 * @param customerId
+	 * @param orderId
+	 * @return
+	 * @throws Exception
+	 */
 	@Operation(summary = "Get The Order for the Customer by Order ID")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
@@ -110,14 +117,17 @@ public class OrderProcessControllerImpl extends AbstractController {
 
 	/**
 	 * Order: Initiate Credit Approval
+	 * @param customerId
+	 * @param orderId
+	 * @return
 	 */
 	@Operation(summary = "State Machine Demo 1 - Credit Approval")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "Order Saved!",
+					description = "Order Send for Credit Approval!",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Unable to Save Order",
+					description = "Unable to Send Order for Credit Approval!",
 					content = @Content)
 	})
 	@PostMapping("/credit/customer/{customerId}/order/{orderId}")
@@ -125,7 +135,33 @@ public class OrderProcessControllerImpl extends AbstractController {
 			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
 		log.debug("|"+name()+"|Request to Credit Approval Order ID ... "+orderId);
 		OrderEntity order = orderService.processCreditApproval(customerId, orderId);
-		StandardResponse stdResponse = createSuccessResponse("Order Retrieved after Approval Request!");
+		StandardResponse stdResponse = createSuccessResponse("Order Send for Credit Approval Request!");
+		stdResponse.setPayload(order);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Event Handling for Testing Purpose ONLY
+	 * @param event
+	 * @param customerId
+	 * @param orderId
+	 * @return
+	 */
+	@Operation(summary = "State Machine Demo 2 - Event")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Order Event!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to update Order with Event!",
+					content = @Content)
+	})
+	@PostMapping("/event/{event}/customer/{customerId}/order/{orderId}")
+	public ResponseEntity<StandardResponse> paymentRequest(@PathVariable("event") String event,
+			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
+		log.debug("|"+name()+"|Event Handling for Order ID ... "+orderId);
+		OrderEntity order = orderService.handleEvent(customerId, orderId, event);
+		StandardResponse stdResponse = createSuccessResponse("Order Event = !"+event);
 		stdResponse.setPayload(order);
 		return ResponseEntity.ok(stdResponse);
 	}
@@ -133,6 +169,10 @@ public class OrderProcessControllerImpl extends AbstractController {
 	/**
 	 * Order: RESET Order State
 	 * ONLY FOR TESTING THE STATE MACHINE
+	 *
+	 * @param customerId
+	 * @param orderId
+	 * @return
 	 */
 	@Operation(summary = "State Machine Demo 0 - RESET ORDER STATE")
 	@ApiResponses(value = {
