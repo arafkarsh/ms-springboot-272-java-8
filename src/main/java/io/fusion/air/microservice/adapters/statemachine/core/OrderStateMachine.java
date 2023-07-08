@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 // Spring State Machine
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
@@ -63,19 +62,16 @@ public class OrderStateMachine implements OrderStateMachineService {
     /**
      * STEP 1:
      * Credit Check Event
-     *
      * @param order
      * @return
      */
     @Override
-    @Transactional
-    public void requestCreditApproval(OrderEntity order) {
+    public void creditCheckRequest(OrderEntity order) {
         sendEvent(OrderEvent.CREDIT_CHECKING_EVENT, order);
     }
 
     /**
      * Credit Approved Event
-     *
      * @param order
      */
     @Override
@@ -85,7 +81,6 @@ public class OrderStateMachine implements OrderStateMachineService {
 
     /**
      * Credit Declined Event
-     *
      * @param order
      */
     @Override
@@ -96,19 +91,16 @@ public class OrderStateMachine implements OrderStateMachineService {
     /**
      * STEP 2:
      * Payment Init Event
-     *
      * @param order
      * @return
      */
     @Override
-    @Transactional
-    public void processPayment(OrderEntity order) {
+    public void paymentInit(OrderEntity order) {
         sendEvent(OrderEvent.PAYMENT_INIT_EVENT, order);
     }
 
     /**
      * Payment Approved
-     *
      * @param order
      * @return
      */
@@ -119,7 +111,6 @@ public class OrderStateMachine implements OrderStateMachineService {
 
     /**
      * Payment Declined Event
-     *
      * @param order
      * @return
      */
@@ -129,15 +120,46 @@ public class OrderStateMachine implements OrderStateMachineService {
     }
 
     /**
+     * Package the Order
+     * @param order
+     * @return
+     */
+    @Override
+    public void orderPackage(OrderEntity order) {
+        sendEvent(OrderEvent.ORDER_PACKAGE_EVENT, order);
+    }
+
+    /**
+     * Ready to Ship once the Order is Packaged
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public void readyToShip(OrderEntity order) {
+        sendEvent(OrderEvent.ORDER_READY_TO_SHIP_EVENT, order);
+    }
+
+    /**
      * Ship the Product Event
      *
      * @param order
      * @return
      */
     @Override
-    @Transactional
     public void shipTheProduct(OrderEntity order) {
         sendEvent(OrderEvent.ORDER_SHIPPED_EVENT, order);
+    }
+
+    /**
+     * Order In Transit
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public void orderInTransit(OrderEntity order) {
+        sendEvent(OrderEvent.ORDER_IN_TRANSIT_EVENT, order);
     }
 
     /**
@@ -175,10 +197,13 @@ public class OrderStateMachine implements OrderStateMachineService {
      * Order Cancelled Event
      * @param order
      */
-    @Transactional
     public void orderCancelled(OrderEntity order) {
         sendEvent(OrderEvent.ORDER_CANCELLED_EVENT, order);
     }
+
+    // =======================================================================================================
+    // Restore State Machine and Send Message / Event to State Machine
+    // =======================================================================================================
 
     /**
      * Send Message/Event to State Machine
@@ -234,7 +259,6 @@ public class OrderStateMachine implements OrderStateMachineService {
 
     /**
      * Validate Inputs
-     * @param sm
      * @param event
      * @param order
      * @return

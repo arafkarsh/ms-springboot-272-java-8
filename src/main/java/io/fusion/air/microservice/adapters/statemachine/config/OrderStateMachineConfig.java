@@ -83,12 +83,14 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
 
                 .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
-                .state(OrderState.PAYMENT_CONFIRMED)
+                .state(OrderState.PAYMENT_CONFIRMED)        // Payment Confirmed
 
                 .state(OrderState.PACKING_IN_PROCESS)      // Packing Process
                 .state(OrderState.READY_FOR_SHIPMENT)      // Ready For Shipment
+
                 .state(OrderState.SHIPPED)                 // Shipping Process
-                .state(OrderState.IN_TRANSIT)
+                .state(OrderState.IN_TRANSIT)              // In Transit
+                .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
 
                 .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
                 .end(OrderState.CANCELLED)                 // :-( Sad Path
@@ -148,11 +150,27 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .event(OrderEvent.ORDER_CANCELLED_EVENT)
                 .and()
                 .withExternal()
-                    .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.SHIPPED)
+                    .source(OrderState.PAYMENT_CONFIRMED).target(OrderState.PACKING_IN_PROCESS)
+                    .event(OrderEvent.ORDER_PACKAGE_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.PACKING_IN_PROCESS).target(OrderState.READY_FOR_SHIPMENT)
+                    .event(OrderEvent.ORDER_READY_TO_SHIP_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.READY_FOR_SHIPMENT).target(OrderState.SHIPPED)
+                    .event(OrderEvent.ORDER_SHIPPED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.SHIPPED).target(OrderState.IN_TRANSIT)
+                    .event(OrderEvent.ORDER_IN_TRANSIT_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.IN_TRANSIT).target(OrderState.REACHED_DESTINATION)
                     .event(OrderEvent.SEND_FOR_DELIVERY_EVENT)
                 .and()
                 .withExternal()
-                    .source(OrderState.SHIPPED).target(OrderState.DELIVERED)
+                    .source(OrderState.REACHED_DESTINATION).target(OrderState.DELIVERED)
                     .event(OrderEvent.ORDER_DELIVERED_EVENT)
                 .and()
                 .withExternal()

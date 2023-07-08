@@ -26,6 +26,8 @@ import io.fusion.air.microservice.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 // Sprong State Machine
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.state.State;
@@ -63,6 +65,7 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
      * @param rootStateMachine
      */
     @Override
+    @Transactional
     public void preStateChange(State<OrderState, OrderEvent> state,
                                Message<OrderEvent> message,
                                Transition<OrderState, OrderEvent> transition,

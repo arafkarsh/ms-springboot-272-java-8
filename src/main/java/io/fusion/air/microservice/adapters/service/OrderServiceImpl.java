@@ -22,7 +22,6 @@ import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
 import io.fusion.air.microservice.domain.ports.services.OrderStateMachineService;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
-import io.fusion.air.microservice.domain.statemachine.OrderState;
 import io.fusion.air.microservice.utils.Utils;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity processCreditApproval(String customerId, String orderId) {
         Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
         log.info("[1] Process Order ID = "+orderId);
-        orderStateMachineService.requestCreditApproval(orderOpt.get());
+        orderStateMachineService.creditCheckRequest(orderOpt.get());
         return orderOpt.get();
     }
 
@@ -194,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity order = orderOpt.get();
         switch(orderEvent) {
             case CREDIT_CHECKING_EVENT:
-                orderStateMachineService.requestCreditApproval(order);
+                orderStateMachineService.creditCheckRequest(order);
                 break;
 
             case CREDIT_APPROVED_EVENT:
@@ -206,7 +205,7 @@ public class OrderServiceImpl implements OrderService {
                 break;
 
             case PAYMENT_INIT_EVENT:
-                orderStateMachineService.processPayment(order);
+                orderStateMachineService.paymentInit(order);
                 break;
 
             case PAYMENT_APPROVED_EVENT:
@@ -217,8 +216,20 @@ public class OrderServiceImpl implements OrderService {
                 orderStateMachineService.paymentDeclined(order);
                 break;
 
+            case ORDER_PACKAGE_EVENT:
+                orderStateMachineService.orderPackage(order);
+                break;
+
+            case ORDER_READY_TO_SHIP_EVENT:
+                orderStateMachineService.readyToShip(order);
+                break;
+
             case ORDER_SHIPPED_EVENT:
                 orderStateMachineService.shipTheProduct(order);
+                break;
+
+            case ORDER_IN_TRANSIT_EVENT:
+                orderStateMachineService.orderInTransit(order);
                 break;
 
             case SEND_FOR_DELIVERY_EVENT:
@@ -252,7 +263,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity processPaymentRequest(String customerId, String orderId) {
         Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
         log.info("Process Order ID = "+orderId);
-        orderStateMachineService.processPayment(orderOpt.get());
+        orderStateMachineService.paymentInit(orderOpt.get());
         return orderOpt.get();
     }
 }

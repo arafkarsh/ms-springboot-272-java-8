@@ -32,7 +32,7 @@ public interface OrderStateMachineService {
      * @param order
      * @return
      */
-    public void requestCreditApproval(OrderEntity order);
+    public void creditCheckRequest(OrderEntity order);
 
     /**
      * Credit Approved
@@ -51,7 +51,7 @@ public interface OrderStateMachineService {
      * @param order
      * @return
      */
-    public void processPayment(OrderEntity order);
+    public void paymentInit(OrderEntity order);
 
     /**
      * Payment Approved
@@ -68,11 +68,32 @@ public interface OrderStateMachineService {
     public void paymentDeclined(OrderEntity order);
 
     /**
+     * Package the Order
+     * @param order
+     * @return
+     */
+    public void orderPackage(OrderEntity order);
+
+    /**
+     * Ready to Ship once the Order is Packaged
+     * @param order
+     * @return
+     */
+    public void readyToShip(OrderEntity order);
+
+    /**
      * Ship the Product
      * @param order
      * @return
      */
     public void shipTheProduct(OrderEntity order);
+
+    /**
+     * Order In Transit
+     * @param order
+     * @return
+     */
+    public void orderInTransit(OrderEntity order);
 
     /**
      * Send For Delivery

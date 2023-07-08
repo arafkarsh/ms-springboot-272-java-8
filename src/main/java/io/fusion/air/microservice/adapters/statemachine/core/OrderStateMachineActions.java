@@ -15,12 +15,14 @@
  */
 package io.fusion.air.microservice.adapters.statemachine.core;
 
+import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.statemachine.action.Action;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -33,7 +35,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date:
  */
 
-@Service
+@Component
 public class OrderStateMachineActions {
 
     // Set Logger -> Lookup will automatically determine the class name.
@@ -43,9 +45,11 @@ public class OrderStateMachineActions {
     public Action<OrderState, OrderEvent> creditCheckAction() {
         return context -> {
             try {
+                OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
                 OrderState sourceState = context.getSource().getId();
                 OrderState targetState = context.getTarget().getId();
                 log.info("Transitioning from {} to {}", sourceState, targetState);
+                log.info("Send CREDIT CHECK EVENT for Order ID = "+order.getOrderId());
             } catch (Exception e) {
 
             }
