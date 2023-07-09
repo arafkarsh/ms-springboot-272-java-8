@@ -51,7 +51,9 @@ public enum OrderEvent {
 
     ORDER_DELIVERED_EVENT,
 
-    ORDER_RETURNED_EVENT
+    ORDER_RETURNED_EVENT,
+
+    FAILURE_EVENT
     ;
 
     // Lookup table

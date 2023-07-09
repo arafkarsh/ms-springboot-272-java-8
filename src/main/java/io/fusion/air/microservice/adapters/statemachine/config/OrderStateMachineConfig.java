@@ -17,29 +17,27 @@ package io.fusion.air.microservice.adapters.statemachine.config;
 // Custom
 import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineActions;
 import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineGuards;
-import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
-import io.fusion.air.microservice.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 // Spring State Machine
-import org.springframework.statemachine.action.Action;
+import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
-import org.springframework.statemachine.guard.Guard;
+
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 // Java &  SLF4J
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.slf4j.Logger;
+import org.springframework.statemachine.transition.Transition;
 
 import java.math.BigDecimal;
 
@@ -73,30 +71,37 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
      */
     @Override
     public void configure(StateMachineStateConfigurer<OrderState, OrderEvent> states) throws Exception {
-        states.withStates()
-                .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
+        states
+            .withStates()
+                .initial(OrderState.ORDER_RECEIVED)            // Order RECEIVED
+                .state(OrderState.IN_PROGRESS)
+                .state(OrderState.ERROR)                        // ERROR State
+                .end(OrderState.ORDER_COMPLETED)
+                .and()
+                .withStates()
+                    .parent(OrderState.ORDER_RECEIVED)         // ROOT of All the States
+                    .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
+                    .choice(OrderState.CREDIT_CHOICE)          // Credit Check is a Choice based on Condition
 
-                .choice(OrderState.CREDIT_CHOICE)          // Credit Check is a Choice based on Condition
+                    .state(OrderState.CREDIT_CHECKING)         // Credit Check Denied
+                    .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
+                    .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
 
-                .state(OrderState.CREDIT_CHECKING)         // Credit Check Denied
-                .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
-                .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
+                    .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
+                    .state(OrderState.PAYMENT_CONFIRMED)        // Payment Confirmed
 
-                .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
-                .state(OrderState.PAYMENT_CONFIRMED)        // Payment Confirmed
+                    .state(OrderState.PACKING_IN_PROCESS)      // Packing Process
+                    .state(OrderState.READY_FOR_SHIPMENT)      // Ready For Shipment
 
-                .state(OrderState.PACKING_IN_PROCESS)      // Packing Process
-                .state(OrderState.READY_FOR_SHIPMENT)      // Ready For Shipment
+                    .state(OrderState.SHIPPED)                 // Shipping Process
+                    .state(OrderState.IN_TRANSIT)              // In Transit
+                    .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
 
-                .state(OrderState.SHIPPED)                 // Shipping Process
-                .state(OrderState.IN_TRANSIT)              // In Transit
-                .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
-
-                .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
-                .end(OrderState.CANCELLED)                 // :-( Sad Path
-                .end(OrderState.RETURNED)                  // :-( Sad Path
-                .end(OrderState.DELIVERED);                // :-) Happy Path
-    }
+                    .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
+                    .end(OrderState.CANCELLED)                 // :-( Sad Path
+                    .end(OrderState.RETURNED)                  // :-( Sad Path
+                    .end(OrderState.DELIVERED);                // :-) Happy Path
+        }
 
     /**
      * Order Processing
@@ -109,8 +114,16 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineTransitionConfigurer<OrderState, OrderEvent> transitions) throws Exception {
         transitions
                 .withExternal()
+                    .source(OrderState.ORDER_RECEIVED).target(OrderState.CREDIT_CHOICE)
+                    .event(OrderEvent.CREDIT_CHECKING_EVENT)
+                .and()
+                .withExternal()
                     .source(OrderState.ORDER_INITIALIZED).target(OrderState.CREDIT_CHOICE)
                     .event(OrderEvent.CREDIT_CHECKING_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.ORDER_RECEIVED).target(OrderState.ERROR)
+                    .event(OrderEvent.FAILURE_EVENT)
                 .and()
                 .withChoice()
                     .source(OrderState.CREDIT_CHOICE)
@@ -200,10 +213,33 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
      */
     private StateMachineListenerAdapter<OrderState, OrderEvent> getSMListenerAdapter() {
         StateMachineListenerAdapter<OrderState, OrderEvent> adapter = new StateMachineListenerAdapter<OrderState, OrderEvent>() {
+            /**
+             * Log when the State changes.
+             * @param from
+             * @param to
+             */
             @Override
             public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
                 log.info(String.format(">> State Changed From: %s >> To >> %s", from, to));
             }
+
+            /**
+             * Handle the Errors throw by the Actions / Guards
+             * @param stateMachine
+             * @param exception
+             */
+            public void stateMachineError(StateMachine<OrderState, OrderEvent> stateMachine, Exception exception) {
+                // Capture the current state before transitioning to the error state
+                OrderState errorSourceState = stateMachine.getState().getId();
+                stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_SOURCE, errorSourceState);
+                stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_MSG, exception.getMessage());
+                // Log the exception and the source state
+                log.error("Exception occurred during state transition from state: " + errorSourceState, exception);
+
+                // Handle the Error and Send a Failure Event to State Machine
+                stateMachine.sendEvent(OrderEvent.FAILURE_EVENT);
+            }
+
         };
         return adapter;
     }

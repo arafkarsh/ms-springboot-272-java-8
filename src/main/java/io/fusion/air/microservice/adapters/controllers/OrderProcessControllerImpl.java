@@ -131,7 +131,7 @@ public class OrderProcessControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@PostMapping("/credit/customer/{customerId}/order/{orderId}")
-	public ResponseEntity<StandardResponse> creditApproval(
+	public ResponseEntity<StandardResponse> creditCheckingRequest(
 			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
 		log.debug("|"+name()+"|Request to Credit Approval Order ID ... "+orderId);
 		OrderEntity order = orderService.processCreditApproval(customerId, orderId);
@@ -150,14 +150,14 @@ public class OrderProcessControllerImpl extends AbstractController {
 	@Operation(summary = "State Machine Demo 2 - Event")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "Order Event!",
+					description = "Order updated with Event!",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Unable to update Order with Event!",
+					description = "Unable to update Order for the Event!",
 					content = @Content)
 	})
 	@PostMapping("/event/{event}/customer/{customerId}/order/{orderId}")
-	public ResponseEntity<StandardResponse> paymentRequest(@PathVariable("event") String event,
+	public ResponseEntity<StandardResponse> eventHandlingRequest(@PathVariable("event") String event,
 			@PathVariable("customerId") String customerId, @PathVariable("orderId") String orderId) {
 		log.debug("|"+name()+"|Event Handling for Order ID ... "+orderId);
 		OrderEntity order = orderService.handleEvent(customerId, orderId, event);

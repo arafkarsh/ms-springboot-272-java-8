@@ -59,6 +59,10 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
 
+    @Column(name = "result")
+    @Enumerated(EnumType.STRING)
+    private OrderState result;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private List<OrderStateHistoryEntity> orderHistory = new ArrayList<>();
@@ -161,6 +165,14 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
+     * Returns the Result of the Current Order Processing State
+     * @return
+     */
+    public OrderState getResult() {
+        return result;
+    }
+
+    /**
      * Returns the Order State Transition History
      * @return
      */
@@ -180,7 +192,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      * ONLY TO DEMO/TEST VARIOUS DOMAIN EVENTS
      */
     public void resetOrderState() {
-        orderState = OrderState.ORDER_INITIALIZED;
+        initializeOrder();
         orderHistory.clear();
     }
 
@@ -189,9 +201,9 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      * @return
      */
     @JsonIgnore
-    public OrderEntity initializeOrder() {
+    protected void initializeOrder() {
         orderState = OrderState.ORDER_INITIALIZED;
-        return this;
+        result = OrderState.IN_PROGRESS;
     }
 
     public static Builder builder() {
@@ -203,7 +215,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
 
         private Builder() {
             order = new OrderEntity();
-            order.orderState = OrderState.ORDER_INITIALIZED;
+            order.initializeOrder();
         }
 
         public Builder addCustomerId(String customerId) {
@@ -213,6 +225,12 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
 
         public Builder addOrderItems(List<OrderItemEntity> orderItems) {
             order.orderItems = orderItems;
+            order.calculateTotalOrderValue();
+            return this;
+        }
+
+        public Builder addOrderItem(OrderItemEntity orderItem) {
+            order.orderItems.add(orderItem);
             order.calculateTotalOrderValue();
             return this;
         }

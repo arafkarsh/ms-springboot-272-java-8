@@ -76,15 +76,25 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
             Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(OrderConstants.ORDER_ID_HEADER, "")))
                 .ifPresent(orderId -> {
                     Optional<OrderEntity> orderOpt = orderRepository.findByOrderId(Utils.getUUID(orderId));
+                    String errorSource = "", errorMsg = "", notes = "";
                     if(orderOpt.isPresent()) {
                         OrderEntity order = orderOpt.get();
                         OrderState source = order.getOrderState();
                         OrderState target = state.getId();
                         OrderEvent event  = transition.getTrigger().getEvent();
-                        log.info("Change Order State From >> "+source+" To "+target+" Based on Event "+event);
-                        order.addOrderStateHistory(new OrderStateHistoryEntity(source, target, event, ""));
+                        OrderStateHistoryEntity history = null;
+                        if(event != null && event.equals(OrderEvent.FAILURE_EVENT)) {
+                            errorSource = stateMachine.getExtendedState().get(OrderConstants.ERROR_SOURCE, String.class);
+                            errorMsg = stateMachine.getExtendedState().get(OrderConstants.ERROR_MSG, String.class);
+                            notes = "ErrorSource="+errorSource+"|ErrorMsg="+errorMsg;
+                        }
+                        // Create History for the State Change
+                        history = new OrderStateHistoryEntity(source, target, event, order.getVersion()+1, notes);
+                        order.addOrderStateHistory(history);
                         order.setState(target);
+                        // Save the Order with the History Details
                         orderRepository.save(order);
+                        log.info("Change Order State From >> "+source+" To "+target+" Based on Event "+event);
                     }
                 });
         });

@@ -45,6 +45,9 @@ public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
     @Enumerated(EnumType.STRING)
     private OrderEvent transitionEvent;
 
+    @Column(name= "orderVersion", columnDefinition = "int default 0")
+    private Integer orderVersion;
+
     @Column(name = "notes")
     private String notes;
 
@@ -55,12 +58,15 @@ public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
      * @param _source
      * @param _target
      * @param _event
+     * @param _version
      * @param _notes
      */
-    public OrderStateHistoryEntity(OrderState _source, OrderState _target, OrderEvent _event, String _notes) {
+    public OrderStateHistoryEntity(OrderState _source, OrderState _target, OrderEvent _event,
+                                   int _version, String _notes) {
         this.sourceState = _source;
         this.targetState = _target;
         this.transitionEvent = _event;
+        this.orderVersion = _version;
         this.notes = _notes;
     }
 
@@ -86,6 +92,14 @@ public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
      */
     public OrderEvent getTransitionEvent() {
         return transitionEvent;
+    }
+
+    /**
+     * Get the Order Version
+     * @return
+     */
+    public int getOrderVersion() {
+        return orderVersion;
     }
 
     /**

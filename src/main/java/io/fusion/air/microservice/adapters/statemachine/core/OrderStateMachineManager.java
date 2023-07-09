@@ -48,7 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date:
  */
 @Service
-public class OrderStateMachine implements OrderStateMachineService {
+public class OrderStateMachineManager implements OrderStateMachineService {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());

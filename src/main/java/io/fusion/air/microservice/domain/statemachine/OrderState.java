@@ -25,6 +25,14 @@ import java.util.Map;
  */
 public enum OrderState {
 
+    ORDER_RECEIVED,
+
+    IN_PROGRESS,
+
+    ORDER_COMPLETED,
+
+    ERROR,
+
     ORDER_INITIALIZED,
 
     CREDIT_CHOICE,
