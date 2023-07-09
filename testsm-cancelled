@@ -24,6 +24,6 @@ curl -X 'POST' "http://${API_PREFIX}ORDER_IN_TRANSIT_EVENT/customer/${CUSTOMER}/
 
 curl -X 'POST' "http://${API_PREFIX}SEND_FOR_DELIVERY_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
-curl -X 'POST' "http://${API_PREFIX}ORDER_DELIVERED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+curl -X 'POST' "http://${API_PREFIX}ORDER_CANCELLED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
 

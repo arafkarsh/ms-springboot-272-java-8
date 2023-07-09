@@ -19,7 +19,6 @@ import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
-import io.fusion.air.microservice.domain.statemachine.OrderNotes;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
 import org.springframework.context.annotation.Bean;
@@ -51,9 +50,19 @@ public class OrderStateMachineActions {
     @Bean
     public Action<OrderState, OrderEvent> creditCheckAction() {
         return context -> {
-            logStateTransition(context, "Send CREDIT CHECK EVENT");
+            logStateTransition(context, "ACTION ON CREDIT CHECK EVENT");
             // Add Business Logic to Handle Event
             // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> creditApprovedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON CREDIT DENIED EVENT - THROWS EXCEPTION");
+            // Add Business Logic to Handle Event
+            // ...
+            throw new BusinessServiceException("Error in Credit Denied State: Target State = "+context.getTarget().getId().name());
         };
     }
 
@@ -64,7 +73,7 @@ public class OrderStateMachineActions {
     @Bean
     public Action<OrderState, OrderEvent> creditDeniedAction() {
         return context -> {
-            logStateTransition(context, "To Demo Exception Handling: in Credit Denied:");
+            logStateTransition(context, "ACTION ON CREDIT DENIED EVENT - THROWS EXCEPTION");
             // Add Business Logic to Handle Event
             // ...
             throw new BusinessServiceException("Error in Credit Denied State: Target State = "+context.getTarget().getId().name());
@@ -72,9 +81,99 @@ public class OrderStateMachineActions {
     }
 
     @Bean
+    public Action<OrderState, OrderEvent> paymentInitAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON PAYMENT INIT EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
     public Action<OrderState, OrderEvent> paymentApprovalAction() {
         return context -> {
-            logStateTransition(context, "Send PAYMENT APPROVAL EVENT");
+            logStateTransition(context, "ACTION ON PAYMENT APPROVAL EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> paymentDeclinedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON PAYMENT DECLINED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderPackagingAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER PACKAGING EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderReadyToShipAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER READY TO SHIP EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderShippedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER SHIPPED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderInTransitAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER IN TRANSIT EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> sendForDelivery() {
+        return context -> {
+            logStateTransition(context, "ACTION ON SEND FOR DELIVERY EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderCancelledAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER CANCELLED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderReturnedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER RETURNED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> orderDeliveredAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER DELIVERED EVENT");
             // Add Business Logic to Handle Event
             // ...
         };
