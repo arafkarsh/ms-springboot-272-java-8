@@ -19,19 +19,24 @@ import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderNotes;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
 import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateContext;
-import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
+// Spring State Machine
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.action.Action;
 // Java
 import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Order State Machine Actions
+ * Order State Machine Error Handler
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -39,49 +44,43 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 
 @Component
-public class OrderStateMachineActions {
+public class OrderStateMachineErrorHandler {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
     @Bean
-    public Action<OrderState, OrderEvent> creditCheckAction() {
+    public Action<OrderState, OrderEvent> handleError() {
         return context -> {
-            logStateTransition(context, "Send CREDIT CHECK EVENT");
-            // Add Business Logic to Handle Event
-            // ...
+            System.out.println("STATE ERROR 2: ================================================== >>");
+            // Order Notes Object to capture errors
+            OrderNotes error = createOrderNotes(context);
+            // Get the State Machine from the context
+            StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
+            if(stateMachine != null) {
+                // Store the Order Notes in Extended State
+                stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_OBJECT, error);
+                // Extract Order from the Extended State
+                OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
+                if(order != null) {
+                    // Create Message for the Failure Event
+                    Message mesg = MessageBuilder.withPayload(OrderEvent.FAILURE_EVENT)
+                            .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
+                            .build();
+                    // Send Event to the State Machine
+                    stateMachine.sendEvent(mesg);
+                }
+            }
         };
     }
 
     /**
-     * Action to Demonstrate Exception handling in Spring State Machine
-     * @return
-     */
-    @Bean
-    public Action<OrderState, OrderEvent> creditDeniedAction() {
-        return context -> {
-            logStateTransition(context, "To Demo Exception Handling: in Credit Denied:");
-            // Add Business Logic to Handle Event
-            // ...
-            throw new BusinessServiceException("Error in Credit Denied State: Target State = "+context.getTarget().getId().name());
-        };
-    }
-
-    @Bean
-    public Action<OrderState, OrderEvent> paymentApprovalAction() {
-        return context -> {
-            logStateTransition(context, "Send PAYMENT APPROVAL EVENT");
-            // Add Business Logic to Handle Event
-            // ...
-        };
-    }
-
-    /**
-     * Log the State Transition Details
+     * Create Order Notes from the Context
      * @param context
      * @param _msg
      */
-    private void logStateTransition(StateContext<OrderState, OrderEvent> context, String _msg) {
+    private OrderNotes createOrderNotes(StateContext<OrderState, OrderEvent> context) {
+        // Extract Order States and Events
         OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
         OrderState source = context.getSource().getId();
         OrderState target = context.getTarget().getId();
@@ -90,7 +89,9 @@ public class OrderStateMachineActions {
         String t = (target != null) ? target.name() : "No-Target";
         String e = (event != null) ?  event.name() : "No-Event";
         String o = (order != null) ? order.getOrderId() : "No-Order-Found!";
-        log.info("TRANSITIONING FROM {} TO {} based on EVENT = {}", s, t,e);
-        log.info("{} for Order ID = {}",_msg,o);
+        String errorMessage = (context.getException() != null) ? context.getException().getMessage() : "";
+        log.info("TRANSITIONING FAILED: FROM {} TO {} based on EVENT = {}", s, t,e);
+        log.info("{} for Order ID = {}",errorMessage,o);
+        return new OrderNotes(s,t,e, "", errorMessage);
     }
 }

@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.adapters.statemachine.config;
 // Custom
 import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineActions;
+import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineErrorHandler;
 import io.fusion.air.microservice.adapters.statemachine.core.OrderStateMachineGuards;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
@@ -60,6 +61,9 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
 
     @Autowired
     private OrderStateMachineActions orderActions;
+
+    @Autowired
+    private OrderStateMachineErrorHandler errorHandler;
 
     /**
      * Order Processing
@@ -140,7 +144,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .withExternal()
                     .source(OrderState.CREDIT_CHECKING).target(OrderState.CREDIT_DENIED)
                     .event(OrderEvent.CREDIT_DECLINED_EVENT)
-                    .action(orderActions.creditDeniedAction(), orderActions.handleError())
+                    .action(orderActions.creditDeniedAction(), errorHandler.handleError())
                 .and()
                 .withExternal()
                     .source(OrderState.CREDIT_DENIED).target(OrderState.CANCELLED)
@@ -242,7 +246,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 log.error("<><><> Exception occurred during state transition from state: " + errorSourceState, exception);
 
                 // Handle the Error and Send a Failure Event to State Machine
-                stateMachine.sendEvent(OrderEvent.FAILURE_EVENT);
+                // stateMachine.sendEvent(OrderEvent.FAILURE_EVENT);
             }
 
         };

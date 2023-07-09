@@ -64,7 +64,7 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
      */
     @Override
     @Transactional
-    public void preStateChange(State<OrderState, OrderEvent> state,
+    public void postStateChange(State<OrderState, OrderEvent> state,
                                Message<OrderEvent> message,
                                Transition<OrderState, OrderEvent> transition,
                                StateMachine<OrderState, OrderEvent> stateMachine,
