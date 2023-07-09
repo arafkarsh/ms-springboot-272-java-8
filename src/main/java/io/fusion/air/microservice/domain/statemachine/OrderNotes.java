@@ -24,11 +24,11 @@ import java.io.Serializable;
  */
 public class OrderNotes implements Serializable {
 
-    private String sourceState;
-    private String targetState;
-    private String transitionEvent;
-    private String message;
-    private String errorMessage;
+    private String sourceState = "";
+    private String targetState = "";
+    private String transitionEvent = "";
+    private String message = "";
+    private String errorMessage = "";
 
     public OrderNotes() {}
 
@@ -42,11 +42,11 @@ public class OrderNotes implements Serializable {
      */
     public OrderNotes(String _sourceState, String _targetState,
                       String _transitionEvent, String _message, String _errorMessage) {
-        this.sourceState = _sourceState;
-        this.targetState = _targetState;
-        this.transitionEvent = _transitionEvent;
-        this.message = _message;
-        this.errorMessage = _errorMessage;
+        this.sourceState        = (_sourceState != null) ? _sourceState : "";
+        this.targetState        = (_targetState != null) ? _targetState : "";
+        this.transitionEvent    = (_transitionEvent != null) ? _transitionEvent : "";
+        this.message            = (_message != null) ? _message : "";
+        this.errorMessage       = (_errorMessage != null) ? _errorMessage : "";
     }
 
     /**
@@ -77,7 +77,7 @@ public class OrderNotes implements Serializable {
      * Returns the Notes
      * @return
      */
-    private String getMessage() {
+    public String getMessage() {
         return message;
     }
 

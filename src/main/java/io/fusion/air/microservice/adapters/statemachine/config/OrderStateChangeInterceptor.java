@@ -18,10 +18,7 @@ package io.fusion.air.microservice.adapters.statemachine.config;
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.entities.example.OrderStateHistoryEntity;
-import io.fusion.air.microservice.domain.statemachine.OrderConstants;
-import io.fusion.air.microservice.domain.statemachine.OrderNotes;
-import io.fusion.air.microservice.domain.statemachine.OrderEvent;
-import io.fusion.air.microservice.domain.statemachine.OrderState;
+import io.fusion.air.microservice.domain.statemachine.*;
 import io.fusion.air.microservice.utils.Utils;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,25 +82,33 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                         OrderEvent event  = transition.getTrigger().getEvent();
                         OrderStateHistoryEntity history = null;
                         OrderNotes errorObj = null;
+                        OrderResult result = null;
                         try {
+                            // If the Event is a FAILURE Event thrown by Exceptions
                             if(event != null && event.equals(OrderEvent.FAILURE_EVENT)) {
                                 errorObj = stateMachine.getExtendedState().get(OrderConstants.ERROR_OBJECT, OrderNotes.class);
-                                // errorSource = stateMachine.getExtendedState().get(OrderConstants.ERROR_SOURCE, String.class);
-                                // errorMsg = stateMachine.getExtendedState().get(OrderConstants.ERROR_MSG, String.class);
-                                // notes = "ErrorSource="+errorSource+"|ErrorMsg="+errorMsg;
                                 notes = Utils.toJsonString(errorObj);
+                                result = OrderResult.fromString(errorObj.getTargetState());
+                            }
+                            // Check if there are any Results Available based on Target State
+                            if(result == null) {
+                                result = OrderResult.fromString(target.name());
                             }
                             // Create History for the State Change
                             history = new OrderStateHistoryEntity(source, target, event, order.getVersion() + 1, notes);
                             order.addOrderStateHistory(history);
                             order.setState(target);
+                            // If Results Available then Set the Result in Order Object
+                            if(result != null) {
+                                order.setOrderResult(result);
+                            }
                             // Save the Order with the History Details
                             orderRepository.save(order);
                             String s = (source != null) ? source.name() : "NO-SOURCE";
                             String t = (target != null) ? target.name() : "NO-TARGET";
                             String e = (event != null) ? event.name() : "NO-EVENT";
                             log.info("CHANGE ORDER STATE FROM >> {} TO {}  Based on Event {}",s, t, e);
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             log.error("ERROR in OrderStateChangeListener! ");
                             e.printStackTrace();
                         }

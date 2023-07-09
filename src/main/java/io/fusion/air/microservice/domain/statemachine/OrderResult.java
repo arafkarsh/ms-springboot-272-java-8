@@ -23,43 +23,19 @@ import java.util.Map;
  * @version:
  * @date:
  */
-public enum OrderState {
-
-    ORDER_RECEIVED,
-
+public enum OrderResult {
     IN_PROGRESS,
 
-    ORDER_COMPLETED,
-
-    ERROR,
-
     SUSPENDED,
-
-    ORDER_INITIALIZED,
-
-    CREDIT_CHOICE,
-
-    CREDIT_CHECKING,
 
     CREDIT_APPROVED,
 
     CREDIT_DENIED,
 
-    PAYMENT_PROCESSING,
 
     PAYMENT_CONFIRMED,
 
     PAYMENT_DECLINED,
-
-    PACKING_IN_PROCESS,
-
-    READY_FOR_SHIPMENT,
-
-    SHIPPED,
-
-    IN_TRANSIT,
-
-    REACHED_DESTINATION,
 
     CANCELLED,
 
@@ -68,22 +44,18 @@ public enum OrderState {
     DELIVERED;
 
     // Lookup table
-    private static final Map<String, OrderState> lookup = new HashMap<>();
+    private static final Map<String, OrderResult> lookup = new HashMap<>();
 
     // Populate the lookup table on loading time
     static {
-        for (OrderState os : OrderState.values()) {
+        for (OrderResult os : OrderResult.values()) {
             lookup.put(os.name().toLowerCase(), os);
         }
     }
 
     // This method can be used for reverse lookup purpose
-    public static OrderState fromString(String state) {
-        OrderState foundState = lookup.get(state.trim().toLowerCase());
-        if (foundState == null) {
-            throw new IllegalArgumentException("No OrderState with text " + state + " found");
-        }
-        return foundState;
+    public static OrderResult fromString(String state) {
+        return lookup.get(state.trim().toLowerCase());
     }
 
 }

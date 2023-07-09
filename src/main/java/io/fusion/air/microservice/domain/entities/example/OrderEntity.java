@@ -17,6 +17,7 @@ package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
+import io.fusion.air.microservice.domain.statemachine.OrderResult;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 
 import javax.persistence.*;
@@ -61,7 +62,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
 
     @Column(name = "result")
     @Enumerated(EnumType.STRING)
-    private OrderState result;
+    private OrderResult result;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
@@ -98,6 +99,14 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      */
     public void setState(OrderState state) {
         orderState = state;
+    }
+
+    /**
+     * Set the Order Result
+     * @param _result
+     */
+    public void setOrderResult(OrderResult _result) {
+        this.result = _result;
     }
 
     /**
@@ -168,7 +177,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      * Returns the Result of the Current Order Processing State
      * @return
      */
-    public OrderState getResult() {
+    public OrderResult getResult() {
         return result;
     }
 
@@ -203,7 +212,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
     @JsonIgnore
     protected void initializeOrder() {
         orderState = OrderState.ORDER_INITIALIZED;
-        result = OrderState.IN_PROGRESS;
+        result = OrderResult.IN_PROGRESS;
     }
 
     public static Builder builder() {

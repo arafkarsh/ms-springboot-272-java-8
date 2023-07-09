@@ -82,26 +82,28 @@ public class OrderStateMachineActions {
     public Action<OrderState, OrderEvent> handleError() {
         return context -> {
             System.out.println("STATE ERROR 2: ================================================== >>");
-
+            // Extract Order States and Events
             OrderState sourceState = context.getSource().getId();
             OrderState targetState = context.getTarget().getId();
             OrderEvent event = context.getEvent();
-
             String s = (sourceState != null) ? sourceState.name() : "No-Source";
             String t = (targetState != null) ? targetState.name() : "No-Target";
             String e = (event != null) ?  event.name() : "No-Event";
+
+            // Order Notes Object to capture errors
             OrderNotes error = new OrderNotes(s,t,e, "", context.getException().getMessage());
-
+            // Store the Order Notes in Extended State
             StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
-            stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_SOURCE, sourceState.name());
-            stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_MSG, context.getException().getMessage());
             stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_OBJECT, error);
-
+            // Extract Order ID from the Extended State
             OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
-            log.info("HANDLE ERROR in Target State:{} Order ID = {}",targetState.name(), order.getOrderId());
+            log.info("HANDLE ERROR in Target State:{} Order ID = {}",t, order.getOrderId());
+
+            // Create Message for the Failure Event
             Message mesg = MessageBuilder.withPayload(OrderEvent.FAILURE_EVENT)
                     .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
                     .build();
+            // Send Event to the State Machine
             stateMachine.sendEvent(mesg);
 
         };
