@@ -16,7 +16,6 @@
 package io.fusion.air.microservice.adapters.statemachine.core;
 // Custom
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
-import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderNotes;
@@ -77,7 +76,6 @@ public class OrderStateMachineErrorHandler {
     /**
      * Create Order Notes from the Context
      * @param context
-     * @param _msg
      */
     private OrderNotes createOrderNotes(StateContext<OrderState, OrderEvent> context) {
         // Extract Order States and Events
@@ -90,7 +88,7 @@ public class OrderStateMachineErrorHandler {
         String e = (event != null) ?  event.name() : "No-Event";
         String o = (order != null) ? order.getOrderId() : "No-Order-Found!";
         String errorMessage = (context.getException() != null) ? context.getException().getMessage() : "";
-        log.info("TRANSITIONING FAILED: FROM {} TO {} based on EVENT = {}", s, t,e);
+        log.info("TRANSITIONING FAILED: FROM [{}] TO ({}) based on EVENT = <{}>", s, t,e);
         log.info("{} for Order ID = {}",errorMessage,o);
         return new OrderNotes(s,t,e, "", errorMessage);
     }

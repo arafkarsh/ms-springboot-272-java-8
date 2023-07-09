@@ -100,10 +100,15 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .state(OrderState.IN_TRANSIT)              // In Transit
                     .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
 
-                    .end(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
-                    .end(OrderState.CANCELLED)                 // :-( Sad Path
-                    .end(OrderState.RETURNED)                  // :-( Sad Path
-                    .end(OrderState.DELIVERED);                // :-) Happy Path
+                    .state(OrderState.PAYMENT_DECLINED)          // :-( Sad Path
+                    .state(OrderState.CANCELLED)                 // :-( Sad Path
+                    .state(OrderState.RETURNED)                  // :-( Sad Path
+                    .state(OrderState.DELIVERED)                 // :-) Happy Path
+
+                    .stateEntry(OrderState.DELIVERED, orderActions.autoTransition())
+                    .stateEntry(OrderState.RETURNED, orderActions.autoTransition())
+                    .stateEntry(OrderState.CANCELLED, orderActions.autoTransition())
+                ;
         }
 
     /**
@@ -193,6 +198,19 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .withExternal()
                     .source(OrderState.SHIPPED).target(OrderState.RETURNED)
                     .event(OrderEvent.ORDER_RETURNED_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.DELIVERED).target(OrderState.ORDER_COMPLETED)
+                    .event(OrderEvent.AUTO_TRANSITION_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.RETURNED).target(OrderState.ORDER_COMPLETED)
+                    .event(OrderEvent.AUTO_TRANSITION_EVENT)
+                .and()
+                .withExternal()
+                    .source(OrderState.CANCELLED).target(OrderState.ORDER_COMPLETED)
+                    .event(OrderEvent.AUTO_TRANSITION_EVENT)
+
         ;
     }
 
@@ -225,8 +243,8 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
              */
             @Override
             public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
-                System.out.println("STATE TRANSITION ================================================== >>");
-                log.info(String.format(">>> State Changed From: %s >> To >> %s", from, to));
+                // System.out.println("STATE TRANSITION ================================================== >>");
+                // logStateTransition(from, to);
             }
 
             /**
@@ -250,5 +268,18 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
             }
 
         };
+    }
+
+    /**
+     * Log State Change
+     * @param from
+     * @param to
+     */
+    private void logStateTransition(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
+        OrderState source = (from != null) ? from.getId() : null;
+        OrderState target = (to != null) ? to.getId() : null;
+        String s = (source != null) ? source.name() : "No-Source";
+        String t = (target != null) ? target.name() : "No-Target";
+        log.info("LISTENER: STATE TRANSITIONING FROM [{}] TO ({})", s, t);
     }
 }

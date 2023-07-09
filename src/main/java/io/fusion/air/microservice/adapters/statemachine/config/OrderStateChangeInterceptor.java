@@ -104,16 +104,29 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                             }
                             // Save the Order with the History Details
                             orderRepository.save(order);
-                            String s = (source != null) ? source.name() : "NO-SOURCE";
-                            String t = (target != null) ? target.name() : "NO-TARGET";
-                            String e = (event != null) ? event.name() : "NO-EVENT";
-                            log.info("CHANGE ORDER STATE FROM >> {} TO {}  Based on Event {}",s, t, e);
                         } catch (Exception e) {
-                            log.error("ERROR in OrderStateChangeListener! ");
+                            log.error("ERROR in OrderStateChangeListener! "+e.getMessage(),e);
                             e.printStackTrace();
+                        } finally {
+                            // Log the State Change
+                            logStateChange(source, target, event);
                         }
                     }
                 });
         });
+    }
+
+    /**
+     * Log State Change
+     * @param source
+     * @param target
+     * @param event
+     */
+    private void logStateChange(OrderState source, OrderState target, OrderEvent event) {
+        String s = (source != null) ? source.name() : "NO-SOURCE";
+        String t = (target != null) ? target.name() : "NO-TARGET";
+        String e = (event != null) ? event.name() : "NO-EVENT";
+        System.out.println("STATE TRANSITION ================================================== >>");
+        log.info("CHANGE ORDER STATE FROM >> [{}] TO ({})  Based on Event <{}>",s, t, e);
     }
 }

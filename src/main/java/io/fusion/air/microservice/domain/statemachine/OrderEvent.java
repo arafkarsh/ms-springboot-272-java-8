@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public enum OrderEvent {
 
+    AUTO_TRANSITION_EVENT,
     CREDIT_CHECKING_EVENT,
 
     CREDIT_APPROVED_EVENT,

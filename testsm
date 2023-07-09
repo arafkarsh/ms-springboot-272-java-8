@@ -1,0 +1,52 @@
+#!/bin/sh
+echo "Order State Machine Test"
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/reset/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' 'http://localhost:9090/ms-cache/api/v1/order/process/event/CREDIT_CHECKING_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' -H 'accept: application/json' -d ''
+
+curl -X 'POST' 'http://localhost:9090/ms-cache/api/v1/order/process/event/CREDIT_APPROVED_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' -H 'accept: application/json' -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/PAYMENT_INIT_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/PAYMENT_APPROVED_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/ORDER_PACKAGE_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/ORDER_READY_TO_SHIP_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/ORDER_SHIPPED_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/ORDER_IN_TRANSIT_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/SEND_FOR_DELIVERY_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+curl -X 'POST' \
+  'http://localhost:9090/ms-cache/api/v1/order/process/event/ORDER_DELIVERED_EVENT/customer/123/order/e5a5bb0d-6282-4072-9926-a0653095fd07' \
+  -H 'accept: application/json' \
+  -d ''
+
+

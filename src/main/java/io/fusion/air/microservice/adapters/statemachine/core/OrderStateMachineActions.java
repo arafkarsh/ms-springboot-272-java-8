@@ -19,10 +19,14 @@ import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.OrderNotes;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
 import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateContext;
+import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
 // Java
@@ -76,6 +80,28 @@ public class OrderStateMachineActions {
         };
     }
 
+    @Bean
+    public Action<OrderState, OrderEvent> autoTransition() {
+        return context -> {
+            System.out.println("AUTO TRANSITIONING: ==================================================== >>");
+            // Get the State Machine from the context
+            StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
+            if(stateMachine != null) {
+                // Extract Order from the Extended State
+                OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
+                if(order != null) {
+                    // Create Message for the Failure Event
+                    Message mesg = MessageBuilder.withPayload(OrderEvent.AUTO_TRANSITION_EVENT)
+                            .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
+                            .build();
+                    // Send Event to the State Machine
+                    stateMachine.sendEvent(mesg);
+                    logStateTransition(context, "AUTO TRANSITION EVENT SEND: ");
+                }
+            }
+        };
+    }
+
     /**
      * Log the State Transition Details
      * @param context
@@ -90,7 +116,7 @@ public class OrderStateMachineActions {
         String t = (target != null) ? target.name() : "No-Target";
         String e = (event != null) ?  event.name() : "No-Event";
         String o = (order != null) ? order.getOrderId() : "No-Order-Found!";
-        log.info("TRANSITIONING FROM {} TO {} based on EVENT = {}", s, t,e);
+        log.info("TRANSITIONING FROM [{}] TO ({}) based on EVENT = <{}>", s, t,e);
         log.info("{} for Order ID = {}",_msg,o);
     }
 }
