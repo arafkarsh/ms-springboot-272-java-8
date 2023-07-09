@@ -59,10 +59,9 @@ public class OrderStateMachineActions {
     @Bean
     public Action<OrderState, OrderEvent> creditApprovedAction() {
         return context -> {
-            logStateTransition(context, "ACTION ON CREDIT DENIED EVENT - THROWS EXCEPTION");
+            logStateTransition(context, "ACTION ON CREDIT APPROVED EVENT");
             // Add Business Logic to Handle Event
             // ...
-            throw new BusinessServiceException("Error in Credit Denied State: Target State = "+context.getTarget().getId().name());
         };
     }
 
@@ -76,7 +75,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON CREDIT DENIED EVENT - THROWS EXCEPTION");
             // Add Business Logic to Handle Event
             // ...
-            throw new BusinessServiceException("Error in Credit Denied State: Target State = "+context.getTarget().getId().name());
+            throw new BusinessServiceException("Service Unavailable to check Credit: Target State = "+context.getTarget().getId().name());
         };
     }
 

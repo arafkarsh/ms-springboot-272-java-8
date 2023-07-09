@@ -1,0 +1,14 @@
+#!/bin/sh
+echo "Order State Machine Test"
+API_PREFIX=localhost:9090/ms-cache/api/v1/order/process/event/
+ORDER=e5a5bb0d-6282-4072-9926-a0653095fd07
+CUSTOMER=123
+echo "RESET\n"
+curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/order/process/reset/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+
+echo "\n\nCREDIT_CHECKING_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}CREDIT_CHECKING_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+
+echo "\n\nCREDIT_DECLINED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}CREDIT_DECLINED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+

@@ -46,10 +46,6 @@ public class OrderStateMachineGuards {
     @Bean
     public Guard<OrderState, OrderEvent> creditCheckRequiredGuard() {
         return context -> {
-            // Following Method is Required if the OrderEntity is Send as a Message (sendMessage)
-            // As the OrderEntity is Set as an Extended State following call is NOT Required.
-            // OrderEntity order = (OrderEntity) context.getMessageHeader(OrderConstants.ORDER_HEADER);
-
             // Extract OrderEntity from the Extended State
             OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
             if(order != null) {
