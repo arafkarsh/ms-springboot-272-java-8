@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.domain.entities.example;
-
+// Custom
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
+import io.fusion.air.microservice.domain.statemachine.OrderNotes;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
-
+import io.fusion.air.microservice.utils.Utils;
+// Java X Persistence
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * To Keep Track of Order States and its Transitions based on Order Event
@@ -106,7 +109,23 @@ public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
      * Returns Notes
      * @return
      */
-    public String getNotes() {
+    @JsonIgnore
+    public String getNotesString() {
         return notes;
+    }
+
+    /**
+     * Returns Object Error
+     * @return
+     */
+    public OrderNotes getNotes() {
+        if(notes != null && notes.trim().length() > 0) {
+            try {
+                return Utils.fromJsonToObject(notes, OrderNotes.class);
+            } catch (Exception e) {
+                System.out.println("ERROR: " + e.getMessage());
+            }
+        }
+        return null;
     }
 }

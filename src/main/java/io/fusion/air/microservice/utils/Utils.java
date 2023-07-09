@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
-import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.slf4j.MDC;
 
 import javax.servlet.http.Cookie;
@@ -267,6 +266,29 @@ public final class Utils {
 		}
 		return "";
 	}
+
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+
+	static {
+		// Configure objectMapper for your needs
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+
+	/**
+	 * Convert JSON to Object
+	 * @param jsonString
+	 * @param targetClass
+	 * @return
+	 * @param <T>
+	 */
+	public static <T> T fromJsonToObject(String jsonString, Class<T> targetClass) {
+		try {
+			return objectMapper.readValue(jsonString, targetClass);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Failed to convert JSON string to object: " + e.getMessage(), e);
+		}
+	}
+
 	
 	/**
 	 * String Utilities

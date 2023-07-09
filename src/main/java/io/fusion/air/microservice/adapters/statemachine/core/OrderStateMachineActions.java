@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.adapters.statemachine.core;
-
+// Custom
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.OrderConstants;
+import io.fusion.air.microservice.domain.statemachine.OrderNotes;
 import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
-import org.slf4j.Logger;
+// Spring
 import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
 import org.springframework.stereotype.Component;
-
+// Java
+import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -48,11 +54,56 @@ public class OrderStateMachineActions {
                 OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
                 OrderState sourceState = context.getSource().getId();
                 OrderState targetState = context.getTarget().getId();
-                log.info("Transitioning from {} to {}", sourceState, targetState);
+                log.info("Transitioning FROM {} TO {}", sourceState, targetState);
                 log.info("Send CREDIT CHECK EVENT for Order ID = "+order.getOrderId());
             } catch (Exception e) {
 
             }
+        };
+    }
+
+    /**
+     * Action to Demonstrate Exception handling in Spring State Machine
+     * @return
+     */
+    @Bean
+    public Action<OrderState, OrderEvent> creditDeniedAction() {
+        return context -> {
+            OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
+            OrderState sourceState = context.getSource().getId();
+            OrderState targetState = context.getTarget().getId();
+            log.info("Transitioning FROM {} TO {}", sourceState, targetState);
+            log.info("To Demo Exception Handling: in Credit Denied: Order ID = "+order.getOrderId());
+            throw new BusinessServiceException("Error in Credit Denied State: Target State = "+targetState.name());
+        };
+    }
+
+    @Bean
+    public Action<OrderState, OrderEvent> handleError() {
+        return context -> {
+            System.out.println("STATE ERROR 2: ================================================== >>");
+
+            OrderState sourceState = context.getSource().getId();
+            OrderState targetState = context.getTarget().getId();
+            OrderEvent event = context.getEvent();
+
+            String s = (sourceState != null) ? sourceState.name() : "No-Source";
+            String t = (targetState != null) ? targetState.name() : "No-Target";
+            String e = (event != null) ?  event.name() : "No-Event";
+            OrderNotes error = new OrderNotes(s,t,e, "", context.getException().getMessage());
+
+            StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
+            stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_SOURCE, sourceState.name());
+            stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_MSG, context.getException().getMessage());
+            stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_OBJECT, error);
+
+            OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
+            log.info("HANDLE ERROR in Target State:{} Order ID = {}",targetState.name(), order.getOrderId());
+            Message mesg = MessageBuilder.withPayload(OrderEvent.FAILURE_EVENT)
+                    .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
+                    .build();
+            stateMachine.sendEvent(mesg);
+
         };
     }
 }

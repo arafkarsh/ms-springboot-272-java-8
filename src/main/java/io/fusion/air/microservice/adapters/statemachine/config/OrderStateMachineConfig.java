@@ -22,6 +22,7 @@ import io.fusion.air.microservice.domain.statemachine.OrderEvent;
 import io.fusion.air.microservice.domain.statemachine.OrderState;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 // Spring State Machine
 import org.springframework.statemachine.StateMachine;
@@ -31,15 +32,13 @@ import org.springframework.statemachine.config.builders.StateMachineConfiguratio
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
+import org.springframework.statemachine.listener.StateMachineListener;
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 // Java &  SLF4J
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.slf4j.Logger;
-import org.springframework.statemachine.transition.Transition;
-
-import java.math.BigDecimal;
 
 /**
  * Order State Machine
@@ -74,9 +73,9 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         states
             .withStates()
                 .initial(OrderState.ORDER_RECEIVED)            // Order RECEIVED
-                .state(OrderState.IN_PROGRESS)
+                .state(OrderState.IN_PROGRESS)                  // IN Progress State
                 .state(OrderState.ERROR)                        // ERROR State
-                .end(OrderState.ORDER_COMPLETED)
+                .end(OrderState.ORDER_COMPLETED)                // Order Processing Completed
                 .and()
                 .withStates()
                     .parent(OrderState.ORDER_RECEIVED)         // ROOT of All the States
@@ -141,6 +140,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .withExternal()
                     .source(OrderState.CREDIT_CHECKING).target(OrderState.CREDIT_DENIED)
                     .event(OrderEvent.CREDIT_DECLINED_EVENT)
+                    .action(orderActions.creditDeniedAction(), orderActions.handleError())
                 .and()
                 .withExternal()
                     .source(OrderState.CREDIT_DENIED).target(OrderState.CANCELLED)
@@ -203,7 +203,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineConfigurationConfigurer<OrderState, OrderEvent> config) throws Exception {
         config
                 .withConfiguration()
-                .listener(getSMListenerAdapter())
+                .listener(stateMachineListener())
                 .autoStartup(true);
     }
 
@@ -211,8 +211,9 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
      * Logs the State Changes in the State Machine
      * @return
      */
-    private StateMachineListenerAdapter<OrderState, OrderEvent> getSMListenerAdapter() {
-        StateMachineListenerAdapter<OrderState, OrderEvent> adapter = new StateMachineListenerAdapter<OrderState, OrderEvent>() {
+    @Bean
+    public StateMachineListener<OrderState, OrderEvent> stateMachineListener() {
+        return new StateMachineListenerAdapter<OrderState, OrderEvent>() {
             /**
              * Log when the State changes.
              * @param from
@@ -220,7 +221,8 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
              */
             @Override
             public void stateChanged(State<OrderState, OrderEvent> from, State<OrderState, OrderEvent> to) {
-                log.info(String.format(">> State Changed From: %s >> To >> %s", from, to));
+                System.out.println("STATE TRANSITION ================================================== >>");
+                log.info(String.format(">>> State Changed From: %s >> To >> %s", from, to));
             }
 
             /**
@@ -228,19 +230,21 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
              * @param stateMachine
              * @param exception
              */
+            @Override
             public void stateMachineError(StateMachine<OrderState, OrderEvent> stateMachine, Exception exception) {
+                System.out.println("STATE ERROR 1: ================================================== >>");
+
                 // Capture the current state before transitioning to the error state
                 OrderState errorSourceState = stateMachine.getState().getId();
                 stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_SOURCE, errorSourceState);
                 stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_MSG, exception.getMessage());
                 // Log the exception and the source state
-                log.error("Exception occurred during state transition from state: " + errorSourceState, exception);
+                log.error("<><><> Exception occurred during state transition from state: " + errorSourceState, exception);
 
                 // Handle the Error and Send a Failure Event to State Machine
                 stateMachine.sendEvent(OrderEvent.FAILURE_EVENT);
             }
 
         };
-        return adapter;
     }
 }
