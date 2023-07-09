@@ -207,6 +207,7 @@ public class OrderStateMachineActions {
      * @param _msg
      */
     private void logStateTransition(StateContext<OrderState, OrderEvent> context, String _msg) {
+        System.out.println("STATE ACTION on EVENT  =============================================== >>");
         OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
         OrderState source = context.getSource().getId();
         OrderState target = context.getTarget().getId();
