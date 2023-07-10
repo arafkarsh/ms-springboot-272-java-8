@@ -16,6 +16,9 @@
 package io.fusion.air.microservice.domain.ports.services;
 // Custom
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+
+import java.util.List;
 
 /**
  * Order State Machine Service
@@ -67,12 +70,27 @@ public interface OrderStateMachineService {
      */
     public void paymentDeclined(OrderEntity order);
 
+
+    /**
+     * Package Fork - Parallel Processing: Order Packaging
+     * @param order
+     * @return
+     */
+    public void packageFork(OrderEntity order);
+
     /**
      * Package the Order
      * @param order
      * @return
      */
     public void orderPackage(OrderEntity order);
+
+    /**
+     * Package Fork - Parallel Processing: Send Bill Notification
+     * @param order
+     * @return
+     */
+    public void sendBill(OrderEntity order);
 
     /**
      * Ready to Ship once the Order is Packaged
@@ -119,5 +137,12 @@ public interface OrderStateMachineService {
      * @return
      */
     public void orderCancelled(OrderEntity order);
+
+    /**
+     * Sends Multiple Events to the State Machine
+     * @param order
+     * @param events
+     */
+    public void multipleEvents(OrderEntity order, List<OrderEvent> events);
 
 }

@@ -3,6 +3,10 @@ echo "Order State Machine Test"
 API_PREFIX=localhost:9090/ms-cache/api/v1/order/process/event/
 ORDER=e5a5bb0d-6282-4072-9926-a0653095fd07
 CUSTOMER=123
+if [ -n "$1" ]; then
+    ORDER=$1
+fi
+
 echo "RESET\n"
 curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/order/process/reset/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 

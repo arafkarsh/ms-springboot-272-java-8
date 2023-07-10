@@ -116,6 +116,15 @@ public class OrderStateMachineActions {
     }
 
     @Bean
+    public Action<OrderState, OrderEvent> sendBillAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON ORDER SEND BILL EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
+
+    @Bean
     public Action<OrderState, OrderEvent> orderReadyToShipAction() {
         return context -> {
             logStateTransition(context, "ACTION ON ORDER READY TO SHIP EVENT");
@@ -181,7 +190,7 @@ public class OrderStateMachineActions {
     @Bean
     public Action<OrderState, OrderEvent> autoTransition() {
         return context -> {
-            System.out.println("AUTO TRANSITIONING: ==================================================== >>");
+            System.out.println("(6) AUTO TRANSITIONING: == (StateMachineActions) ================================================= >>");
             // Get the State Machine from the context
             StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
             if(stateMachine != null) {
@@ -206,7 +215,10 @@ public class OrderStateMachineActions {
      * @param _msg
      */
     private void logStateTransition(StateContext<OrderState, OrderEvent> context, String _msg) {
-        System.out.println("STATE ACTION on EVENT  =============================================== >>");
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        System.out.println("(3) STATE ACTION on EVENT  == (StateMachineActions) =========================================== >>");
+        System.out.println("--------------------------------------------------------------------------------------------------");
+
         OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
         OrderState source = context.getSource().getId();
         OrderState target = context.getTarget().getId();

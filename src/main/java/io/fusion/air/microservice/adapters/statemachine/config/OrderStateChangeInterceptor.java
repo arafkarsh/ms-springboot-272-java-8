@@ -23,6 +23,10 @@ import io.fusion.air.microservice.utils.Utils;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
+import org.springframework.statemachine.access.StateMachineAccess;
+import org.springframework.statemachine.access.StateMachineAccessor;
+import org.springframework.statemachine.region.Region;
+import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +56,9 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderHistoryService orderHistoryService;
 
     /**
      * Based on the State change by the Order Event
@@ -90,6 +97,8 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                                 notes = Utils.toJsonString(errorObj);
                                 result = OrderResult.fromString(errorObj.getTargetState());
                             }
+                            orderHistoryService.saveOrderHistory(source, target, event, order, errorObj);
+                            /**
                             // Check if there are any Results Available based on Target State
                             if(result == null) {
                                 result = OrderResult.fromString(target.name());
@@ -104,6 +113,7 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                             }
                             // Save the Order with the History Details
                             orderRepository.save(order);
+                             */
                         } catch (Exception e) {
                             log.error("ERROR in OrderStateChangeListener! "+e.getMessage(),e);
                             e.printStackTrace();
@@ -126,7 +136,11 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
         String s = (source != null) ? source.name() : "NO-SOURCE";
         String t = (target != null) ? target.name() : "NO-TARGET";
         String e = (event != null) ? event.name() : "NO-EVENT";
-        System.out.println("STATE TRANSITION ================================================== >>");
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        System.out.println("(4) STATE TRANSITION == (StateChangeInterceptor) ============================================== >> "+event);
+        System.out.println("--------------------------------------------------------------------------------------------------");
         log.info("CHANGE ORDER STATE FROM >> [{}] TO ({})  Based on Event <{}>",s, t, e);
+        System.out.println("--------------------------------------------------------------------------------------------------");
+
     }
 }

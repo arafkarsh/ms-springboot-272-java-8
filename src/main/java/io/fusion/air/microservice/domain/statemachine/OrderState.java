@@ -25,47 +25,69 @@ import java.util.Map;
  */
 public enum OrderState {
 
-    ORDER_RECEIVED,
+    ORDER_RECEIVED(1),
 
-    IN_PROGRESS,
+    IN_PROGRESS(2),
 
-    ORDER_COMPLETED,
+    ORDER_COMPLETED(200),
 
-    ERROR,
+    ERROR(100),
 
-    SUSPENDED,
+    JOIN_SHIPMENT(50),
 
-    ORDER_INITIALIZED,
+    SUSPENDED(99),
 
-    CREDIT_CHOICE,
+    ORDER_INITIALIZED (10),
 
-    CREDIT_CHECKING,
+    CREDIT_CHOICE(11),
 
-    CREDIT_APPROVED,
+    CREDIT_CHECKING(12),
 
-    CREDIT_DENIED,
+    CREDIT_APPROVED(13),
 
-    PAYMENT_PROCESSING,
+    CREDIT_DENIED(14),
 
-    PAYMENT_CONFIRMED,
+    PAYMENT_PROCESSING(21),
 
-    PAYMENT_DECLINED,
+    PAYMENT_CONFIRMED(22),
 
-    PACKING_IN_PROCESS,
+    PAYMENT_DECLINED(23),
 
-    READY_FOR_SHIPMENT,
+    PACKING_FORK(31),
 
-    SHIPPED,
+    ORDER_PACKAGING_START(32),
 
-    IN_TRANSIT,
+    ORDER_PACKAGING_DONE(33),
 
-    REACHED_DESTINATION,
 
-    CANCELLED,
+    SEND_BILL_START(34),
 
-    RETURNED,
+    SEND_BILL_DONE(35),
 
-    DELIVERED;
+
+    READY_TO_SHIP_JOIN(41),
+
+    SHIPPED(42),
+
+    IN_TRANSIT(43),
+
+    REACHED_DESTINATION(44),
+
+    CANCELLED(61),
+
+    RETURNED(62),
+
+    DELIVERED(63);
+
+    private final int rank;
+
+    OrderState(int rank) {
+        this.rank = rank;
+    }
+
+    public int getRank() {
+        return this.rank;
+    }
 
     // Lookup table
     private static final Map<String, OrderState> lookup = new HashMap<>();

@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "order_state_history_tx")
-public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
+public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID implements Comparable<OrderStateHistoryEntity> {
 
     @Column(name = "sourceState")
     @Enumerated(EnumType.STRING)
@@ -127,5 +127,14 @@ public class OrderStateHistoryEntity extends AbstractBaseEntityWithUUID {
             }
         }
         return null;
+    }
+
+    /**
+     * Compare based on Order Version For Sorting in Ascending order.
+     */
+    @Override
+    @JsonIgnore
+    public int compareTo(OrderStateHistoryEntity o) {
+        return this.orderVersion - o.orderVersion;
     }
 }

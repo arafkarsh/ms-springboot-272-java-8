@@ -16,7 +16,9 @@
 package io.fusion.air.microservice.adapters.service;
 // Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
+import io.fusion.air.microservice.adapters.statemachine.config.OrderStateDetails;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
@@ -29,6 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 // Java
 import org.slf4j.Logger;
+import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,6 +52,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date:
  */
 @Service
+@RequestScope
 public class OrderServiceImpl implements OrderService {
 
     // Set Logger -> Lookup will automatically determine the class name.
@@ -188,8 +194,15 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     public OrderEntity handleEvent(String customerId, String orderId, OrderEvent orderEvent) {
+        if(orderEvent == null) {
+            throw new BusinessServiceException("Invalid Event for OrderProcessing!");
+        }
         Optional<OrderEntity> orderOpt = findById( customerId,  orderId);
         log.info("Handle Event "+orderEvent+" For Order ID = "+orderId);
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        System.out.println("(1) INCOMING EVENT == (OrderServiceImpl) === ["+orderEvent.name()+"] ======= >> OrderID = "+orderId);
+        System.out.println("--------------------------------------------------------------------------------------------------");
+
         OrderEntity order = orderOpt.get();
         switch(orderEvent) {
             case CREDIT_CHECKING_EVENT:
@@ -216,39 +229,63 @@ public class OrderServiceImpl implements OrderService {
                 orderStateMachineService.paymentDeclined(order);
                 break;
 
-            case ORDER_PACKAGE_EVENT:
+            case PACKAGE_FORK_EVENT:
+                ArrayList<OrderEvent> events = new ArrayList<OrderEvent>();
+                events.add(OrderEvent.PACKAGE_FORK_EVENT);
+                events.add(OrderEvent.PACKAGE_EVENT);
+                events.add(OrderEvent.ORDER_SEND_BILL_EVENT);
+                events.add(OrderEvent.ORDER_READY_TO_SHIP_EVENT);
+                // events.add(OrderEvent.ORDER_SHIPPED_EVENT);
+                orderStateMachineService.multipleEvents(order, events);
+                /**
+                    orderStateMachineService.packageFork(order);
+                    // break;
+                 */
+            case PACKAGE_EVENT:
                 orderStateMachineService.orderPackage(order);
                 break;
 
+            case ORDER_SEND_BILL_EVENT:
+                orderStateMachineService.sendBill(order);
+                break;
+
             case ORDER_READY_TO_SHIP_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_READY_TO_SHIP_EVENT");
                 orderStateMachineService.readyToShip(order);
                 break;
 
             case ORDER_SHIPPED_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_SHIPPED_EVENT");
                 orderStateMachineService.shipTheProduct(order);
                 break;
 
             case ORDER_IN_TRANSIT_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_IN_TRANSIT_EVENT");
                 orderStateMachineService.orderInTransit(order);
                 break;
 
             case SEND_FOR_DELIVERY_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: SEND_FOR_DELIVERY_EVENT");
                 orderStateMachineService.sendForDelivery(order);
                 break;
 
             case ORDER_CANCELLED_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_CANCELLED_EVENT");
                 orderStateMachineService.orderCancelled(order);
                 break;
 
             case ORDER_DELIVERED_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_DELIVERED_EVENT");
                 orderStateMachineService.orderDelivered(order);
                 break;
 
             case ORDER_RETURNED_EVENT:
+                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_RETURNED_EVENT");
                 orderStateMachineService.orderReturned(order);
                 break;
 
             default:
+                System.out.println("INVALID EVENT ..... ");
                 break;
         }
         return order;

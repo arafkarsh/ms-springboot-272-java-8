@@ -23,6 +23,7 @@ import io.fusion.air.microservice.domain.statemachine.OrderState;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -186,6 +187,7 @@ public class OrderEntity extends AbstractBaseEntityWithUUID {
      * @return
      */
     public List<OrderStateHistoryEntity> getOrderHistory() {
+         Collections.sort(orderHistory);
         return orderHistory;
     }
 

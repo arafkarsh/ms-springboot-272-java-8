@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.adapters.statemachine.core;
 // Custom
 import io.fusion.air.microservice.adapters.statemachine.config.OrderStateChangeInterceptor;
+import io.fusion.air.microservice.adapters.statemachine.config.OrderStateDetails;
 import io.fusion.air.microservice.domain.entities.example.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderStateMachineService;
@@ -33,6 +34,11 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 // Java
 import org.slf4j.Logger;
+import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -48,6 +54,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date:
  */
 @Service
+@RequestScope
 public class OrderStateMachineManager implements OrderStateMachineService {
 
     // Set Logger -> Lookup will automatically determine the class name.
@@ -58,6 +65,9 @@ public class OrderStateMachineManager implements OrderStateMachineService {
 
     @Autowired
     private OrderStateChangeInterceptor orderStateChangeInterceptor;
+
+    @Autowired
+    private OrderStateDetails orderStateDetails;
 
     /**
      * STEP 1:
@@ -120,13 +130,35 @@ public class OrderStateMachineManager implements OrderStateMachineService {
     }
 
     /**
+     * Package Fork - Parallel Processing: Order Packaging
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public void packageFork(OrderEntity order) {
+        sendEvent(OrderEvent.PACKAGE_FORK_EVENT, order);
+    }
+
+    /**
      * Package the Order
      * @param order
      * @return
      */
     @Override
     public void orderPackage(OrderEntity order) {
-        sendEvent(OrderEvent.ORDER_PACKAGE_EVENT, order);
+        sendEvent(OrderEvent.PACKAGE_EVENT, order);
+    }
+
+    /**
+     * Package Fork - Parallel Processing: Send Bill Notification
+     *
+     * @param order
+     * @return
+     */
+    @Override
+    public void sendBill(OrderEntity order) {
+        sendEvent(OrderEvent.ORDER_SEND_BILL_EVENT, order);
     }
 
     /**
@@ -201,6 +233,15 @@ public class OrderStateMachineManager implements OrderStateMachineService {
         sendEvent(OrderEvent.ORDER_CANCELLED_EVENT, order);
     }
 
+    /**
+     * Sends Multiple Events to the State Machine
+     * @param order
+     * @param events
+     */
+    public void multipleEvents(OrderEntity order, List<OrderEvent> events) {
+        sendEvent(order, events);
+    }
+
     // =======================================================================================================
     // Restore State Machine and Send Message / Event to State Machine
     // =======================================================================================================
@@ -212,7 +253,9 @@ public class OrderStateMachineManager implements OrderStateMachineService {
      */
     private void sendEvent(OrderEvent event, OrderEntity order) {
        validateInputs(event, order);
-       // Restore the state Machine based on Order ID
+       orderStateDetails.addOrder(order);
+       orderStateDetails.setEvent(event);
+        // Restore the state Machine based on Order ID
         StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
         // Create Message with the Order Event and Set the Order ID in the Header
         Message mesg = MessageBuilder.withPayload(event)
@@ -222,7 +265,31 @@ public class OrderStateMachineManager implements OrderStateMachineService {
                 // .setHeader(OrderConstants.ORDER_HEADER, order)
                 .build();
         // Send the Message to the State Machine
+        System.out.println("[0][1][1] - OrderStateMachineManager: "+event.name());
         sm.sendEvent(mesg);
+    }
+
+    /**
+     * Send Multiple Events
+     * @param order
+     * @param events
+     */
+    private void sendEvent(OrderEntity order, List<OrderEvent> events ) {
+        validateInputs(events, order);
+        // Restore the state Machine based on Order ID
+        StateMachine<OrderState, OrderEvent> sm = restoreStateMachine(order);
+        orderStateDetails.addOrder(order);
+        // Send Multiple Events
+        for(OrderEvent event : events) {
+            orderStateDetails.setEvent(event);
+            // Create Message with the Order Event and Set the Order ID in the Header
+            Message mesg = MessageBuilder.withPayload(event)
+                    .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
+                    .build();
+            // Send the Message to the State Machine
+            System.out.println("[0][1][1] - OrderStateMachineManager: " + event.name());
+            sm.sendEvent(mesg);
+        }
     }
 
     /**
@@ -235,7 +302,7 @@ public class OrderStateMachineManager implements OrderStateMachineService {
         if(order == null) {
             throw new InputDataException("Invalid Order (null) to Restore the State Machine!");
         }
-        log.info("Restore State Machine For Order Id = "+order.getOrderId());
+        log.info("Restore State Machine For Order Id = "+order.getOrderId()+" OrderState = "+order.getOrderState());
         StateMachine<OrderState, OrderEvent> sm = stateMachineFactory.getStateMachine(order.getOrderId());
         // Stop The State Machine
         sm.stop();
@@ -265,6 +332,16 @@ public class OrderStateMachineManager implements OrderStateMachineService {
      */
     private boolean validateInputs(OrderEvent event, OrderEntity order) {
         if(event == null) {
+            throw new InputDataException("Invalid OrderEvent! to Send Event");
+        }
+        if(order == null) {
+            throw new InputDataException("Invalid Order! to Send Event");
+        }
+        return true;
+    }
+
+    private boolean validateInputs(List<OrderEvent> events, OrderEntity order) {
+        if(events == null) {
             throw new InputDataException("Invalid OrderEvent! to Send Event");
         }
         if(order == null) {

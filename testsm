@@ -3,6 +3,10 @@ echo "Order State Machine Test"
 API_PREFIX=localhost:9090/ms-cache/api/v1/order/process/event/
 ORDER=e5a5bb0d-6282-4072-9926-a0653095fd07
 CUSTOMER=123
+# Check if the input is not null
+if [ -n "$1" ]; then
+    ORDER=$1
+fi
 echo "RESET\n"
 curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/order/process/reset/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
@@ -18,14 +22,20 @@ curl -X 'POST' "http://${API_PREFIX}PAYMENT_INIT_EVENT/customer/${CUSTOMER}/orde
 echo "\n\nPAYMENT_APPROVED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PAYMENT_APPROVED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
-echo "\n\nORDER_PACKAGE_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}ORDER_PACKAGE_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+echo "\n\nPACKAGE_FORK_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PACKAGE_FORK_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
-echo "\n\nORDER_READY_TO_SHIP_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}ORDER_READY_TO_SHIP_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+#echo "\n\nPACKAGE_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}PACKAGE_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
-echo "\n\nORDER_SHIPPED_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}ORDER_SHIPPED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+#echo "\n\nORDER_SEND_BILL_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}ORDER_SEND_BILL_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+
+#echo "\n\nORDER_READY_TO_SHIP_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}ORDER_READY_TO_SHIP_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+
+#echo "\n\nORDER_SHIPPED_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}ORDER_SHIPPED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
 
 echo "\n\nORDER_IN_TRANSIT_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}ORDER_IN_TRANSIT_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
