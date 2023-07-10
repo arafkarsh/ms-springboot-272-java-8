@@ -74,7 +74,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
         states
             .withStates()
                 .initial(OrderState.ORDER_RECEIVED)            // Order RECEIVED
-                // .region("Order Processing")
+                .region("Order Processing")
 
                 .state(OrderState.IN_PROGRESS)                  // IN Progress State
                 .state(OrderState.ERROR)                        // ERROR State
@@ -83,7 +83,7 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .withStates()
                     .parent(OrderState.ORDER_RECEIVED)         // ROOT of All the States
                     .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
-                    // .region("Payment")
+                    .region("Payment")
 
                     .choice(OrderState.CREDIT_CHOICE)          // Credit Check is a Choice based on Condition
 
@@ -112,15 +112,15 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .withStates()
                         .parent(OrderState.PACKING_FORK)
                         .initial(OrderState.ORDER_PACKAGING_START)
-                        // .state(OrderState.ORDER_PACKAGING_DONE)
-                        // .region("Packing")
+                        .state(OrderState.ORDER_PACKAGING_DONE)
+                        .region("Packing")
                         .end(OrderState.ORDER_PACKAGING_DONE)
                     .and()
                     .withStates()
                         .parent(OrderState.PACKING_FORK)
                         .initial(OrderState.SEND_BILL_START)
-                        // .state(OrderState.SEND_BILL_DONE)
-                        // .region("Notification")
+                        .state(OrderState.SEND_BILL_DONE)
+                        .region("Notification")
                         .end(OrderState.SEND_BILL_DONE)
                 ;
         }

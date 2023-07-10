@@ -265,7 +265,7 @@ public class OrderStateMachineManager implements OrderStateMachineService {
                 // .setHeader(OrderConstants.ORDER_HEADER, order)
                 .build();
         // Send the Message to the State Machine
-        System.out.println("[0][1][1] - OrderStateMachineManager: "+event.name());
+        // System.out.println("[0][1][1] - OrderStateMachineManager: "+event.name());
         sm.sendEvent(mesg);
     }
 
@@ -287,7 +287,7 @@ public class OrderStateMachineManager implements OrderStateMachineService {
                     .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
                     .build();
             // Send the Message to the State Machine
-            System.out.println("[0][1][1] - OrderStateMachineManager: " + event.name());
+            // System.out.println("[0][1][1] - OrderStateMachineManager: " + event.name());
             sm.sendEvent(mesg);
         }
     }

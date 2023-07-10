@@ -98,22 +98,6 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                                 result = OrderResult.fromString(errorObj.getTargetState());
                             }
                             orderHistoryService.saveOrderHistory(source, target, event, order, errorObj);
-                            /**
-                            // Check if there are any Results Available based on Target State
-                            if(result == null) {
-                                result = OrderResult.fromString(target.name());
-                            }
-                            // Create History for the State Change
-                            history = new OrderStateHistoryEntity(source, target, event, order.getVersion() + 1, notes);
-                            order.addOrderStateHistory(history);
-                            order.setState(target);
-                            // If Results Available then Set the Result in Order Object
-                            if(result != null) {
-                                order.setOrderResult(result);
-                            }
-                            // Save the Order with the History Details
-                            orderRepository.save(order);
-                             */
                         } catch (Exception e) {
                             log.error("ERROR in OrderStateChangeListener! "+e.getMessage(),e);
                             e.printStackTrace();

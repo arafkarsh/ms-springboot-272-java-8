@@ -250,37 +250,30 @@ public class OrderServiceImpl implements OrderService {
                 break;
 
             case ORDER_READY_TO_SHIP_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_READY_TO_SHIP_EVENT");
                 orderStateMachineService.readyToShip(order);
                 break;
 
             case ORDER_SHIPPED_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_SHIPPED_EVENT");
                 orderStateMachineService.shipTheProduct(order);
                 break;
 
             case ORDER_IN_TRANSIT_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_IN_TRANSIT_EVENT");
                 orderStateMachineService.orderInTransit(order);
                 break;
 
             case SEND_FOR_DELIVERY_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: SEND_FOR_DELIVERY_EVENT");
                 orderStateMachineService.sendForDelivery(order);
                 break;
 
             case ORDER_CANCELLED_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_CANCELLED_EVENT");
                 orderStateMachineService.orderCancelled(order);
                 break;
 
             case ORDER_DELIVERED_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_DELIVERED_EVENT");
                 orderStateMachineService.orderDelivered(order);
                 break;
 
             case ORDER_RETURNED_EVENT:
-                System.out.println("[0][1][0] - OrderServiceImpl: ORDER_RETURNED_EVENT");
                 orderStateMachineService.orderReturned(order);
                 break;
 

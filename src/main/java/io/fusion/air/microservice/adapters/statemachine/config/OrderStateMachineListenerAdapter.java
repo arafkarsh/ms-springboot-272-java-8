@@ -72,6 +72,7 @@ public class OrderStateMachineListenerAdapter extends StateMachineListenerAdapte
 
     @Override
     public void transition(Transition<OrderState, OrderEvent> transition) {
+        /**
         String src = (transition.getSource() != null) ? transition.getSource().getId().name() : "NoSource";
         String dst = (transition.getTarget() != null) ? transition.getTarget().getId().name() : "NoTarget";
         if(transition.getSource() != null) {
@@ -80,6 +81,7 @@ public class OrderStateMachineListenerAdapter extends StateMachineListenerAdapte
             System.out.println("--------------------------------------------------------------------------------------------------");
             //  log.info("Transition from {} to {}", transition.getSource().getId(), transition.getTarget().getId());
         }
+         */
     }
 
     /**
