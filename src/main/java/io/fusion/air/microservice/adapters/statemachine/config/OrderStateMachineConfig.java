@@ -98,17 +98,8 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                     .fork(OrderState.PACKING_FORK)
                     .join(OrderState.READY_TO_SHIP_JOIN)
                     .state(OrderState.SHIPPED)
-                    .state(OrderState.IN_TRANSIT)
-                    .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
-
-                    .stateEntry(OrderState.DELIVERED, actions.autoTransition())
-                    .stateEntry(OrderState.RETURNED, actions.autoTransition())
-                    .stateEntry(OrderState.CANCELLED, actions.autoTransition())
-
-                    .state(OrderState.CANCELLED)                 // :-( Sad Path
-                    .state(OrderState.RETURNED)                  // :-( Sad Path
-                    .state(OrderState.DELIVERED)                 // :-) Happy Path
                     .and()
+
                     .withStates()
                         .parent(OrderState.PACKING_FORK)
                         .initial(OrderState.ORDER_PACKAGING_START)
@@ -116,12 +107,27 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                         .region("Packing")
                         .end(OrderState.ORDER_PACKAGING_DONE)
                     .and()
+
                     .withStates()
                         .parent(OrderState.PACKING_FORK)
                         .initial(OrderState.SEND_BILL_START)
                         .state(OrderState.SEND_BILL_DONE)
                         .region("Notification")
                         .end(OrderState.SEND_BILL_DONE)
+                    .and()
+
+                    .withStates()
+                        .parent(OrderState.SHIPPED)
+                        .initial(OrderState.IN_TRANSIT)
+                        .state(OrderState.REACHED_DESTINATION)      // Order Reached the Destination
+                        .region("Shipping")
+                        .stateEntry(OrderState.DELIVERED, actions.autoTransition())
+                        .stateEntry(OrderState.RETURNED, actions.autoTransition())
+                        .stateEntry(OrderState.CANCELLED, actions.autoTransition())
+
+                        .state(OrderState.CANCELLED)                 // :-( Sad Path
+                        .state(OrderState.RETURNED)                  // :-( Sad Path
+                        .state(OrderState.DELIVERED)                 // :-) Happy Path
                 ;
         }
 
