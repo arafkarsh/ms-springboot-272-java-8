@@ -73,61 +73,62 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
     public void configure(StateMachineStateConfigurer<OrderState, OrderEvent> states) throws Exception {
         states
             .withStates()
-                .initial(OrderState.ORDER_RECEIVED)            // Order RECEIVED
+                .initial(OrderState.ORDER_RECEIVED)                         // Order RECEIVED
                 .region("Order Processing")
 
-                .state(OrderState.IN_PROGRESS)                  // IN Progress State
-                .state(OrderState.ERROR)                        // ERROR State
-                .end(OrderState.ORDER_COMPLETED)                // Order Processing Completed
+                .state(OrderState.IN_PROGRESS)                              // IN Progress State
+                .state(OrderState.ERROR)                                    // ERROR State
+                .end(OrderState.ORDER_COMPLETED)                            // Order Processing Completed
                 .and()
                 .withStates()
-                    .parent(OrderState.ORDER_RECEIVED)         // ROOT of All the States
-                    .initial(OrderState.ORDER_INITIALIZED)     // Order Initialized
+                    .parent(OrderState.ORDER_RECEIVED)                      // PARENT of All the States
+                    .initial(OrderState.ORDER_INITIALIZED)                  // Order Initialized
                     .region("Payment")
 
-                    .choice(OrderState.CREDIT_CHOICE)          // Credit Check is a Choice based on Condition
+                    .choice(OrderState.CREDIT_CHOICE)                       // Credit Check is a Choice based on Condition
 
-                    .state(OrderState.CREDIT_CHECKING)         // Credit Check Denied
-                    .state(OrderState.CREDIT_DENIED)           // Credit Check Denied
-                    .state(OrderState.CREDIT_APPROVED)         // Credit Check Approved
+                    .state(OrderState.CREDIT_CHECKING)                      // Credit Check Denied
+                    .state(OrderState.CREDIT_DENIED)                        // Credit Check Denied
+                    .state(OrderState.CREDIT_APPROVED)                      // Credit Check Approved
 
-                    .state(OrderState.PAYMENT_PROCESSING)      // Payment Process
-                    .state(OrderState.PAYMENT_CONFIRMED)       // Payment Confirmed
-                    .state(OrderState.PAYMENT_DECLINED)        // :-( Sad Path
+                    .state(OrderState.PAYMENT_PROCESSING)                   // Payment Process
+                    .state(OrderState.PAYMENT_CONFIRMED)                    // Payment Confirmed
+                    .state(OrderState.PAYMENT_DECLINED)                     // :-( Sad Path
 
-                    .fork(OrderState.PACKING_FORK)
-                    .join(OrderState.READY_TO_SHIP_JOIN)
-                    .state(OrderState.SHIPPED)
+                    .fork(OrderState.PACKING_FORK)                          // FORK - Parallel Tasks
+                    .join(OrderState.READY_TO_SHIP_JOIN)                    // JOIN the Parallel Tasks
+                    .state(OrderState.SHIPPED)                              // Shipped State
                     .and()
 
                     .withStates()
-                        .parent(OrderState.PACKING_FORK)
-                        .initial(OrderState.ORDER_PACKAGING_START)
-                        .state(OrderState.ORDER_PACKAGING_DONE)
-                        .region("Packing")
-                        .end(OrderState.ORDER_PACKAGING_DONE)
+                        .parent(OrderState.PACKING_FORK)                    // Parent State - FORK
+                        .initial(OrderState.ORDER_PACKAGING_START)          // Initial State - for Packaging
+                        .state(OrderState.ORDER_PACKAGING_DONE)             // Packaging Done
+                        .region("Packing")                               // Define Region
+                        .end(OrderState.ORDER_PACKAGING_DONE)               // End of Child Region
                     .and()
 
                     .withStates()
-                        .parent(OrderState.PACKING_FORK)
-                        .initial(OrderState.SEND_BILL_START)
-                        .state(OrderState.SEND_BILL_DONE)
-                        .region("Notification")
-                        .end(OrderState.SEND_BILL_DONE)
+                        .parent(OrderState.PACKING_FORK)                    // Parent State - FORK
+                        .initial(OrderState.SEND_BILL_START)                // Send Invoice
+                        .state(OrderState.SEND_BILL_DONE)                   // Invoice is Done
+                        .region("Notification")                           // Notification Region
+                        .end(OrderState.SEND_BILL_DONE)                     // End of Child Region
                     .and()
 
                     .withStates()
-                        .parent(OrderState.SHIPPED)
-                        .initial(OrderState.IN_TRANSIT)
-                        .state(OrderState.REACHED_DESTINATION)      // Order Reached the Destination
-                        .region("Shipping")
+                        .parent(OrderState.SHIPPED)                         // Parent State - Shipped
+                        .initial(OrderState.IN_TRANSIT)                     // In Transit
+                        .state(OrderState.REACHED_DESTINATION)              // Order Reached the Destination
+                        .region("Shipping")                             // Shipping Region
+
                         .stateEntry(OrderState.DELIVERED, actions.autoTransition())
                         .stateEntry(OrderState.RETURNED, actions.autoTransition())
                         .stateEntry(OrderState.CANCELLED, actions.autoTransition())
 
-                        .state(OrderState.CANCELLED)                 // :-( Sad Path
-                        .state(OrderState.RETURNED)                  // :-( Sad Path
-                        .state(OrderState.DELIVERED)                 // :-) Happy Path
+                        .state(OrderState.CANCELLED)                        // :-( Sad Path
+                        .state(OrderState.RETURNED)                         // :-( Sad Path
+                        .state(OrderState.DELIVERED)                        // :-) Happy Path
                 ;
         }
 
