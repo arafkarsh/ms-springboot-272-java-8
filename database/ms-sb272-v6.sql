@@ -106,6 +106,29 @@ CREATE TABLE ms_schema.order_item_tx (
 ALTER TABLE ms_schema.order_item_tx OWNER TO postgres;
 
 --
+-- Name: order_state_history_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
+--
+
+CREATE TABLE ms_schema.order_state_history_tx (
+    uuid character(36) NOT NULL,
+    createdby character varying(255) NOT NULL,
+    createdtime timestamp without time zone NOT NULL,
+    isactive boolean,
+    updatedby character varying(255) NOT NULL,
+    updatedtime timestamp without time zone NOT NULL,
+    version integer,
+    notes character varying(255),
+    sourcestate character varying(255),
+    targetstate character varying(255),
+    transitionevent character varying(255),
+    order_id character(36),
+    orderversion integer
+);
+
+
+ALTER TABLE ms_schema.order_state_history_tx OWNER TO postgres;
+
+--
 -- Name: order_tx; Type: TABLE; Schema: ms_schema; Owner: postgres
 --
 
@@ -128,7 +151,8 @@ CREATE TABLE ms_schema.order_tx (
     zip_code character varying(255),
     totalordervalue numeric(19,2),
     payment_id character(36),
-    orderstatus character varying(255)
+    orderstatus character varying(255),
+    result character varying(255)
 );
 
 
@@ -493,12 +517,34 @@ fb19e155-144c-493d-895d-ff7614e7f53f	anonymousUser	2023-07-05 11:24:30.548063	t	
 
 
 --
+-- Data for Name: order_state_history_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
+--
+
+COPY ms_schema.order_state_history_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, notes, sourcestate, targetstate, transitionevent, order_id, orderversion) FROM stdin;
+34f5ea0e-1c1b-4d6e-bb66-d67c486af12d	anonymousUser	2023-07-11 19:33:52.706979	t	anonymousUser	2023-07-11 19:33:52.706979	0		PAYMENT_CONFIRMED	PACKING_FORK	PACKAGE_FORK_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1260
+3b1c9b73-9579-4d49-80fc-03dae3b41ce3	anonymousUser	2023-07-11 19:33:52.712169	t	anonymousUser	2023-07-11 19:33:52.712169	0		PACKING_FORK	ORDER_PACKAGING_START	PACKAGE_FORK_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1261
+c912dcf3-50fb-483b-82ba-e5f17501d943	anonymousUser	2023-07-11 19:33:52.716025	t	anonymousUser	2023-07-11 19:33:52.716025	0		ORDER_PACKAGING_START	SEND_BILL_START	PACKAGE_FORK_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1262
+8d9616b0-5346-422c-9e1e-51459bbe322f	anonymousUser	2023-07-11 19:33:52.723367	t	anonymousUser	2023-07-11 19:33:52.723367	0		SEND_BILL_START	ORDER_PACKAGING_DONE	PACKAGE_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1263
+352e535b-909d-401c-a026-29e2037d732a	anonymousUser	2023-07-11 19:33:52.729532	t	anonymousUser	2023-07-11 19:33:52.729532	0		ORDER_PACKAGING_DONE	SEND_BILL_DONE	ORDER_SEND_BILL_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1264
+9739cd03-ed33-46ab-9060-8965ad970ed2	anonymousUser	2023-07-11 19:33:52.733862	t	anonymousUser	2023-07-11 19:33:52.733862	0		PACKING_FORK	SHIPPED	ORDER_SEND_BILL_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1265
+72ba5285-20d7-42d2-874d-9636382186d2	anonymousUser	2023-07-11 19:33:52.781436	t	anonymousUser	2023-07-11 19:33:52.781436	0		SHIPPED	IN_TRANSIT	ORDER_IN_TRANSIT_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1266
+8848374a-52a2-4f49-9a5b-3ecb3447e073	anonymousUser	2023-07-11 19:33:52.823355	t	anonymousUser	2023-07-11 19:33:52.823355	0		IN_TRANSIT	REACHED_DESTINATION	SEND_FOR_DELIVERY_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1267
+74a8ceac-bd78-44a2-8c53-5c62cd0e18d6	anonymousUser	2023-07-11 19:33:52.876158	t	anonymousUser	2023-07-11 19:33:52.876158	0		REACHED_DESTINATION	DELIVERED	ORDER_DELIVERED_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1268
+c7eb994a-a817-478e-a60d-adc7c080a63d	anonymousUser	2023-07-11 19:33:52.882737	t	anonymousUser	2023-07-11 19:33:52.882737	0		DELIVERED	ORDER_COMPLETED	AUTO_TRANSITION_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1269
+2dfe87f2-5a9a-4cdd-b859-ae6b8f9631d9	anonymousUser	2023-07-11 19:33:52.546064	t	anonymousUser	2023-07-11 19:33:52.546064	0		ORDER_INITIALIZED	CREDIT_CHECKING	CREDIT_CHECKING_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1256
+e0d97762-7d73-45ac-ae69-6b5cdf91f3c0	anonymousUser	2023-07-11 19:33:52.580143	t	anonymousUser	2023-07-11 19:33:52.580143	0		CREDIT_CHECKING	CREDIT_APPROVED	CREDIT_APPROVED_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1257
+e0cf0207-c7ce-4f65-bb64-fdeef38b6e10	anonymousUser	2023-07-11 19:33:52.621261	t	anonymousUser	2023-07-11 19:33:52.621261	0		CREDIT_APPROVED	PAYMENT_PROCESSING	PAYMENT_INIT_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1258
+3b92439c-f615-4bc4-9e59-a983e417ccf2	anonymousUser	2023-07-11 19:33:52.668696	t	anonymousUser	2023-07-11 19:33:52.668696	0		PAYMENT_PROCESSING	PAYMENT_CONFIRMED	PAYMENT_APPROVED_EVENT	e5a5bb0d-6282-4072-9926-a0653095fd07	1259
+\.
+
+
+--
 -- Data for Name: order_tx; Type: TABLE DATA; Schema: ms_schema; Owner: postgres
 --
 
-COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, currency, customer_id, city, country, landmark, phone, state, street, zip_code, totalordervalue, payment_id, orderstatus) FROM stdin;
-e5a5bb0d-6282-4072-9926-a0653095fd07	anonymousUser	2023-07-05 11:24:30.537602	t	anonymousUser	2023-07-07 17:07:09.140175	7	INR	123	Edison	USA	Near Walmart	7321002010	NJ	321 Cobblestone Lan	08110	170000.00	63fd3531-ee6b-40d8-aed0-2faeebc41c87	ORDER_INITIALIZED
-7a8bc3d8-911f-4aee-bc71-5dfa25a4a3ae	anonymousUser	2023-07-07 12:44:27.546798	t	anonymousUser	2023-07-07 17:07:42.893026	6	INR	123	Edison	USA	Near Walmart	7321002010	NJ	321 Cobblestone Lane	08110	85000.00	999bda45-b1ad-4af3-a2fa-4564cca52ed6	ORDER_INITIALIZED
+COPY ms_schema.order_tx (uuid, createdby, createdtime, isactive, updatedby, updatedtime, version, currency, customer_id, city, country, landmark, phone, state, street, zip_code, totalordervalue, payment_id, orderstatus, result) FROM stdin;
+7a8bc3d8-911f-4aee-bc71-5dfa25a4a3ae	anonymousUser	2023-07-07 12:44:27.546798	t	anonymousUser	2023-07-11 11:43:12.021425	40	INR	123	Edison	USA	Near Walmart	7321002010	NJ	321 Cobblestone Lane	08110	85000.00	999bda45-b1ad-4af3-a2fa-4564cca52ed6	ORDER_INITIALIZED	IN_PROGRESS
+e5a5bb0d-6282-4072-9926-a0653095fd07	anonymousUser	2023-07-05 11:24:30.537602	t	anonymousUser	2023-07-11 19:33:52.883491	1269	INR	123	Edison	USA	Near Walmart	7321002010	NJ	321 Cobblestone Lan	08110	170000.00	63fd3531-ee6b-40d8-aed0-2faeebc41c87	ORDER_COMPLETED	DELIVERED
 \.
 
 
@@ -576,6 +622,14 @@ ALTER TABLE ONLY ms_schema.order_item_tx
 
 
 --
+-- Name: order_state_history_tx order_state_history_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_state_history_tx
+    ADD CONSTRAINT order_state_history_tx_pkey PRIMARY KEY (uuid);
+
+
+--
 -- Name: order_tx order_tx_pkey; Type: CONSTRAINT; Schema: ms_schema; Owner: postgres
 --
 
@@ -613,6 +667,14 @@ ALTER TABLE ONLY ms_schema.order_tx
 
 ALTER TABLE ONLY ms_schema.order_item_tx
     ADD CONSTRAINT fkb3heb7c2x68gtl42n66w217vl FOREIGN KEY (order_id) REFERENCES ms_schema.order_tx(uuid);
+
+
+--
+-- Name: order_state_history_tx fkqm01yul77rf1ekm5seeqxnaqp; Type: FK CONSTRAINT; Schema: ms_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY ms_schema.order_state_history_tx
+    ADD CONSTRAINT fkqm01yul77rf1ekm5seeqxnaqp FOREIGN KEY (order_id) REFERENCES ms_schema.order_tx(uuid);
 
 
 --
