@@ -53,6 +53,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON CREDIT CHECK EVENT");
             // Add Business Logic to Handle Event
             // ...
+            // Send Credit Approval Request Using Kafka Topic
         };
     }
 
@@ -62,6 +63,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON CREDIT APPROVED EVENT");
             // Add Business Logic to Handle Event
             // ...
+            // Received Event from Kafka Topic for Credit Approval
         };
     }
 
@@ -75,6 +77,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON CREDIT DENIED EVENT - THROWS EXCEPTION");
             // Add Business Logic to Handle Event
             // ...
+            // Received Event from Kafka Topic for Credit Denied
             throw new BusinessServiceException("Service Unavailable to check Credit: Target State = "+context.getTarget().getId().name());
         };
     }
@@ -85,6 +88,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON PAYMENT INIT EVENT");
             // Add Business Logic to Handle Event
             // ...
+            // Send Payment Request to Payment Gateway Service / Usign a Kafka Topic
         };
     }
 
@@ -94,6 +98,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON PAYMENT APPROVAL EVENT");
             // Add Business Logic to Handle Event
             // ...
+            // Received Payment Approval
         };
     }
 
@@ -103,6 +108,7 @@ public class OrderStateMachineActions {
             logStateTransition(context, "ACTION ON PAYMENT DECLINED EVENT");
             // Add Business Logic to Handle Event
             // ...
+            // Received Payment Declined
         };
     }
 
