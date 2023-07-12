@@ -9,21 +9,27 @@ if [ -n "$1" ]; then
 fi
 echo "RESET\n"
 curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/order/process/reset/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nCREDIT_CHECKING_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}CREDIT_CHECKING_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nCREDIT_APPROVED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}CREDIT_APPROVED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nPAYMENT_INIT_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PAYMENT_INIT_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nPAYMENT_APPROVED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PAYMENT_APPROVED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nPACKAGE_FORK_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PACKAGE_FORK_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 #echo "\n\nPACKAGE_EVENT\n"
 #curl -X 'POST' "http://${API_PREFIX}PACKAGE_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
@@ -39,9 +45,12 @@ curl -X 'POST' "http://${API_PREFIX}PACKAGE_FORK_EVENT/customer/${CUSTOMER}/orde
 
 echo "\n\nORDER_IN_TRANSIT_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}ORDER_IN_TRANSIT_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nSEND_FOR_DELIVERY_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}SEND_FOR_DELIVERY_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3
 
 echo "\n\nORDER_DELIVERED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}ORDER_DELIVERED_EVENT/customer/${CUSTOMER}/order/${ORDER}" -H 'accept: application/json' -d ''
+sleep 3

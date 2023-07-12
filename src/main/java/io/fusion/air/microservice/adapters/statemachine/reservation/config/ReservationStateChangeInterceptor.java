@@ -13,52 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.statemachine.order.config;
+package io.fusion.air.microservice.adapters.statemachine.reservation.config;
 // Custom
-import io.fusion.air.microservice.adapters.repository.OrderRepository;
-import io.fusion.air.microservice.domain.entities.order.OrderEntity;
-import io.fusion.air.microservice.domain.entities.order.OrderStateHistoryEntity;
-import io.fusion.air.microservice.domain.statemachine.order.*;
+import io.fusion.air.microservice.adapters.repository.ReservationRepository;
+import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
+import io.fusion.air.microservice.domain.entities.reservation.ReservationStateHistoryEntity;
+import io.fusion.air.microservice.domain.statemachine.reservation.*;
 import io.fusion.air.microservice.utils.Utils;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-// Sprong State Machine
+// Spring State Machine
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.support.StateMachineInterceptorAdapter;
 import org.springframework.statemachine.transition.Transition;
-// Java & SLF4J
+// Java
 import java.util.Optional;
 import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Order State Change Listener
+ * Reservation State Change Listener
  *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
 @Component
-public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<OrderState, OrderEvent> {
+public class ReservationStateChangeInterceptor extends StateMachineInterceptorAdapter<ReservationState, ReservationEvent> {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
     @Autowired
-    private OrderRepository orderRepository;
+    private ReservationRepository reservationRepository;
 
     @Autowired
-    private OrderHistoryService orderHistoryService;
+    private ReservationHistoryService reservationHistoryService;
 
     /**
-     * Based on the State change by the Order Event
-     * Set the new state in the Order Object and Save the State.
+     * Based on the State change by the Reservation Event
+     * Set the new state in the Reservation Object and Save the State.
      * @param state
      * @param message
      * @param transition
@@ -67,36 +66,36 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
      */
     @Override
     @Transactional
-    public void postStateChange(State<OrderState, OrderEvent> state,
-                               Message<OrderEvent> message,
-                               Transition<OrderState, OrderEvent> transition,
-                               StateMachine<OrderState, OrderEvent> stateMachine,
-                               StateMachine<OrderState, OrderEvent> rootStateMachine) {
+    public void postStateChange(State<ReservationState, ReservationEvent> state,
+                               Message<ReservationEvent> message,
+                               Transition<ReservationState, ReservationEvent> transition,
+                               StateMachine<ReservationState, ReservationEvent> stateMachine,
+                               StateMachine<ReservationState, ReservationEvent> rootStateMachine) {
 
         Optional.ofNullable(message).ifPresent(msg -> {
-            Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(OrderConstants.ORDER_ID_HEADER, "")))
+            Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(ReservationConstants.RESERVATION_ID_HEADER, "")))
                 .ifPresent(orderId -> {
-                    Optional<OrderEntity> orderOpt = orderRepository.findByOrderId(Utils.getUUID(orderId));
+                    Optional<ReservationEntity> orderOpt = reservationRepository.findByReservationId(Utils.getUUID(orderId));
                     String errorSource = "", errorMsg = "", notes = "";
                     if(orderOpt.isPresent()) {
-                        OrderEntity order = orderOpt.get();
-                        OrderState source = order.getOrderState();
-                        OrderState target = state.getId();
-                        OrderEvent event  = null;
+                        ReservationEntity order = orderOpt.get();
+                        ReservationState source = order.getReservationState();
+                        ReservationState target = state.getId();
+                        ReservationEvent event  = null;
                         if(transition.getTrigger() != null) {
                             event = transition.getTrigger().getEvent();
                         }
-                        OrderStateHistoryEntity history = null;
-                        OrderNotes errorObj = null;
-                        OrderResult result = null;
+                        ReservationStateHistoryEntity history = null;
+                        ReservationNotes errorObj = null;
+                        ReservationResult result = null;
                         try {
                             // If the Event is a FAILURE Event thrown by Exceptions
-                            if(event != null && event.equals(OrderEvent.FAILURE_EVENT)) {
-                                errorObj = stateMachine.getExtendedState().get(OrderConstants.ERROR_OBJECT, OrderNotes.class);
+                            if(event != null && event.equals(ReservationEvent.FAILURE_EVENT)) {
+                                errorObj = stateMachine.getExtendedState().get(ReservationConstants.ERROR_OBJECT, ReservationNotes.class);
                                 notes = Utils.toJsonString(errorObj);
-                                result = OrderResult.fromString(errorObj.getTargetState());
+                                result = ReservationResult.fromString(errorObj.getTargetState());
                             }
-                            orderHistoryService.saveOrderHistory(source, target, event, order, errorObj);
+                            reservationHistoryService.saveReservationHistory(source, target, event, order, errorObj);
                         } catch (Exception e) {
                             log.error("ERROR in OrderStateChangeListener! "+e.getMessage(),e);
                             e.printStackTrace();
@@ -115,14 +114,14 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
      * @param target
      * @param event
      */
-    private void logStateChange(OrderState source, OrderState target, OrderEvent event) {
+    private void logStateChange(ReservationState source, ReservationState target, ReservationEvent event) {
         String s = (source != null) ? source.name() : "NO-SOURCE";
         String t = (target != null) ? target.name() : "NO-TARGET";
         String e = (event != null) ? event.name() : "NO-EVENT";
         System.out.println("--------------------------------------------------------------------------------------------------");
-        System.out.println("(4) STATE TRANSITION == (StateChangeInterceptor) ============================================== >> "+event);
+        System.out.println("(4) STATE TRANSITION == (StateChangeInterceptor) =============================================== >> "+event);
         System.out.println("--------------------------------------------------------------------------------------------------");
-        log.info("CHANGE ORDER STATE FROM >> [{}] TO ({})  Based on Event <{}>",s, t, e);
+        log.info("CHANGE RESERVATION STATE FROM >> [{}] TO ({})  Based on Event <{}>",s, t, e);
         System.out.println("--------------------------------------------------------------------------------------------------");
 
     }
