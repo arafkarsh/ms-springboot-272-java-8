@@ -193,7 +193,7 @@ public class OrderStateMachineActions {
         };
     }
 
-    @Bean
+    @Bean(name = "Order-Auto-Transition")
     public Action<OrderState, OrderEvent> autoTransition() {
         return context -> {
             System.out.println("(6) AUTO TRANSITIONING: == (StateMachineActions) ================================================= >>");

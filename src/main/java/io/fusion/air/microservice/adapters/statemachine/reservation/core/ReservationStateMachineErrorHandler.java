@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.statemachine.order.core;
+package io.fusion.air.microservice.adapters.statemachine.reservation.core;
 // Custom
-import io.fusion.air.microservice.domain.entities.order.OrderEntity;
-import io.fusion.air.microservice.domain.statemachine.order.OrderConstants;
-import io.fusion.air.microservice.domain.statemachine.order.OrderEvent;
-import io.fusion.air.microservice.domain.statemachine.order.OrderNotes;
-import io.fusion.air.microservice.domain.statemachine.order.OrderState;
+import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
+import io.fusion.air.microservice.domain.statemachine.reservation.ReservationConstants;
+import io.fusion.air.microservice.domain.statemachine.reservation.ReservationEvent;
+import io.fusion.air.microservice.domain.statemachine.reservation.ReservationNotes;
+import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
 // Spring
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.statemachine.StateContext;
-import org.springframework.stereotype.Component;
 // Spring State Machine
+import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
+import org.springframework.stereotype.Component;
 // Java
-import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import org.slf4j.Logger;
 
 /**
- * Order State Machine Error Handler
+ * Reservation State Machine Error Handler
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -43,28 +43,28 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 
 @Component
-public class OrderStateMachineErrorHandler {
+public class ReservationStateMachineErrorHandler {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @Bean(name = "Order-Error-Handler")
-    public Action<OrderState, OrderEvent> handleError() {
+    @Bean(name = "Reservation-Error-Handler")
+    public Action<ReservationState, ReservationEvent> handleError() {
         return context -> {
             System.out.println("STATE ERROR 2: ================================================== >>");
             // Order Notes Object to capture errors
-            OrderNotes error = createOrderNotes(context);
+            ReservationNotes error = createReservationNotes(context);
             // Get the State Machine from the context
-            StateMachine<OrderState, OrderEvent> stateMachine = context.getStateMachine();
+            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
             if(stateMachine != null) {
                 // Store the Order Notes in Extended State
-                stateMachine.getExtendedState().getVariables().put(OrderConstants.ERROR_OBJECT, error);
+                stateMachine.getExtendedState().getVariables().put(ReservationConstants.ERROR_OBJECT, error);
                 // Extract Order from the Extended State
-                OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
+                ReservationEntity order = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
                 if(order != null) {
                     // Create Message for the Failure Event
-                    Message mesg = MessageBuilder.withPayload(OrderEvent.FAILURE_EVENT)
-                            .setHeader(OrderConstants.ORDER_ID_HEADER, order.getOrderId())
+                    Message mesg = MessageBuilder.withPayload(ReservationEvent.FAILURE_EVENT)
+                            .setHeader(ReservationConstants.RESERVATION_ID_HEADER, order.getReservationId())
                             .build();
                     // Send Event to the State Machine
                     stateMachine.sendEvent(mesg);
@@ -74,22 +74,22 @@ public class OrderStateMachineErrorHandler {
     }
 
     /**
-     * Create Order Notes from the Context
+     * Create Reservation Notes from the Context
      * @param context
      */
-    private OrderNotes createOrderNotes(StateContext<OrderState, OrderEvent> context) {
-        // Extract Order States and Events
-        OrderEntity order = context.getExtendedState().get(OrderConstants.ORDER_HEADER, OrderEntity.class);
-        OrderState source = context.getSource().getId();
-        OrderState target = context.getTarget().getId();
-        OrderEvent event = context.getEvent();
+    private ReservationNotes createReservationNotes(StateContext<ReservationState, ReservationEvent> context) {
+        // Extract Reservation States and Events
+        ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
+        ReservationState source = context.getSource().getId();
+        ReservationState target = context.getTarget().getId();
+        ReservationEvent event = context.getEvent();
         String s = (source != null) ? source.name() : "No-Source";
         String t = (target != null) ? target.name() : "No-Target";
         String e = (event != null) ?  event.name() : "No-Event";
-        String o = (order != null) ? order.getOrderId() : "No-Order-Found!";
+        String o = (reservation != null) ? reservation.getReservationId() : "No-Reservation-Found!";
         String errorMessage = (context.getException() != null) ? context.getException().getMessage() : "";
         log.info("TRANSITIONING FAILED: FROM [{}] TO ({}) based on EVENT = <{}>", s, t,e);
         log.info("{} for Order ID = {}",errorMessage,o);
-        return new OrderNotes(s,t,e, "", errorMessage);
+        return new ReservationNotes(s,t,e, "", errorMessage);
     }
 }

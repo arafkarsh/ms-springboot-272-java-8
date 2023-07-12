@@ -43,7 +43,7 @@ import org.slf4j.Logger;
  */
 
 @Configuration
-@EnableStateMachineFactory
+@EnableStateMachineFactory(name = "Order-State-Machine-Factory")
 public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderState, OrderEvent> {
 
     // Set Logger -> Lookup will automatically determine the class name.
@@ -256,21 +256,4 @@ public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<O
                 .autoStartup(true);
 
     }
-
-    /**
-     .and()
-     .withStates()
-     .parent(OrderState.IN_TRANSIT)
-     .initial(OrderState.REACHED_DESTINATION)              // In Transit
-     .state(OrderState.REACHED_DESTINATION)     // Order Reached the Destination
-     .region("Shipping")
-
-     .stateEntry(OrderState.DELIVERED, actions.autoTransition())
-     .stateEntry(OrderState.RETURNED, actions.autoTransition())
-     .stateEntry(OrderState.CANCELLED, actions.autoTransition())
-
-     .state(OrderState.CANCELLED)                 // :-( Sad Path
-     .state(OrderState.RETURNED)                  // :-( Sad Path
-     .state(OrderState.DELIVERED)                 // :-) Happy Path
-     */
 }
