@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.adapters.controllers;
-
+// Custom
 import io.fusion.air.microservice.domain.entities.order.OrderEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
+// Swagger
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
-
+// Java & Utils
 import java.util.List;
 import java.util.Optional;
-
+import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -65,7 +66,7 @@ public class OrderProcessControllerImpl extends AbstractController {
 	private OrderService orderService;
 
 	/**
-	 * GET Method Call to Get Cart for the Customer
+	 * GET Method Call to Get Order for the Customer
 	 * 
 	 * @return
 	 */

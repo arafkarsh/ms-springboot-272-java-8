@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.repository;
 
-import io.fusion.air.microservice.domain.entities.order.OrderEntity;
+import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -31,35 +31,34 @@ import java.util.UUID;
  * @date:
  */
 @Repository
-public interface OrderRepository extends PagingAndSortingRepository<OrderEntity, UUID> {
+public interface ReservationRepository extends PagingAndSortingRepository<ReservationEntity, UUID> {
 
 
     /**
-     * Find Order by Customer ID
-     *
+     * Find Reservation by Customer ID
      * @param customerId
      * @return
      */
-    public List<OrderEntity> findByCustomerId(String customerId);
+    public List<ReservationEntity> findByCustomerId(String customerId);
 
     /**
-     * Find by Order ID
-     * @param orderId
+     * Find by Reservation ID
+     * @param reservationId
      * @return
      */
-    @Query("SELECT order FROM OrderEntity order WHERE order.uuid = :orderId ")
-    public Optional<OrderEntity> findByOrderId(@Param("orderId") UUID orderId);
+    @Query("SELECT reservation FROM ReservationEntity reservation WHERE reservation.uuid = :reservationId ")
+    public Optional<ReservationEntity> findByReservationId(@Param("reservationId") UUID reservationId);
 
     /**
-     * Find by Customer ID and Order ID
+     * Find by Customer ID and Reservation ID
      * @param customerId
-     * @param orderId
+     * @param reservationId
      * @return
      */
-    @Query("SELECT order FROM OrderEntity order WHERE order.customerId = :customerId AND order.uuid = :orderId ")
-    public Optional<OrderEntity> findByCustomerIdAndOrderId(
+    @Query("SELECT reservation FROM ReservationEntity reservation WHERE reservation.customerId = :customerId AND reservation.uuid = :reservationId ")
+    public Optional<ReservationEntity> findByCustomerIdAndReservationId(
             @Param("customerId") String customerId,
-            @Param("orderId") UUID orderId);
+            @Param("reservationId") UUID reservationId);
 
 
 }

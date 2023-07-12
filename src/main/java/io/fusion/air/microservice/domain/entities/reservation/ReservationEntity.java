@@ -99,13 +99,13 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
                 .mapToInt(HotelReservationEntity::getTotalCost)
                 .sum();
 
-        totalValue += Optional.ofNullable(rentalReservations)
+        totalValue += Optional.ofNullable(getRentalReservations())
                 .orElse(Collections.emptyList())
                 .stream()
                 .mapToInt(RentalReservationEntity::getTotalCost)
                 .sum();
 
-        totalValue += Optional.ofNullable(flightReservations)
+        totalValue += Optional.ofNullable(getFlightReservations())
                 .orElse(Collections.emptyList())
                 .stream()
                 .mapToInt(FlightReservationEntity::getTotalCost)
@@ -223,7 +223,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     /**
      * ONLY TO DEMO/TEST VARIOUS DOMAIN EVENTS
      */
-    public void resetOrderState() {
+    public void resetState() {
         initializeOrder();
         reservationHistory.clear();
     }
@@ -237,7 +237,27 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         reservationState = ReservationState.ORDER_INITIALIZED;
         result = ReservationResult.IN_PROGRESS;
     }
+    
+    /**
+     * Returns Rental Reservations
+     * @return
+     */
+    public List<RentalReservationEntity> getRentalReservations() {
+        return rentalReservations;
+    }
 
+    /**
+     * Returns Flight Reservations
+     * @return
+     */
+    public List<FlightReservationEntity> getFlightReservations() {
+        return flightReservations;
+    }
+
+    /**
+     * Returns the Reservation Builder
+     * @return
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -274,7 +294,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         }
 
         public Builder addRentalReservations(RentalReservationEntity rentalReservations) {
-            reservation.rentalReservations.add(rentalReservations);
+            reservation.getRentalReservations().add(rentalReservations);
             reservation.calculateTotalValue();
             return this;
         }
@@ -286,7 +306,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         }
 
         public Builder addFlightReservations(FlightReservationEntity flightReservations) {
-            reservation.flightReservations.add(flightReservations);
+            reservation.getFlightReservations().add(flightReservations);
             reservation.calculateTotalValue();
             return this;
         }

@@ -120,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         throw new DataNotFoundException("Order Not Found for OrderId="+orderId);    }
 
     /**
-     * Save the Cart Item
+     * Save Order
      *
      * @param order
      * @return
