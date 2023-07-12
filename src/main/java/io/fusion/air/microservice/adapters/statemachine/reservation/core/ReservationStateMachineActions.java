@@ -48,7 +48,9 @@ public class ReservationStateMachineActions {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @Bean
+    // Hotel Booking
+
+    @Bean(name = "Reservation-Hotel-Request")
     public Action<ReservationState, ReservationEvent> hotelReservationRequestAction() {
         return context -> {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION REQUEST EVENT");
@@ -58,7 +60,7 @@ public class ReservationStateMachineActions {
         };
     }
 
-    @Bean
+    @Bean(name = "Reservation-Hotel-Confirmed")
     public Action<ReservationState, ReservationEvent> hotelReservationConfirmedAction() {
         return context -> {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION CONFIRMED EVENT");
@@ -72,7 +74,7 @@ public class ReservationStateMachineActions {
      * Action to Demonstrate Exception handling in Spring State Machine
      * @return
      */
-    @Bean
+    @Bean(name = "Reservation-Hotel-Declined")
     public Action<ReservationState, ReservationEvent> hotelReservationDeclinedAction() {
         return context -> {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION DECLINED EVENT - THROWS EXCEPTION");
@@ -83,7 +85,7 @@ public class ReservationStateMachineActions {
         };
     }
 
-    @Bean
+    @Bean(name = "Reservation-Hotel-Rollback")
     public Action<ReservationState, ReservationEvent> hotelReservationRollbackAction() {
         return context -> {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION ROLLBACK EVENT");
@@ -93,7 +95,157 @@ public class ReservationStateMachineActions {
         };
     }
 
+    // RENTAL Booking
 
+    @Bean(name = "Reservation-Rental-Request")
+    public Action<ReservationState, ReservationEvent> rentalReservationRequestAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION REQUEST EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send To Request Using Kafka Topic: RENTAL BOOKING REQUEST
+        };
+    }
+
+    @Bean(name = "Reservation-Rental-Confirmed")
+    public Action<ReservationState, ReservationEvent> rentalReservationConfirmedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION CONFIRMED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for RENTAL BOOKING CONFIRMED
+        };
+    }
+
+    /**
+     * Action to Demonstrate Exception handling in Spring State Machine
+     * @return
+     */
+    @Bean(name = "Reservation-Rental-Declined")
+    public Action<ReservationState, ReservationEvent> rentalReservationDeclinedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION DECLINED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for RENTAL BOOKING DECLINED
+        };
+    }
+
+    @Bean(name = "Reservation-Rental-Rollback")
+    public Action<ReservationState, ReservationEvent> rentalReservationRollbackAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION ROLLBACK EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for RENTAL BOOKING ROLLBACK
+        };
+    }
+
+    // FLIGHT Booking
+
+    @Bean(name = "Reservation-flight-Request")
+    public Action<ReservationState, ReservationEvent> flightReservationRequestAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION REQUEST EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send To Request Using Kafka Topic: FLIGHT BOOKING REQUEST
+        };
+    }
+
+    @Bean(name = "Reservation-flight-Confirmed")
+    public Action<ReservationState, ReservationEvent> flightReservationConfirmedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION CONFIRMED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for FLIGHT BOOKING CONFIRMED
+        };
+    }
+
+    /**
+     * Action to Demonstrate Exception handling in Spring State Machine
+     * @return
+     */
+    @Bean(name = "Reservation-flight-declined")
+    public Action<ReservationState, ReservationEvent> flightReservationDeclinedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION DECLINED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for FLIGHT BOOKING DECLINED
+        };
+    }
+
+    @Bean(name = "Reservation-flight-Rollback")
+    public Action<ReservationState, ReservationEvent> flightReservationRollbackAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION ROLLBACK EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for FLIGHT BOOKING ROLLBACK
+        };
+    }
+
+    // Payment
+
+    @Bean(name = "Reservation-Payment-Request")
+    public Action<ReservationState, ReservationEvent> paymentRequestAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON PAYMENT REQUEST EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send To Request Using Kafka Topic: PAYMENT REQUEST
+        };
+    }
+
+    @Bean(name = "Reservation-Payment-Approved")
+    public Action<ReservationState, ReservationEvent> paymentConfirmedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON PAYMENT CONFIRMED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for PAYMENT CONFIRMED
+        };
+    }
+
+    /**
+     * Action to Demonstrate Exception handling in Spring State Machine
+     * @return
+     */
+    @Bean(name = "Reservation-Payment-Declined")
+    public Action<ReservationState, ReservationEvent> paymentDeclinedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON PAYMENT DECLINED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for PAYMENT DECLINED
+        };
+    }
+
+    // Invoice
+
+    @Bean(name = "Reservation-Send-Invoice")
+    public Action<ReservationState, ReservationEvent> sendInvoiceAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON SEND INVOICE EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send To Request Using Kafka Topic: SEND INVOICE
+        };
+    }
+
+    @Bean(name = "Reservation-Send-Travel-Details")
+    public Action<ReservationState, ReservationEvent> sendTravelDetailsAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON SEND TRAVEL DETAILS EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for SEND TRAVEL DETAILS
+        };
+    }
+
+    // AUTO TRANSITION
 
     @Bean(name = "Reservation-Auto-Transition")
     public Action<ReservationState, ReservationEvent> autoTransition() {
