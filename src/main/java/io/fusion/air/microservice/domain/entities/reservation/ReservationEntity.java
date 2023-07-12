@@ -48,15 +48,15 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservation_id")
-    private List<HotelReservationEntity> hotelReservations = new ArrayList<>();
+    private List<HotelReservationEntity> hotelReservationList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservation_id")
-    private List<RentalReservationEntity> rentalReservations = new ArrayList<>();
+    private List<RentalReservationEntity> rentalReservationList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservation_id")
-    private List<FlightReservationEntity> flightReservations = new ArrayList<>();
+    private List<FlightReservationEntity> flightReservationList = new ArrayList<>();
 
     @Embedded
     private CustomerAddress customerAddress;
@@ -93,19 +93,19 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
             }
         }
          */
-        totalValue += Optional.ofNullable(hotelReservations)
+        totalValue += Optional.ofNullable(hotelReservationList)
                 .orElse(Collections.emptyList())
                 .stream()
                 .mapToInt(HotelReservationEntity::getTotalCost)
                 .sum();
 
-        totalValue += Optional.ofNullable(getRentalReservations())
+        totalValue += Optional.ofNullable(rentalReservationList)
                 .orElse(Collections.emptyList())
                 .stream()
                 .mapToInt(RentalReservationEntity::getTotalCost)
                 .sum();
 
-        totalValue += Optional.ofNullable(getFlightReservations())
+        totalValue += Optional.ofNullable(flightReservationList)
                 .orElse(Collections.emptyList())
                 .stream()
                 .mapToInt(FlightReservationEntity::getTotalCost)
@@ -167,8 +167,8 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
      * Get the Order Items
      * @return
      */
-    public List<HotelReservationEntity> getHotelReservations() {
-        return hotelReservations;
+    public List<HotelReservationEntity> getHotelReservationList() {
+        return hotelReservationList;
     }
 
     /**
@@ -237,21 +237,21 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         reservationState = ReservationState.ORDER_INITIALIZED;
         result = ReservationResult.IN_PROGRESS;
     }
-    
+
     /**
      * Returns Rental Reservations
      * @return
      */
-    public List<RentalReservationEntity> getRentalReservations() {
-        return rentalReservations;
+    public List<RentalReservationEntity> getRentalReservationList() {
+        return rentalReservationList;
     }
 
     /**
      * Returns Flight Reservations
      * @return
      */
-    public List<FlightReservationEntity> getFlightReservations() {
-        return flightReservations;
+    public List<FlightReservationEntity> getFlightReservationList() {
+        return flightReservationList;
     }
 
     /**
@@ -276,37 +276,37 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         }
 
         public Builder addHotelReservations(List<HotelReservationEntity> hotelReservations) {
-            reservation.hotelReservations = hotelReservations;
+            reservation.hotelReservationList = hotelReservations;
             reservation.calculateTotalValue();
             return this;
         }
 
         public Builder addHotelReservations(HotelReservationEntity hotelReservations) {
-            reservation.hotelReservations.add(hotelReservations);
+            reservation.hotelReservationList.add(hotelReservations);
             reservation.calculateTotalValue();
             return this;
         }
 
         public Builder addRentalReservations(List<RentalReservationEntity> rentalReservations) {
-            reservation.rentalReservations = rentalReservations;
+            reservation.rentalReservationList = rentalReservations;
             reservation.calculateTotalValue();
             return this;
         }
 
         public Builder addRentalReservations(RentalReservationEntity rentalReservations) {
-            reservation.getRentalReservations().add(rentalReservations);
+            reservation.getRentalReservationList().add(rentalReservations);
             reservation.calculateTotalValue();
             return this;
         }
 
         public Builder addFlightReservations(List<FlightReservationEntity> flightReservations) {
-            reservation.flightReservations = flightReservations;
+            reservation.flightReservationList = flightReservations;
             reservation.calculateTotalValue();
             return this;
         }
 
         public Builder addFlightReservations(FlightReservationEntity flightReservations) {
-            reservation.getFlightReservations().add(flightReservations);
+            reservation.getFlightReservationList().add(flightReservations);
             reservation.calculateTotalValue();
             return this;
         }
