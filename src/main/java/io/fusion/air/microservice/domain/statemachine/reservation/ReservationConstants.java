@@ -23,8 +23,8 @@ package io.fusion.air.microservice.domain.statemachine.reservation;
 public class ReservationConstants {
 
     // Message Header for the Events used in the State Machine
-    public static final String ORDER_ID_HEADER = "ORDER_ID";
-    public static final String ORDER_HEADER = "ORDER";
+    public static final String ORDER_ID_HEADER = "RESERVATION_ID";
+    public static final String ORDER_HEADER = "RESERVATION_ID";
     public static final String ERROR_SOURCE = "ERROR_SOURCE_STATE";
     public static final String ERROR_MSG = "ERROR_MSG";
     public static final String ERROR_OBJECT = "ERROR_OBJECT";

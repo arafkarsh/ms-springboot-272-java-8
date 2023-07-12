@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.domain.entities.reservation;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+// Custom
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationResult;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
-
+// Java & Persistence
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Reservation Entity
@@ -81,7 +81,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Calculate the Order Value
+     * Calculate the Reservation Value
      * @return
      */
     @JsonIgnore
@@ -116,7 +116,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Sets the Order State
+     * Sets the Reservation State
      * @param state
      */
     public void setState(ReservationState state) {
@@ -124,18 +124,18 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Set the Order Result
+     * Set the Reservation Result
      * @param _result
      */
-    public void setOrderResult(ReservationResult _result) {
+    public void setReservationResult(ReservationResult _result) {
         this.result = _result;
     }
 
     /**
-     * Returns the Order ID
+     * Returns the Reservation ID
      * @return
      */
-    public String getOrderId() {
+    public String getReservationId() {
         return super.getIdAsString();
     }
 
@@ -156,7 +156,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Get the Total Order Value
+     * Get the Total Reservation Value
      * @return
      */
     public Integer getTotalValue() {
@@ -164,11 +164,27 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Get the Order Items
+     * Get the Hotel Reservation
      * @return
      */
     public List<HotelReservationEntity> getHotelReservationList() {
         return hotelReservationList;
+    }
+
+    /**
+     * Returns Rental Reservations
+     * @return
+     */
+    public List<RentalReservationEntity> getRentalReservationList() {
+        return rentalReservationList;
+    }
+
+    /**
+     * Returns Flight Reservations
+     * @return
+     */
+    public List<FlightReservationEntity> getFlightReservationList() {
+        return flightReservationList;
     }
 
     /**
@@ -188,7 +204,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the Status of the Order
+     * Returns the Status of the Reservation
      * @return
      */
     public ReservationState getReservationState() {
@@ -196,7 +212,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the Result of the Current Order Processing State
+     * Returns the Result of the Current Reservation Processing State
      * @return
      */
     public ReservationResult getResult() {
@@ -204,7 +220,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the Order State Transition History
+     * Returns the Reservation State Transition History
      * @return
      */
     public List<ReservationStateHistoryEntity> getReservationHistory() {
@@ -213,7 +229,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Add Order History
+     * Add Reservation History
      * @param history
      */
     public void addReservationStateHistory(ReservationStateHistoryEntity history) {
@@ -229,29 +245,55 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Initialize the Order
+     * Initialize the Reservation
      * @return
      */
     @JsonIgnore
     protected void initializeOrder() {
-        reservationState = ReservationState.ORDER_INITIALIZED;
+        reservationState = ReservationState.RESERVATION_REQUEST_RECEIVED;
         result = ReservationResult.IN_PROGRESS;
     }
 
     /**
-     * Returns Rental Reservations
+     * Is Valid Reservation
      * @return
      */
-    public List<RentalReservationEntity> getRentalReservationList() {
-        return rentalReservationList;
+    @JsonIgnore
+    public boolean isValidReservations() {
+        if(hotelReservationList.size() > 0) {
+            return true;
+        }
+        if(rentalReservationList.size() > 0) {
+            return true;
+        }
+        if(flightReservationList.size() > 0) {
+            return true;
+        }
+        return false;
     }
 
-    /**
-     * Returns Flight Reservations
-     * @return
-     */
-    public List<FlightReservationEntity> getFlightReservationList() {
-        return flightReservationList;
+    @JsonIgnore
+    public boolean isHotelReservationRequired() {
+        if(hotelReservationList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean isRentalReservationRequired() {
+        if(rentalReservationList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean isFlightReservationRequired() {
+        if(flightReservationList.size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
