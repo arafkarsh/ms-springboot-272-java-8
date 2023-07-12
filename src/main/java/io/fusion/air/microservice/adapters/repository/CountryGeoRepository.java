@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.repository;
 
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryGeoEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

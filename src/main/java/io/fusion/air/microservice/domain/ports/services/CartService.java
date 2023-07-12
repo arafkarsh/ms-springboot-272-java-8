@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.domain.ports.services;
 
-import io.fusion.air.microservice.domain.entities.example.CartEntity;
-import io.fusion.air.microservice.domain.models.example.Cart;
+import io.fusion.air.microservice.domain.entities.order.CartEntity;
+import io.fusion.air.microservice.domain.models.order.Cart;
 
 import java.math.BigDecimal;
 import java.util.List;

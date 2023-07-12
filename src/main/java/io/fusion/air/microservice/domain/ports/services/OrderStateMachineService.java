@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.domain.ports.services;
 // Custom
-import io.fusion.air.microservice.domain.entities.example.OrderEntity;
-import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.entities.order.OrderEntity;
+import io.fusion.air.microservice.domain.statemachine.order.OrderEvent;
 
 import java.util.List;
 

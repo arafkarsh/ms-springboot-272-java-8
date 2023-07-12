@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.domain.ports.services;
 
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryGeoEntity;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

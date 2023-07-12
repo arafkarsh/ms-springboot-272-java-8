@@ -16,14 +16,13 @@
 package io.fusion.air.microservice.adapters.service;
 // Custom
 import io.fusion.air.microservice.adapters.repository.OrderRepository;
-import io.fusion.air.microservice.adapters.statemachine.config.OrderStateDetails;
-import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.entities.order.OrderEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
 import io.fusion.air.microservice.domain.ports.services.OrderStateMachineService;
-import io.fusion.air.microservice.domain.statemachine.OrderEvent;
+import io.fusion.air.microservice.domain.statemachine.order.OrderEvent;
 import io.fusion.air.microservice.utils.Utils;
 // Spring
 import org.springframework.beans.factory.annotation.Autowired;

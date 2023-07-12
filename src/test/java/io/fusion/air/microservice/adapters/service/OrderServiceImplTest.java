@@ -15,21 +15,6 @@
  */
 package io.fusion.air.microservice.adapters.service;
 
-import io.fusion.air.microservice.domain.entities.example.OrderEntity;
-import io.fusion.air.microservice.domain.entities.example.OrderItemEntity;
-import io.fusion.air.microservice.domain.entities.example.PaymentEntity;
-import io.fusion.air.microservice.domain.entities.example.ShippingAddress;
-import io.fusion.air.microservice.domain.ports.services.OrderService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  *
  * @author: Araf Karsh Hamid
@@ -54,7 +39,7 @@ class OrderServiceImplTest {
                 .addCustomerId("123")
                 .addOrderItems(items)
                 .addShippingAddress(new ShippingAddress())
-                .addPayment(new PaymentEntity())
+                .addPayment(new OrderPaymentEntity())
                 .build();
     }
 

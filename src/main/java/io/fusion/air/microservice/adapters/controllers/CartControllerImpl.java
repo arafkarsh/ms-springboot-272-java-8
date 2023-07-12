@@ -15,9 +15,9 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.domain.entities.example.CartEntity;
+import io.fusion.air.microservice.domain.entities.order.CartEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
-import io.fusion.air.microservice.domain.models.example.Cart;
+import io.fusion.air.microservice.domain.models.order.Cart;
 import io.fusion.air.microservice.domain.ports.services.CartService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;

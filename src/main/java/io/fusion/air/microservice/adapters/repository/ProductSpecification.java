@@ -18,7 +18,7 @@ package io.fusion.air.microservice.adapters.repository;
 import java.math.BigDecimal;
 // import java.time.LocalDate;
 
-import io.fusion.air.microservice.domain.entities.example.ProductEntity;
+import io.fusion.air.microservice.domain.entities.order.ProductEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

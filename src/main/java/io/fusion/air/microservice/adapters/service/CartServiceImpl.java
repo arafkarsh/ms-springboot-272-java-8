@@ -16,8 +16,8 @@
 package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.adapters.repository.CartRepository;
-import io.fusion.air.microservice.domain.entities.example.CartEntity;
-import io.fusion.air.microservice.domain.models.example.Cart;
+import io.fusion.air.microservice.domain.entities.order.CartEntity;
+import io.fusion.air.microservice.domain.models.order.Cart;
 import io.fusion.air.microservice.domain.ports.services.CartService;
 import io.fusion.air.microservice.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import java.util.UUID;
  * The annotation offers several options for customization:
  *
  * readOnly: This attribute is a hint for the persistence provider that the transaction will be read-only.
- * In our example, we use @Transactional(readOnly = true) because the method is just reading data from the
+ * In our order, we use @Transactional(readOnly = true) because the method is just reading data from the
  * database and not modifying anything. This can allow the persistence provider and the database to apply
  * some optimizations.
  *

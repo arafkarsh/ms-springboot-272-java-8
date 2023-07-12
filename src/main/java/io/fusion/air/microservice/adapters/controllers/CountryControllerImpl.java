@@ -15,8 +15,8 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryGeoEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.domain.ports.services.CountryService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;

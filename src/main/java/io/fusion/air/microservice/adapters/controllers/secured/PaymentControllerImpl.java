@@ -17,9 +17,9 @@ package io.fusion.air.microservice.adapters.controllers.secured;
 
 
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
-import io.fusion.air.microservice.domain.models.example.PaymentDetails;
-import io.fusion.air.microservice.domain.models.example.PaymentStatus;
-import io.fusion.air.microservice.domain.models.example.PaymentType;
+import io.fusion.air.microservice.domain.models.order.PaymentDetails;
+import io.fusion.air.microservice.domain.models.order.PaymentStatus;
+import io.fusion.air.microservice.domain.models.order.PaymentType;
 
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;

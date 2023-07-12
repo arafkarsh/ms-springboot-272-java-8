@@ -18,10 +18,10 @@ package io.fusion.air.microservice.adapters.service;
 import io.fusion.air.microservice.adapters.repository.ProductRepository;
 import io.fusion.air.microservice.adapters.repository.ProductSpecification;
 
-import io.fusion.air.microservice.domain.entities.example.ProductEntity;
+import io.fusion.air.microservice.domain.entities.order.ProductEntity;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 
-import io.fusion.air.microservice.domain.models.example.Product;
+import io.fusion.air.microservice.domain.models.order.Product;
 import io.fusion.air.microservice.domain.ports.services.ProductService;
 
 import io.fusion.air.microservice.utils.CPU;
@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

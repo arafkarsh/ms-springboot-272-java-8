@@ -16,9 +16,9 @@
 package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.adapters.repository.CountryGeoRepository;
-import io.fusion.air.microservice.domain.entities.example.CountryEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryEntity;
 import io.fusion.air.microservice.adapters.repository.CountryRepository;
-import io.fusion.air.microservice.domain.entities.example.CountryGeoEntity;
+import io.fusion.air.microservice.domain.entities.order.CountryGeoEntity;
 import io.fusion.air.microservice.domain.ports.services.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,7 +35,7 @@ import java.util.List;
  * The annotation offers several options for customization:
  *
  * readOnly: This attribute is a hint for the persistence provider that the transaction will be read-only.
- * In our example, we use @Transactional(readOnly = true) because the method is just reading data from the
+ * In our order, we use @Transactional(readOnly = true) because the method is just reading data from the
  * database and not modifying anything. This can allow the persistence provider and the database to apply
  * some optimizations.
  *

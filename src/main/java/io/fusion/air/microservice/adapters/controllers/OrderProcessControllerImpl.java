@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.domain.entities.example.OrderEntity;
+import io.fusion.air.microservice.domain.entities.order.OrderEntity;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.domain.ports.services.OrderService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
