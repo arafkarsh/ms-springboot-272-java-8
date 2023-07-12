@@ -31,6 +31,12 @@ import java.time.LocalDate;
 @Table(name = "reservation_flight_tx")
 public class FlightReservationEntity extends AbstractBaseEntityWithUUID {
 
+    @Column(name = "passengerName")
+    private String passengerName;
+
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "flightId")
     private String flightId;
 
@@ -76,6 +82,22 @@ public class FlightReservationEntity extends AbstractBaseEntityWithUUID {
         this.flightId = _rentalId;
         this.airlines = _rentalName;
         this.rate = _rate;
+    }
+
+    /**
+     * Returns the Passenger Name
+     * @return
+     */
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    /**
+     * Returns Gender
+     * @return
+     */
+    public String getGender() {
+        return gender;
     }
 
     /**

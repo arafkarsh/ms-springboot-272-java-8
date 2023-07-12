@@ -32,6 +32,9 @@ import java.time.LocalDate;
 @Table(name = "reservation_rental_tx")
 public class RentalReservationEntity extends AbstractBaseEntityWithUUID {
 
+    @Column(name = "primaryDriver")
+    private String primaryDriver;
+
     @Column(name = "rentalId")
     private String rentalId;
 
@@ -82,6 +85,14 @@ public class RentalReservationEntity extends AbstractBaseEntityWithUUID {
         this.rentalName = _rentalName;
         this.days = _days;
         this.rate = _rate;
+    }
+
+    /**
+     * Returns the Primary Driver Name
+     * @return
+     */
+    public String getPrimaryDriver() {
+        return primaryDriver;
     }
 
     /**

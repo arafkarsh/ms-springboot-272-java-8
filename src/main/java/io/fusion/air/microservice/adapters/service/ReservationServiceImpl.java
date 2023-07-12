@@ -21,27 +21,31 @@ import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.ReservationService;
+import io.fusion.air.microservice.domain.ports.services.ReservationStateMachineService;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationEvent;
 import io.fusion.air.microservice.utils.Utils;
-import org.slf4j.Logger;
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
-
+// Java
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Order Service
- * Order Processing is implemented with Spring State Machine
- * 1. Request for Credit
- * 2. Payment Processing
- * 3. Shipping the Product
+ * Reservation Service
+ * Reservation Processing is implemented with Spring State Machine
+ *
+ * 1. Request for Hotel Booking
+ * 2. Request for Rental Booking
+ * 3. Request for Flight Booking
+ * 4. Request for Payment
+ * 5. Request to Send Invoices and Travel Plans
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -56,6 +60,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
+
+    @Autowired
+    private ReservationStateMachineService reservationStateMachineService;
 
     /**
      * ONLY FOR TESTING PURPOSE
@@ -184,6 +191,91 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("--------------------------------------------------------------------------------------------------");
 
         ReservationEntity reservation = reservationOpt.get();
+        switch(reservationEvent) {
+            case RESERVATION_VALIDATION_EVENT:
+                reservationStateMachineService.reservationValidation(reservation);
+                break;
+
+            case RESERVATION_INIT_EVENT:
+                reservationStateMachineService.reservationInit(reservation);
+                break;
+
+            // Hotel
+            case HOTEL_BOOKING_REQUEST_EVENT:
+                reservationStateMachineService.hotelBookingRequest(reservation);
+                break;
+
+            case HOTEL_BOOKING_CONFIRMED_EVENT:
+                reservationStateMachineService.hotelBookingConfirmed(reservation);
+                break;
+
+            case HOTEL_BOOKING_DECLINED_EVENT:
+                reservationStateMachineService.hotelBookingDeclined(reservation);
+                break;
+
+            case HOTEL_BOOKING_ROLLBACK_EVENT:
+                reservationStateMachineService.hotelBookingRollback(reservation);
+                break;
+
+            // Rental
+            case RENTAL_BOOKING_REQUEST_EVENT:
+                reservationStateMachineService.rentalBookingRequest(reservation);
+                break;
+
+            case RENTAL_BOOKING_CONFIRMED_EVENT:
+                reservationStateMachineService.rentalBookingConfirmed(reservation);
+                break;
+
+            case RENTAL_BOOKING_DECLINED_EVENT:
+                reservationStateMachineService.rentalBookingDeclined(reservation);
+                break;
+
+            case RENTAL_BOOKING_ROLLBACK_EVENT:
+                reservationStateMachineService.rentalBookingRollback(reservation);
+                break;
+
+            // Flight
+            case FLIGHT_BOOKING_REQUEST_EVENT:
+                reservationStateMachineService.flightBookingRequest(reservation);
+                break;
+
+            case FLIGHT_BOOKING_CONFIRMED_EVENT:
+                reservationStateMachineService.flightBookingConfirmed(reservation);
+                break;
+
+            case FLIGHT_BOOKING_DECLINED_EVENT:
+                reservationStateMachineService.flightBookingDeclined(reservation);
+                break;
+
+            case FLIGHT_BOOKING_ROLLBACK_EVENT:
+                reservationStateMachineService.flightBookingRollback(reservation);
+                break;
+
+            // Payment
+            case PAYMENT_REQUEST_EVENT:
+                reservationStateMachineService.paymentRequest(reservation);
+                break;
+
+            case PAYMENT_CONFIRMED_EVENT:
+                reservationStateMachineService.paymentConfirmed(reservation);
+                break;
+
+            case PAYMENT_DECLINED_EVENT:
+                reservationStateMachineService.paymentDeclined(reservation);
+                break;
+
+            // Send Invoice and Travel Plans
+            case SEND_INVOICE_EVENT:
+                reservationStateMachineService.sendInvoice(reservation);
+                break;
+
+            case SEND_TRAVEL_DETAILS_EVENT:
+                reservationStateMachineService.sendTravelPlans(reservation);
+                break;
+
+            default:
+                break;
+        }
         return reservation;
     }
 }

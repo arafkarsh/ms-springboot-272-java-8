@@ -24,9 +24,10 @@ import java.util.Map;
  * @date:
  */
 public enum ReservationResult {
-    IN_PROGRESS,
 
+    IN_PROGRESS,
     SUSPENDED,
+    INVALID_REQUEST,
 
     // HOTEL BOOKING RESULT
     HOTEL_BOOKING_CONFIRMED,

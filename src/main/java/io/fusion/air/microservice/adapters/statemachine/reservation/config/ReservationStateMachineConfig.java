@@ -62,7 +62,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
     private ReservationStateMachineListenerAdapter stateMachineListener;
 
     /**
-     * Order Processing
+     * Reservation Processing
      * State Machine - State Configuration
      *
      * @param states
@@ -70,10 +70,61 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
      */
     @Override
     public void configure(StateMachineStateConfigurer<ReservationState, ReservationEvent> states) throws Exception {
-        }
+        states
+            .withStates()
+                .initial(ReservationState.RESERVATION_REQUEST_RECEIVED)
+                .region("Reservation Process")
+                .choice(ReservationState.RESERVATION_REQUIRED)
+                .state(ReservationState.RESERVATION_INITIALIZED)
+                .state(ReservationState.RESERVATION_INVALID)
+                .state(ReservationState.IN_PROGRESS)
+                .state(ReservationState.ERROR)
+                .end(ReservationState.RESERVATION_COMPLETED)
+                .and()
+                .withStates()
+                    .parent(ReservationState.IN_PROGRESS)
+                    .initial(ReservationState.HOTEL_BOOKING_INIT)
+                    .choice(ReservationState.HOTEL_CHOICE)
+                    .state(ReservationState.HOTEL_BOOKING_REQUEST)
+                    .state(ReservationState.HOTEL_BOOKING_CONFIRMED)
+                    .state(ReservationState.HOTEL_BOOKING_DECLINED)
+                    .state(ReservationState.HOTEL_BOOKING_ROLLBACK)
+                    .state(ReservationState.HOTEL_BOOKING_CANCELLED)
+                .and()
+                .withStates()
+                    .parent(ReservationState.IN_PROGRESS)
+                    .initial(ReservationState.RENTAL_BOOKING_INIT)
+                    .choice(ReservationState.RENTAL_CHOICE)
+                    .state(ReservationState.RENTAL_BOOKING_REQUEST)
+                    .state(ReservationState.RENTAL_BOOKING_CONFIRMED)
+                    .state(ReservationState.RENTAL_BOOKING_DECLINED)
+                    .state(ReservationState.RENTAL_BOOKING_ROLLBACK)
+                    .state(ReservationState.RENTAL_BOOKING_CANCELLED)
+                .and()
+                .withStates()
+                    .parent(ReservationState.IN_PROGRESS)
+                    .initial(ReservationState.FLIGHT_BOOKING_INIT)
+                    .choice(ReservationState.FLIGHT_CHOICE)
+                    .state(ReservationState.FLIGHT_BOOKING_REQUEST)
+                    .state(ReservationState.FLIGHT_BOOKING_CONFIRMED)
+                    .state(ReservationState.FLIGHT_BOOKING_DECLINED)
+                    .state(ReservationState.FLIGHT_BOOKING_ROLLBACK)
+                    .state(ReservationState.FLIGHT_BOOKING_CANCELLED)
+                .and()
+                .withStates()
+                    .parent(ReservationState.IN_PROGRESS)
+                    .initial(ReservationState.PAYMENT_REQUEST_INIT)
+                    .state(ReservationState.PAYMENT_APPROVED)
+                    .state(ReservationState.PAYMENT_DECLINED)
+                    .state(ReservationState.SEND_INVOICE_START)
+                    .state(ReservationState.SEND_TRAVEL_DETAILS_START)
+                    .state(ReservationState.TRIP_CONFIRMED)
+
+        ;
+    }
 
     /**
-     * Order Processing
+     * Reservation Processing
      * State Machine - Transition Configuration
      *
      * @param transitions
@@ -81,7 +132,117 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
      */
     @Override
     public void configure(StateMachineTransitionConfigurer<ReservationState, ReservationEvent> transitions) throws Exception {
-
+        transitions
+            .withExternal()
+                .source(ReservationState.RESERVATION_REQUEST_RECEIVED).target(ReservationState.RESERVATION_REQUIRED)
+                .event(ReservationEvent.RESERVATION_VALIDATION_EVENT)
+            .and()
+            .withExternal()
+                .source(ReservationState.IN_PROGRESS).target(ReservationState.ERROR)
+                .event(ReservationEvent.FAILURE_EVENT)
+            .and()
+            .withChoice()
+                .source(ReservationState.RESERVATION_REQUIRED)
+                .first(ReservationState.RESERVATION_INITIALIZED, guards.checkOrderValidity())
+                .last(ReservationState.RESERVATION_INVALID)
+            .and()
+            .withExternal()
+                .source(ReservationState.RESERVATION_INITIALIZED).target(ReservationState.IN_PROGRESS)
+                .event(ReservationEvent.RESERVATION_INIT_EVENT)
+            .and()
+            .withExternal()
+                .source(ReservationState.IN_PROGRESS).target(ReservationState.HOTEL_CHOICE)
+                .event(ReservationEvent.HOTEL_BOOKING_REQUEST_EVENT)
+            .and()
+             // Hotel
+            .withChoice()
+                .source(ReservationState.HOTEL_CHOICE)
+                .first(ReservationState.HOTEL_BOOKING_REQUEST, guards.doHotelBooking())
+                .last(ReservationState.RENTAL_CHOICE)
+                .and()
+                .withExternal()
+                    .source(ReservationState.HOTEL_BOOKING_REQUEST).target(ReservationState.HOTEL_BOOKING_CONFIRMED)
+                    .event(ReservationEvent.HOTEL_BOOKING_CONFIRMED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.HOTEL_BOOKING_REQUEST).target(ReservationState.HOTEL_BOOKING_DECLINED)
+                    .event(ReservationEvent.HOTEL_BOOKING_DECLINED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.HOTEL_BOOKING_ROLLBACK).target(ReservationState.HOTEL_BOOKING_CANCELLED)
+                    .event(ReservationEvent.HOTEL_BOOKING_ROLLBACK_EVENT)
+            .and()
+            .withExternal()
+                .source(ReservationState.HOTEL_BOOKING_CONFIRMED).target(ReservationState.RENTAL_CHOICE)
+                .event(ReservationEvent.RENTAL_BOOKING_REQUEST_EVENT)
+            .and()
+            // Rental
+            .withChoice()
+                .source(ReservationState.RENTAL_CHOICE)
+                .first(ReservationState.RENTAL_BOOKING_REQUEST, guards.doRentalBooking())
+                .last(ReservationState.FLIGHT_CHOICE)
+                .and()
+                .withExternal()
+                    .source(ReservationState.RENTAL_BOOKING_REQUEST).target(ReservationState.RENTAL_BOOKING_CONFIRMED)
+                    .event(ReservationEvent.RENTAL_BOOKING_CONFIRMED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.RENTAL_BOOKING_REQUEST).target(ReservationState.RENTAL_BOOKING_DECLINED)
+                    .event(ReservationEvent.RENTAL_BOOKING_DECLINED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.RENTAL_BOOKING_ROLLBACK).target(ReservationState.RENTAL_BOOKING_CANCELLED)
+                    .event(ReservationEvent.RENTAL_BOOKING_ROLLBACK_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.RENTAL_BOOKING_CONFIRMED).target(ReservationState.FLIGHT_CHOICE)
+                    .event(ReservationEvent.FLIGHT_BOOKING_REQUEST_EVENT)
+            .and()
+            // Flight
+            .withChoice()
+                .source(ReservationState.FLIGHT_CHOICE)
+                .first(ReservationState.FLIGHT_BOOKING_REQUEST, guards.doFlightBooking())
+                .last(ReservationState.PAYMENT_REQUEST_INIT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.FLIGHT_BOOKING_REQUEST).target(ReservationState.FLIGHT_BOOKING_CONFIRMED)
+                    .event(ReservationEvent.FLIGHT_BOOKING_CONFIRMED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.FLIGHT_BOOKING_REQUEST).target(ReservationState.FLIGHT_BOOKING_DECLINED)
+                    .event(ReservationEvent.FLIGHT_BOOKING_DECLINED_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.FLIGHT_BOOKING_ROLLBACK).target(ReservationState.FLIGHT_BOOKING_CANCELLED)
+                    .event(ReservationEvent.FLIGHT_BOOKING_ROLLBACK_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.FLIGHT_BOOKING_CONFIRMED).target(ReservationState.PAYMENT_REQUEST_INIT)
+                    .event(ReservationEvent.PAYMENT_REQUEST_EVENT)
+                .and()
+            //  Payment
+            .withExternal()
+                .source(ReservationState.PAYMENT_REQUEST_INIT).target(ReservationState.PAYMENT_APPROVED)
+                .event(ReservationEvent.PAYMENT_CONFIRMED_EVENT)
+                .and()
+                .withExternal()
+                .source(ReservationState.PAYMENT_REQUEST_INIT).target(ReservationState.PAYMENT_DECLINED)
+                .event(ReservationEvent.PAYMENT_DECLINED_EVENT)
+                .and()
+                .withExternal()
+                .source(ReservationState.PAYMENT_APPROVED).target(ReservationState.SEND_INVOICE_START)
+                .event(ReservationEvent.SEND_INVOICE_EVENT)
+                .and()
+                .withExternal()
+                .source(ReservationState.SEND_INVOICE_START).target(ReservationState.SEND_TRAVEL_DETAILS_START)
+                .event(ReservationEvent.SEND_TRAVEL_DETAILS_EVENT)
+                .and()
+                .withExternal()
+                .source(ReservationState.SEND_TRAVEL_DETAILS_START).target(ReservationState.TRIP_CONFIRMED)
+                .event(ReservationEvent.AUTO_TRANSITION_EVENT)
+                .source(ReservationState.PAYMENT_DECLINED).target(ReservationState.TRIP_CANCELLED)
+                .event(ReservationEvent.AUTO_TRANSITION_EVENT)
+            ;
     }
 
     /**

@@ -1,0 +1,85 @@
+#!/bin/sh
+echo "Reservation State Machine Test"
+API_PREFIX=localhost:9090/ms-cache/api/v1/reservation/event/
+RESERVATION=b9176b11-d924-495e-a459-3b17687d773e
+CUSTOMER=123
+# Check if the input is not null
+if [ -n "$1" ]; then
+    RESERVATION=$1
+fi
+echo "RESET\n"
+curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/reservation/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+sleep 3
+
+echo "\nRESERVATION_VALIDATION_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RESERVATION_VALIDATION_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nRESERVATION_INIT_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RESERVATION_INIT_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nHOTEL_BOOKING_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nHOTEL_BOOKING_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+#echo "\nHOTEL_BOOKING_DECLINED_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_DECLINED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+#echo "\nHOTEL_BOOKING_ROLLBACK_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_ROLLBACK_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
+echo "\nRENTAL_BOOKING_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
+echo "\nRENTAL_BOOKING_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
+#echo "\nRENTAL_BOOKING_DECLINED_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_DECLINED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
+#echo "\nRENTAL_BOOKING_ROLLBACK_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_ROLLBACK_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+sleep 3
+
+echo "\nFLIGHT_BOOKING_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nFLIGHT_BOOKING_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+#echo "\nFLIGHT_BOOKING_DECLINED_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_DECLINED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+#echo "\nFLIGHT_BOOKING_ROLLBACK_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_ROLLBACK_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nPAYMENT_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PAYMENT_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nPAYMENT_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PAYMENT_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+#echo "\nPAYMENT_DECLINED_EVENT\n"
+#curl -X 'POST' "http://${API_PREFIX}PAYMENT_DECLINED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nSEND_INVOICE_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}SEND_INVOICE_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+
+echo "\nSEND_TRAVEL_DETAILS_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}SEND_TRAVEL_DETAILS_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep 3
+

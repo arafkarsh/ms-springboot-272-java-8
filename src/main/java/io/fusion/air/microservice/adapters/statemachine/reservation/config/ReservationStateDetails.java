@@ -55,7 +55,7 @@ public class ReservationStateDetails implements Serializable {
      * Add Reservation
      * @param _reservation
      */
-    public void addOrder(ReservationEntity _reservation) {
+    public void addReservations(ReservationEntity _reservation) {
         reservation = _reservation;
     }
 
