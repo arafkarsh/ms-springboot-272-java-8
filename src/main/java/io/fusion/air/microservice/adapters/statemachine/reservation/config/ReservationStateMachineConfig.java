@@ -127,11 +127,13 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .state(ReservationState.SEND_INVOICE)
                     .state(ReservationState.SEND_TRAVEL_DETAILS)
 
+                    .state(ReservationState.TRIP_CONFIRMED)
+                    .state(ReservationState.TRIP_CANCELLED)
+                
                     .stateEntry(ReservationState.TRIP_CONFIRMED, actions.autoTransition())
                     .stateEntry(ReservationState.TRIP_CANCELLED, actions.autoTransition())
 
-                    .state(ReservationState.TRIP_CONFIRMED)
-                    .state(ReservationState.TRIP_CANCELLED)
+
 
         ;
     }

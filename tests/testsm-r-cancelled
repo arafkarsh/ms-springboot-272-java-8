@@ -56,3 +56,7 @@ curl -X 'POST' "http://${API_PREFIX}PAYMENT_DECLINED_EVENT/customer/${CUSTOMER}/
 echo "\nTRIP_CANCELLED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}TRIP_CANCELLED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
+
+echo "\AUTO_TRANSITION_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}AUTO_TRANSITION_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP

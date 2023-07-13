@@ -265,6 +265,8 @@ public class ReservationStateMachineActions {
                     stateMachine.sendEvent(mesg);
                     logStateTransition(context, "AUTO TRANSITION EVENT SEND: ");
                 }
+            } else {
+                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
             }
         };
     }
