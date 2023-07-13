@@ -273,7 +273,16 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationStateMachineService.sendTravelPlans(reservation);
                 break;
 
+            case TRIP_CONFIRMED_EVENT:
+                reservationStateMachineService.tripConfirmed(reservation);
+                break;
+
+            case TRIP_CANCELLED_EVENT:
+                reservationStateMachineService.tripCancelled(reservation);
+                break;
+
             default:
+                reservationStateMachineService.sendEvent(reservationEvent, reservation);
                 break;
         }
         return reservation;

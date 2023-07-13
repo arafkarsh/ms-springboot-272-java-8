@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
 
 /**
  * Reservation Entity
@@ -72,6 +73,9 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     @Column(name = "result")
     @Enumerated(EnumType.STRING)
     private ReservationResult result;
+    @Column(name = "rollbackOnFailure")
+    // @ColumnDefault("false")
+    private Boolean rollbackOnFailure;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservation_id")
@@ -252,6 +256,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     protected void initializeOrder() {
         reservationState = ReservationState.RESERVATION_REQUEST_RECEIVED;
         result = ReservationResult.IN_PROGRESS;
+        rollbackOnFailure = false;
     }
 
     /**
@@ -302,6 +307,22 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Return True if the Rollback mode is on.
+     * @return
+     */
+    public boolean isRollbackOnFailure() {
+        return rollbackOnFailure;
+    }
+
+    /**
+     * Enables Tx Rollback (hint) across the services
+     */
+    @JsonIgnore
+    public void enableRollback() {
+        rollbackOnFailure = true;
     }
 
     public static class Builder {

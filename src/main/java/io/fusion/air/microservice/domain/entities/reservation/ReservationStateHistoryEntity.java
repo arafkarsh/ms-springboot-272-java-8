@@ -48,8 +48,8 @@ public class ReservationStateHistoryEntity extends AbstractBaseEntityWithUUID im
     @Enumerated(EnumType.STRING)
     private ReservationEvent transitionEvent;
 
-    @Column(name= "orderVersion", columnDefinition = "int default 0")
-    private Integer orderVersion;
+    @Column(name= "aggregateVersionNo", columnDefinition = "int default 0")
+    private Integer aggregateVersionNo;
 
     @Column(name = "notes")
     private String notes;
@@ -69,7 +69,7 @@ public class ReservationStateHistoryEntity extends AbstractBaseEntityWithUUID im
         this.sourceState = _source;
         this.targetState = _target;
         this.transitionEvent = _event;
-        this.orderVersion = _version;
+        this.aggregateVersionNo = _version;
         this.notes = _notes;
     }
 
@@ -101,8 +101,8 @@ public class ReservationStateHistoryEntity extends AbstractBaseEntityWithUUID im
      * Get the Order Version
      * @return
      */
-    public int getOrderVersion() {
-        return orderVersion;
+    public int getAggregateVersionNo() {
+        return aggregateVersionNo;
     }
 
     /**
@@ -135,6 +135,6 @@ public class ReservationStateHistoryEntity extends AbstractBaseEntityWithUUID im
     @Override
     @JsonIgnore
     public int compareTo(ReservationStateHistoryEntity o) {
-        return this.orderVersion - o.orderVersion;
+        return this.aggregateVersionNo - o.aggregateVersionNo;
     }
 }

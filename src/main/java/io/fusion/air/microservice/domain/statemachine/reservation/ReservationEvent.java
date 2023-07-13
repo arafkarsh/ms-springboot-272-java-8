@@ -56,6 +56,11 @@ public enum ReservationEvent {
     SEND_INVOICE_EVENT,
     SEND_TRAVEL_DETAILS_EVENT,
 
+    TRIP_CONFIRMED_EVENT,
+
+    TRIP_CANCELLED_EVENT,
+
+
     FAILURE_EVENT
     ;
 

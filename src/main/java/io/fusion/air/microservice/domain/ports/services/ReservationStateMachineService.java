@@ -157,6 +157,25 @@ public interface ReservationStateMachineService {
 
 
     /**
+     * Trip Confirmed
+     * @param reservation
+     */
+    public void tripConfirmed(ReservationEntity reservation);
+
+    /**
+     * Trip Cancelled
+     * @param reservation
+     */
+    public void tripCancelled(ReservationEntity reservation);
+
+    /**
+     * Send Message/Event to State Machine
+     * @param event
+     * @param reservation
+     */
+    public void sendEvent(ReservationEvent event, ReservationEntity reservation);
+
+    /**
      * Sends Multiple Events to the State Machine
      * @param reservation
      * @param events

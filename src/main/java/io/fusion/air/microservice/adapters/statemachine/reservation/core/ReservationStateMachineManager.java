@@ -261,6 +261,26 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
     }
 
     /**
+     * Trip Confirmed
+     *
+     * @param reservation
+     */
+    @Override
+    public void tripConfirmed(ReservationEntity reservation) {
+        sendEvent(ReservationEvent.TRIP_CONFIRMED_EVENT, reservation);
+    }
+
+    /**
+     * Trip Cancelled
+     *
+     * @param reservation
+     */
+    @Override
+    public void tripCancelled(ReservationEntity reservation) {
+        sendEvent(ReservationEvent.TRIP_CANCELLED_EVENT, reservation);
+    }
+
+    /**
      * Sends Multiple Events to the State Machine
      * @param reservation
      * @param events
@@ -278,7 +298,7 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
      * @param event
      * @param reservation
      */
-    private void sendEvent(ReservationEvent event, ReservationEntity reservation) {
+    public void sendEvent(ReservationEvent event, ReservationEntity reservation) {
        validateInputs(event, reservation);
        reservationStateDetails.addReservations(reservation);
        reservationStateDetails.setEvent(event);
@@ -289,6 +309,7 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
                 .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
                 .build();
         // Send the Message to the State Machine
+        log.info("SENDING MESSAGE >> "+event.name());
         sm.sendEvent(mesg);
     }
 

@@ -31,9 +31,11 @@ curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_CONFIRMED_EVENT/customer/${CUS
 
 echo "\nRENTAL_BOOKING_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
 
 echo "\nRENTAL_BOOKING_CONFIRMED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
 
 echo "\nFLIGHT_BOOKING_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
@@ -47,18 +49,10 @@ echo "\nPAYMENT_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PAYMENT_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
 
-echo "\nPAYMENT_CONFIRMED_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}PAYMENT_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+echo "\nPAYMENT_DECLINED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PAYMENT_DECLINED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
 
-echo "\nSEND_INVOICE_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}SEND_INVOICE_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
-#sleep $SLEEP
-
-echo "\nSEND_TRAVEL_DETAILS_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}SEND_TRAVEL_DETAILS_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
-#sleep $SLEEP
-
-echo "\nTRIP_CONFIRMED_EVENT\n"
-curl -X 'POST' "http://${API_PREFIX}TRIP_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+echo "\nTRIP_CANCELLED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}TRIP_CANCELLED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
