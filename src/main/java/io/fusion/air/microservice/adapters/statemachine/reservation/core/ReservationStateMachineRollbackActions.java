@@ -15,26 +15,26 @@
  */
 package io.fusion.air.microservice.adapters.statemachine.reservation.core;
 // Custom
-
 import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
-import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationConstants;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationEvent;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
-import org.slf4j.Logger;
+// Spring
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Component;
+// Spring State Machine
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
-import org.springframework.stereotype.Component;
-
+// Java
+import org.slf4j.Logger;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Reservation State Machine Actions
+ * Reservation State Machine Rollback Actions
  *
  * @author: Araf Karsh Hamid
  * @version:
@@ -47,8 +47,19 @@ public class ReservationStateMachineRollbackActions {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-
     // ROLL BACK Actions
+    /**
+     * Checks if the Flight Rollback required or Not
+     * @return
+     */
+    @Bean(name = "Reservation-Flight-Rollback-Required")
+    public Action<ReservationState, ReservationEvent> checkFlightRollbackRequired() {
+        return context -> {
+            logStateTransition(context, "Check Flight Rollback Required or Not");
+            // Add Business Logic to Handle Event
+            // ...
+        };
+    }
 
     /**
      * Flight Booking Rollback Action
@@ -57,24 +68,20 @@ public class ReservationStateMachineRollbackActions {
     @Bean(name = "Reservation-Flight-Rollback-Event")
     public Action<ReservationState, ReservationEvent> flightRollBackAction() {
         return context -> {
-            System.out.println("(6.1) FLIGHT_ROLLBACK TRANSITIONING: == (StateMachineActions) ==================================== >>");
-            // Get the State Machine from the context
-            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
-            if(stateMachine != null) {
-                // Extract Reservation from the Extended State
-                ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
-                if(reservation != null) {
-                    // Create Message for the Auto Transition Event
-                    Message mesg = MessageBuilder.withPayload(ReservationEvent.FLIGHT_ROLLBACK_EVENT)
-                            .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
-                            .build();
-                    // Send Event to the State Machine
-                    stateMachine.sendEvent(mesg);
-                    logStateTransition(context, "FLIGHT_ROLLBACK_EVENT SEND: ");
-                }
-            } else {
-                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
-            }
+            sendEvent(context, ReservationEvent.FLIGHT_ROLLBACK_EVENT);
+        };
+    }
+
+    /**
+     * Checks if the Rental Rollback required or Not
+     * @return
+     */
+    @Bean(name = "Reservation-Flight-Rollback-Required")
+    public Action<ReservationState, ReservationEvent> checkRentalRollbackRequired() {
+        return context -> {
+            logStateTransition(context, "Check Rental Rollback Required or Not");
+            // Add Business Logic to Handle Event
+            // ...
         };
     }
 
@@ -85,24 +92,20 @@ public class ReservationStateMachineRollbackActions {
     @Bean(name = "Reservation-Rental-Rollback-Event")
     public Action<ReservationState, ReservationEvent> rentalRollBackAction() {
         return context -> {
-            System.out.println("(6.2) RENTAL_ROLLBACK TRANSITIONING: == (StateMachineActions) ==================================== >>");
-            // Get the State Machine from the context
-            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
-            if(stateMachine != null) {
-                // Extract Reservation from the Extended State
-                ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
-                if(reservation != null) {
-                    // Create Message for the Auto Transition Event
-                    Message mesg = MessageBuilder.withPayload(ReservationEvent.RENTAL_ROLLBACK_EVENT)
-                            .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
-                            .build();
-                    // Send Event to the State Machine
-                    stateMachine.sendEvent(mesg);
-                    logStateTransition(context, "RENTAL_ROLLBACK_EVENT SEND: ");
-                }
-            } else {
-                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
-            }
+            sendEvent(context, ReservationEvent.RENTAL_ROLLBACK_EVENT);
+        };
+    }
+
+    /**
+     * Checks if the Hotel Rollback required or Not
+     * @return
+     */
+    @Bean(name = "Reservation-Flight-Rollback-Required")
+    public Action<ReservationState, ReservationEvent> checkHotelRollbackRequired() {
+        return context -> {
+            logStateTransition(context, "Check Hotel Rollback Required or Not");
+            // Add Business Logic to Handle Event
+            // ...
         };
     }
 
@@ -113,24 +116,7 @@ public class ReservationStateMachineRollbackActions {
     @Bean(name = "Reservation-Hotel-Rollback-Event")
     public Action<ReservationState, ReservationEvent> hotelRollBackAction() {
         return context -> {
-            System.out.println("(6.3) HOTEL_ROLLBACK TRANSITIONING: == (StateMachineActions) ==================================== >>");
-            // Get the State Machine from the context
-            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
-            if(stateMachine != null) {
-                // Extract Reservation from the Extended State
-                ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
-                if(reservation != null) {
-                    // Create Message for the Auto Transition Event
-                    Message mesg = MessageBuilder.withPayload(ReservationEvent.HOTEL_ROLLBACK_EVENT)
-                            .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
-                            .build();
-                    // Send Event to the State Machine
-                    stateMachine.sendEvent(mesg);
-                    logStateTransition(context, "HOTEL_ROLLBACK_EVENT SEND: ");
-                }
-            } else {
-                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
-            }
+            sendEvent(context, ReservationEvent.HOTEL_ROLLBACK_EVENT);
         };
     }
 
@@ -141,25 +127,33 @@ public class ReservationStateMachineRollbackActions {
     @Bean(name = "Reservation-Rollback-Event")
     public Action<ReservationState, ReservationEvent> rollBackAction() {
         return context -> {
-            System.out.println("(6.3) ROLLBACK_EVENT TRANSITIONING: == (StateMachineActions) ==================================== >>");
-            // Get the State Machine from the context
-            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
-            if(stateMachine != null) {
-                // Extract Reservation from the Extended State
-                ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
-                if(reservation != null) {
-                    // Create Message for the Auto Transition Event
-                    Message mesg = MessageBuilder.withPayload(ReservationEvent.ROLLBACK_EVENT)
-                            .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
-                            .build();
-                    // Send Event to the State Machine
-                    stateMachine.sendEvent(mesg);
-                    logStateTransition(context, "ROLLBACK_EVENT SEND: ");
-                }
-            } else {
-                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
-            }
+            sendEvent(context, ReservationEvent.ROLLBACK_EVENT);
         };
+    }
+
+    /**
+     * Send Event for the State Context
+     * @param context
+     * @param event
+     */
+    private void sendEvent(StateContext<ReservationState, ReservationEvent> context, ReservationEvent event) {
+        System.out.println("(6.x) "+event.name()+" TRANSITIONING: == (StateMachineRollbackActions) ============================== >>");
+        StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
+        if(stateMachine != null) {
+            // Extract Reservation from the Extended State
+            ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
+            if(reservation != null) {
+                // Create Message for the Auto Transition Event
+                Message mesg = MessageBuilder.withPayload(event)
+                        .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
+                        .build();
+                // Send Event to the State Machine
+                stateMachine.sendEvent(mesg);
+                logStateTransition(context, event.name()+" SEND!");
+            }
+        } else {
+            logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
+        }
     }
 
     /**

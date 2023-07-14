@@ -247,6 +247,46 @@ public class ReservationStateMachineActions {
         };
     }
 
+    @Bean(name = "Reservation-Trip-Confirmed")
+    public Action<ReservationState, ReservationEvent> tripConfirmedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON TRIP CONFIRMED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for TRIP CONFIRMED  DETAILS
+        };
+    }
+
+    @Bean(name = "Reservation-Trip-Cancelled")
+    public Action<ReservationState, ReservationEvent> tripCancelledAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON TRIP CANCELLED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for TRIP CANCELLED
+        };
+    }
+
+    @Bean(name = "Reservation-Completed")
+    public Action<ReservationState, ReservationEvent> reservationCompleted() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RESERVATION COMPLETED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for RESERVATION COMPLETED
+        };
+    }
+
+    @Bean(name = "Reservation-Terminated")
+    public Action<ReservationState, ReservationEvent> reservationTerminated() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RESERVATION TERMINATED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Received Event from Kafka Topic for RESERVATION TERMINATED
+        };
+    }
+
     // AUTO TRANSITION
 
     @Bean(name = "Reservation-Auto-Transition")
