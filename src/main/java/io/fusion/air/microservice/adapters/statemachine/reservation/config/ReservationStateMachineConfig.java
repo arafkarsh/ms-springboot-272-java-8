@@ -90,6 +90,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .state(ReservationState.RESERVATION_TERMINATED)
 
                 .end(ReservationState.RESERVATION_COMPLETED)
+                
                 .and()
                 // Hotel Booking
                 .withStates()
