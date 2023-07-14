@@ -90,7 +90,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .state(ReservationState.RESERVATION_TERMINATED)
 
                 .end(ReservationState.RESERVATION_COMPLETED)
-                
+
                 .and()
                 // Hotel Booking
                 .withStates()
@@ -153,7 +153,6 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .stateEntry(ReservationState.TRIP_CONFIRMED, actions.autoTransition())
                     // Rollback Starts with Trip Cancellation
                     .stateEntry(ReservationState.TRIP_CANCELLED, rollbackActions.flightRollBackAction())
-
         ;
     }
 
@@ -188,7 +187,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .source(ReservationState.IN_PROGRESS).target(ReservationState.HOTEL_CHOICE)
                 .event(ReservationEvent.HOTEL_BOOKING_REQUEST_EVENT)
                 .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
-            .and()
+                .and()
+
              // Hotel
             .withChoice()
                 .source(ReservationState.HOTEL_CHOICE)
@@ -214,6 +214,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .event(ReservationEvent.RENTAL_BOOKING_REQUEST_EVENT)
                 .action(actions.rentalReservationRequestAction(), errorHandler.handleError())
                 .and()
+
             // Rental
             .withChoice()
                 .source(ReservationState.RENTAL_CHOICE)
@@ -238,7 +239,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .source(ReservationState.RENTAL_BOOKING_CONFIRMED).target(ReservationState.FLIGHT_CHOICE)
                     .event(ReservationEvent.FLIGHT_BOOKING_REQUEST_EVENT)
                     .action(actions.flightReservationRequestAction(), errorHandler.handleError())
-                .and()
+                    .and()
+
             // Flight
             .withChoice()
                 .source(ReservationState.FLIGHT_CHOICE)
@@ -263,7 +265,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .source(ReservationState.FLIGHT_BOOKING_CONFIRMED).target(ReservationState.PAYMENT_REQUEST_INIT)
                     .event(ReservationEvent.PAYMENT_REQUEST_EVENT)
                     .action(actions.paymentRequestAction(), errorHandler.handleError())
-                .and()
+                    .and()
+
             //  Payment
             .withExternal()
                     .source(ReservationState.PAYMENT_REQUEST_INIT).target(ReservationState.PAYMENT_APPROVED)
@@ -280,6 +283,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .event(ReservationEvent.SEND_INVOICE_EVENT)
                     .action(actions.sendInvoiceAction(), errorHandler.handleError())
                 .and()
+
+                // Send Invoice & Trip Plans
                 .withExternal()
                     .source(ReservationState.SEND_INVOICE).target(ReservationState.SEND_TRAVEL_DETAILS)
                     .event(ReservationEvent.SEND_TRAVEL_DETAILS_EVENT)
@@ -299,6 +304,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .source(ReservationState.TRIP_CONFIRMED).target(ReservationState.RESERVATION_COMPLETED)
                     .event(ReservationEvent.AUTO_TRANSITION_EVENT)
                     .action(actions.reservationCompleted(), errorHandler.handleError())
+
+                // Rollback
                 .and()
                 .withExternal()
                     .source(ReservationState.TRIP_CANCELLED).target(ReservationState.FLIGHT_BOOKING_ROLLBACK)
