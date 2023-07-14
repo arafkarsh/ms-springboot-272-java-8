@@ -43,8 +43,8 @@ public class ReservationStateMachineListenerAdapter extends StateMachineListener
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @Autowired
-    private ReservationHistoryService reservationHistory;
+    // @Autowired
+    // private ReservationHistoryService reservationHistory;
 
     /**
      * Log when the State changes.
@@ -58,7 +58,7 @@ public class ReservationStateMachineListenerAdapter extends StateMachineListener
             System.out.println("(5) LISTENER STATE TRANSITION ================================================================= >>");
             System.out.println("--------------------------------------------------------------------------------------------------");
             logStateTransition(from, to);
-            reservationHistory.saveReservationHistory(from.getId(), to.getId());
+            // reservationHistory.saveReservationHistory(from.getId(), to.getId());
             System.out.println("--------------------------------------------------------------------------------------------------");
         }
     }

@@ -67,6 +67,8 @@ public class ReservationStateMachineActions {
             // Add Business Logic to Handle Event
             // ...
             // Received Event from Kafka Topic for HOTEL BOOKING CONFIRMED
+            // To Test the Synchronous call: Sleep for 300 Seconds
+            // sleep(300000);
         };
     }
 
@@ -257,7 +259,7 @@ public class ReservationStateMachineActions {
                 // Extract Reservation from the Extended State
                 ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
                 if(reservation != null) {
-                    // Create Message for the Failure Event
+                    // Create Message for the Auto Transition Event
                     Message mesg = MessageBuilder.withPayload(ReservationEvent.AUTO_TRANSITION_EVENT)
                             .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
                             .build();
@@ -291,5 +293,20 @@ public class ReservationStateMachineActions {
         String o = (reservation != null) ? reservation.getReservationId() : "No-Reservation-Found!";
         log.info("TRANSITIONING FROM [{}] TO ({}) based on EVENT = <{}>", s, t,e);
         log.info("{} for Reservation ID = {}",_msg,o);
+    }
+
+    /**
+     * To Test the Syncrhonous calls
+     * @param duration
+     */
+    private void sleep(long duration) {
+        System.out.println("SLEEP TESTING FOR SYNC CALL [S] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= Duration = "+duration);
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        System.out.println("SLEEP TESTING FOR SYNC CALL [E] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
     }
 }

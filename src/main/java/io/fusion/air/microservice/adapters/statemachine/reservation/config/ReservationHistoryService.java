@@ -48,33 +48,6 @@ public class ReservationHistoryService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    @Autowired
-    private ReservationStateDetails reservationStateDetails;
-
-    @Transactional
-    public void saveReservationHistory(ReservationStateDetails osd) {
-        ReservationState source = osd.getValue(ReservationStateDetails.SOURCE);
-        ReservationState target = osd.getValue(ReservationStateDetails.TARGET);
-        ReservationEvent event =  osd.getEvent();
-        ReservationEntity order = osd.getReservation();
-        ReservationNotes notes = osd.getNotes();
-        saveReservationHistory(source, target, event, order, notes);
-    }
-
-    @Transactional
-    public void saveReservationHistory(ReservationState source, ReservationState target) {
-        if(reservationStateDetails.getReservation().getReservationState().getRank() < target.getRank()) {
-            reservationStateDetails.addProperties(ReservationStateDetails.SOURCE, source);
-            reservationStateDetails.addProperties(ReservationStateDetails.TARGET, target);
-            ReservationEvent event = reservationStateDetails.getEvent();
-            ReservationEntity order = reservationStateDetails.getReservation();
-            ReservationNotes notes = reservationStateDetails.getNotes();
-            saveReservationHistory(source, target, event, order, notes);
-        } else {
-            log.info("STATE ALREADY SAVED!");
-        }
-    }
-
     @Transactional
     public void saveReservationHistory(ReservationState source, ReservationState target, ReservationEvent event,
                                        ReservationEntity order, ReservationNotes errorObj) {
@@ -106,7 +79,6 @@ public class ReservationHistoryService {
         // Save the Reservation with the History Details
         if(target.getRank() >= order.getReservationState().getRank()) {
             reservationRepository.save(order);
-            reservationStateDetails.stateSaved();
         } else {
             log.info("Reservation HISTORY NOT SAVED TARGET RANK IS {} < {} Reservation STATE RANK! ", target.getRank(),order.getReservationState().getRank());
         }

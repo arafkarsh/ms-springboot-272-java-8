@@ -86,15 +86,11 @@ public class OrderStateChangeInterceptor extends StateMachineInterceptorAdapter<
                         if(transition.getTrigger() != null) {
                             event = transition.getTrigger().getEvent();
                         }
-                        OrderStateHistoryEntity history = null;
                         OrderNotes errorObj = null;
-                        OrderResult result = null;
                         try {
                             // If the Event is a FAILURE Event thrown by Exceptions
                             if(event != null && event.equals(OrderEvent.FAILURE_EVENT)) {
                                 errorObj = stateMachine.getExtendedState().get(OrderConstants.ERROR_OBJECT, OrderNotes.class);
-                                notes = Utils.toJsonString(errorObj);
-                                result = OrderResult.fromString(errorObj.getTargetState());
                             }
                             orderHistoryService.saveOrderHistory(source, target, event, order, errorObj);
                         } catch (Exception e) {

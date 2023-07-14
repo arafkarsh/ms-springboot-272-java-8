@@ -66,9 +66,6 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
     @Autowired
     private ReservationStateChangeInterceptor reservationStateChangeInterceptor;
 
-    @Autowired
-    private ReservationStateDetails reservationStateDetails;
-
     /**
      * Check for Valid Reservation
      *
@@ -300,8 +297,6 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
      */
     public void sendEvent(ReservationEvent event, ReservationEntity reservation) {
        validateInputs(event, reservation);
-       reservationStateDetails.addReservations(reservation);
-       reservationStateDetails.setEvent(event);
         // Restore the state Machine based on Reservation ID
         StateMachine<ReservationState, ReservationEvent> sm = restoreStateMachine(reservation);
         // Create Message with the reservation Event and Set the Reservation ID in the Header
@@ -322,10 +317,8 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
         validateInputs(events, reservation);
         // Restore the state Machine based on Reservation ID
         StateMachine<ReservationState, ReservationEvent> sm = restoreStateMachine(reservation);
-        reservationStateDetails.addReservations(reservation);
         // Send Multiple Events
         for(ReservationEvent event : events) {
-            reservationStateDetails.setEvent(event);
             // Create Message with the Reservation Event and Set the Reservation ID in the Header
             Message mesg = MessageBuilder.withPayload(event)
                     .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())

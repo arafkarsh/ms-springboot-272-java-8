@@ -182,7 +182,7 @@ public class ReservationServiceImpl implements ReservationService {
      */
     public ReservationEntity handleEvent(String customerId, String reservationId, ReservationEvent reservationEvent) {
         if(reservationEvent == null) {
-            throw new BusinessServiceException("Invalid Event for reservationProcessing!");
+            throw new BusinessServiceException("Invalid Event for Reservation Processing!");
         }
         Optional<ReservationEntity> reservationOpt = findById( customerId,  reservationId);
         log.info("Handle Event "+reservationEvent+" For reservation ID = "+reservationId);
@@ -191,100 +191,9 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("--------------------------------------------------------------------------------------------------");
 
         ReservationEntity reservation = reservationOpt.get();
-        switch(reservationEvent) {
-            case RESERVATION_VALIDATION_EVENT:
-                reservationStateMachineService.reservationValidation(reservation);
-                break;
+        // Send Event to the State Machine
+        reservationStateMachineService.sendEvent(reservationEvent, reservation);
 
-            case RESERVATION_INIT_EVENT:
-                reservationStateMachineService.reservationInit(reservation);
-                break;
-
-            // Hotel
-            case HOTEL_BOOKING_REQUEST_EVENT:
-                reservationStateMachineService.hotelBookingRequest(reservation);
-                break;
-
-            case HOTEL_BOOKING_CONFIRMED_EVENT:
-                reservationStateMachineService.hotelBookingConfirmed(reservation);
-                break;
-
-            case HOTEL_BOOKING_DECLINED_EVENT:
-                reservationStateMachineService.hotelBookingDeclined(reservation);
-                break;
-
-            case HOTEL_BOOKING_ROLLBACK_EVENT:
-                reservationStateMachineService.hotelBookingRollback(reservation);
-                break;
-
-            // Rental
-            case RENTAL_BOOKING_REQUEST_EVENT:
-                reservationStateMachineService.rentalBookingRequest(reservation);
-                break;
-
-            case RENTAL_BOOKING_CONFIRMED_EVENT:
-                reservationStateMachineService.rentalBookingConfirmed(reservation);
-                break;
-
-            case RENTAL_BOOKING_DECLINED_EVENT:
-                reservationStateMachineService.rentalBookingDeclined(reservation);
-                break;
-
-            case RENTAL_BOOKING_ROLLBACK_EVENT:
-                reservationStateMachineService.rentalBookingRollback(reservation);
-                break;
-
-            // Flight
-            case FLIGHT_BOOKING_REQUEST_EVENT:
-                reservationStateMachineService.flightBookingRequest(reservation);
-                break;
-
-            case FLIGHT_BOOKING_CONFIRMED_EVENT:
-                reservationStateMachineService.flightBookingConfirmed(reservation);
-                break;
-
-            case FLIGHT_BOOKING_DECLINED_EVENT:
-                reservationStateMachineService.flightBookingDeclined(reservation);
-                break;
-
-            case FLIGHT_BOOKING_ROLLBACK_EVENT:
-                reservationStateMachineService.flightBookingRollback(reservation);
-                break;
-
-            // Payment
-            case PAYMENT_REQUEST_EVENT:
-                reservationStateMachineService.paymentRequest(reservation);
-                break;
-
-            case PAYMENT_CONFIRMED_EVENT:
-                reservationStateMachineService.paymentConfirmed(reservation);
-                break;
-
-            case PAYMENT_DECLINED_EVENT:
-                reservationStateMachineService.paymentDeclined(reservation);
-                break;
-
-            // Send Invoice and Travel Plans
-            case SEND_INVOICE_EVENT:
-                reservationStateMachineService.sendInvoice(reservation);
-                break;
-
-            case SEND_TRAVEL_DETAILS_EVENT:
-                reservationStateMachineService.sendTravelPlans(reservation);
-                break;
-
-            case TRIP_CONFIRMED_EVENT:
-                reservationStateMachineService.tripConfirmed(reservation);
-                break;
-
-            case TRIP_CANCELLED_EVENT:
-                reservationStateMachineService.tripCancelled(reservation);
-                break;
-
-            default:
-                reservationStateMachineService.sendEvent(reservationEvent, reservation);
-                break;
-        }
         return reservation;
     }
 }

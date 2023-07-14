@@ -83,7 +83,7 @@ public class OrderStateMachineListenerAdapter extends StateMachineListenerAdapte
     }
 
     /**
-     * Handle the Errors throw by the Actions / Guards
+     * Handle the Errors thrown by the Actions / Guards
      * @param stateMachine
      * @param exception
      */

@@ -75,27 +75,25 @@ public class ReservationStateChangeInterceptor extends StateMachineInterceptorAd
         Optional.ofNullable(message).ifPresent(msg -> {
             Optional.ofNullable(String.class.cast(msg.getHeaders().getOrDefault(ReservationConstants.RESERVATION_ID_HEADER, "")))
                 .ifPresent(orderId -> {
-                    Optional<ReservationEntity> orderOpt = reservationRepository.findByReservationId(Utils.getUUID(orderId));
+                    // Optional<ReservationEntity> orderOpt = reservationRepository.findByReservationId(Utils.getUUID(orderId));
+                    ReservationEntity reservation = stateMachine.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
                     String errorSource = "", errorMsg = "", notes = "";
-                    if(orderOpt.isPresent()) {
-                        ReservationEntity order = orderOpt.get();
-                        ReservationState source = order.getReservationState();
+                    if(reservation != null) {
+                        // ReservationEntity order = orderOpt.get();
+                        ReservationState source = reservation.getReservationState();
                         ReservationState target = state.getId();
                         ReservationEvent event  = null;
                         if(transition.getTrigger() != null) {
                             event = transition.getTrigger().getEvent();
+                            source = transition.getSource().getId();
                         }
-                        ReservationStateHistoryEntity history = null;
                         ReservationNotes errorObj = null;
-                        ReservationResult result = null;
                         try {
                             // If the Event is a FAILURE Event thrown by Exceptions
                             if(event != null && event.equals(ReservationEvent.FAILURE_EVENT)) {
                                 errorObj = stateMachine.getExtendedState().get(ReservationConstants.ERROR_OBJECT, ReservationNotes.class);
-                                notes = Utils.toJsonString(errorObj);
-                                result = ReservationResult.fromString(errorObj.getTargetState());
                             }
-                            reservationHistoryService.saveReservationHistory(source, target, event, order, errorObj);
+                            reservationHistoryService.saveReservationHistory(source, target, event, reservation, errorObj);
                         } catch (Exception e) {
                             log.error("ERROR in OrderStateChangeListener! "+e.getMessage(),e);
                             e.printStackTrace();
@@ -103,6 +101,8 @@ public class ReservationStateChangeInterceptor extends StateMachineInterceptorAd
                             // Log the State Change
                             logStateChange(source, target, event);
                         }
+                    } else {
+                        log.info("Reservation Object is Missing in Extended State of the State Machine!");
                     }
                 });
         });
