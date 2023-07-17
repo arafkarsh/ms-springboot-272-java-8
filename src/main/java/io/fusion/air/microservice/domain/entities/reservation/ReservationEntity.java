@@ -277,6 +277,10 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         return false;
     }
 
+    /**
+     * Check if Hotel Reservation Required. Returns TRUE if its required.
+     * @return
+     */
     @JsonIgnore
     public boolean isHotelReservationRequired() {
         if(hotelReservationList.size() > 0) {
@@ -285,6 +289,10 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         return false;
     }
 
+    /**
+     * Check if Rental Reservation Required. Returns TRUE if its required.
+     * @return
+     */
     @JsonIgnore
     public boolean isRentalReservationRequired() {
         if(rentalReservationList.size() > 0) {
@@ -293,8 +301,51 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         return false;
     }
 
+    /**
+     * Check if Flight Reservation Required. Returns TRUE if its required.
+     * @return
+     */
     @JsonIgnore
     public boolean isFlightReservationRequired() {
+        if(flightReservationList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if Hotel Reservation Confirmed. Returns TRUE if it's Confirmed.
+     * @return
+     */
+    @JsonIgnore
+    public boolean isHotelBookingAvailable() {
+        // Add Business Logic to Check the Confirmation of Reservation
+        if(hotelReservationList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if Rental Reservation Confirmed. Returns TRUE if it's Confirmed.
+     * @return
+     */
+    @JsonIgnore
+    public boolean isRentalBookingAvailable() {
+        // Add Business Logic to Check the Confirmation of Reservation
+        if(rentalReservationList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if Flight Reservation Confirmed. Returns TRUE if it's Confirmed.
+     * @return
+     */
+    @JsonIgnore
+    public boolean isFlightBookingAvailable() {
+        // Add Business Logic to Check the Confirmation of Reservation
         if(flightReservationList.size() > 0) {
             return true;
         }

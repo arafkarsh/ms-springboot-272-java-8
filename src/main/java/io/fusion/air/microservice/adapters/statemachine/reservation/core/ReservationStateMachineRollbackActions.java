@@ -120,6 +120,38 @@ public class ReservationStateMachineRollbackActions {
         };
     }
 
+    @Bean(name = "Reservation-Start-Rollback-Event")
+    public Action<ReservationState, ReservationEvent> startRollbackAction() {
+        return context -> {
+            sendEvent(context, ReservationEvent.START_ROLLBACK_EVENT);
+        };
+    }
+
+    @Bean(name = "Reservation-Start-Rollback-Process")
+    public Action<ReservationState, ReservationEvent> startRollbackProcess() {
+        return context -> {
+            System.out.println("(6.x) [-] TRANSITIONING: == (StateMachineRollbackActions) ============================== >>");
+            StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
+            if(stateMachine != null) {
+                // Extract Reservation from the Extended State
+                ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
+                int x = 1;
+                for(ReservationEvent event : getRollbackEvents() ){
+                    if(checkIfRollbackRequired(reservation, event)) {
+                        System.out.println("(6."+x+") [-] TRANSITIONING: == (StateMachineRollbackActions) ============================== >> "+event.name());
+                        sendMessage(event, reservation.getReservationId(), stateMachine, context);
+                        x++;
+                    }
+                }
+                System.out.println("(6."+x+") [-] TRANSITIONING: == (StateMachineRollbackActions) ============================== >> "+ReservationEvent.ROLLBACK_EVENT.name());
+                // Call Final Rollback
+                rollBackAction();
+            } else {
+                logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
+            }
+        };
+    }
+
     /**
      * Final Rollback Action
      * @return
@@ -137,12 +169,15 @@ public class ReservationStateMachineRollbackActions {
      * @param event
      */
     private void sendEvent(StateContext<ReservationState, ReservationEvent> context, ReservationEvent event) {
-        System.out.println("(6.x) "+event.name()+" TRANSITIONING: == (StateMachineRollbackActions) ============================== >>");
+        System.out.println("(6.x) {"+event.name()+"} TRANSITIONING: == (StateMachineRollbackActions) ============================== >> "+event.name());
         StateMachine<ReservationState, ReservationEvent> stateMachine = context.getStateMachine();
         if(stateMachine != null) {
             // Extract Reservation from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
+            // if(checkIfRollbackRequired(reservation, event)) {
+                sendMessage(event, reservation.getReservationId(), stateMachine, context);
+                /**
                 // Create Message for the Auto Transition Event
                 Message mesg = MessageBuilder.withPayload(event)
                         .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
@@ -150,10 +185,57 @@ public class ReservationStateMachineRollbackActions {
                 // Send Event to the State Machine
                 stateMachine.sendEvent(mesg);
                 logStateTransition(context, event.name()+" SEND!");
+                 */
             }
         } else {
             logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");
         }
+    }
+
+    private void sendMessage(ReservationEvent event, String reservationId,
+                             StateMachine<ReservationState, ReservationEvent> stateMachine,
+                             StateContext<ReservationState, ReservationEvent> context) {
+        if(event == null || stateMachine == null || context == null) {
+            log.info("Invalid Input to sendMessage() method!");
+            return;
+        }
+        // Create Message for the Auto Transition Event
+        Message mesg = MessageBuilder.withPayload(event)
+                .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservationId)
+                .build();
+        // Send Event to the State Machine
+        stateMachine.sendEvent(mesg);
+        logStateTransition(context, event.name()+" SEND!");
+    }
+
+    /**
+     * Returns TRUE if the Rollback is required for a specific event
+     * @param reservation
+     * @param event
+     * @return
+     */
+    private boolean checkIfRollbackRequired(ReservationEntity reservation, ReservationEvent event) {
+        if(reservation == null || event == null) {
+            log.info("Invalid Input to checkIfRollbackRequired() method!");
+            return false;
+        }
+        switch(event) {
+            case HOTEL_ROLLBACK_EVENT:
+                return reservation.isHotelBookingAvailable();
+            case RENTAL_ROLLBACK_EVENT:
+                return reservation.isRentalBookingAvailable();
+            case FLIGHT_ROLLBACK_EVENT:
+                return reservation.isFlightBookingAvailable();
+        }
+        return false;
+    }
+
+    private ReservationEvent[] getRollbackEvents() {
+        ReservationEvent[] events = new ReservationEvent[3];
+        events[0] = ReservationEvent.FLIGHT_ROLLBACK_EVENT;
+        events[1] = ReservationEvent.RENTAL_ROLLBACK_EVENT;
+        events[2] = ReservationEvent.HOTEL_ROLLBACK_EVENT;
+        return events;
     }
 
     /**

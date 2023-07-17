@@ -29,6 +29,9 @@ echo "\nRENTAL_BOOKING_CONFIRMED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
 
+echo "\nRENTAL_BOOKING_COMPLETED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_COMPLETED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
 echo "\nPAYMENT_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}PAYMENT_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP

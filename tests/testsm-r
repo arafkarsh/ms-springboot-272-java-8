@@ -29,11 +29,18 @@ echo "\nHOTEL_BOOKING_CONFIRMED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
 
+echo "\nHOTEL_BOOKING_COMPLETED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_COMPLETED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
 echo "\nRENTAL_BOOKING_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 
 echo "\nRENTAL_BOOKING_CONFIRMED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+
+echo "\nRENTAL_BOOKING_COMPLETED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RENTAL_BOOKING_COMPLETED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 
 echo "\nFLIGHT_BOOKING_REQUEST_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
@@ -41,6 +48,10 @@ curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_REQUEST_EVENT/customer/${CUST
 
 echo "\nFLIGHT_BOOKING_CONFIRMED_EVENT\n"
 curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nFLIGHT_BOOKING_COMPLETED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}FLIGHT_BOOKING_COMPLETED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
 #sleep $SLEEP
 
 echo "\nPAYMENT_REQUEST_EVENT\n"

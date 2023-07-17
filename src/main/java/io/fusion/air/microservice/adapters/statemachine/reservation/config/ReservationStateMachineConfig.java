@@ -119,7 +119,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .state(ReservationState.RENTAL_BOOKING_CANCELLED)
                     // Distributed Tx Rollback
                     .state(ReservationState.RENTAL_BOOKING_ROLLBACK)
-                    .stateEntry(ReservationState.RENTAL_BOOKING_ROLLBACK, rollbackActions.hotelRollBackAction())
+                    .stateEntry(ReservationState.RENTAL_BOOKING_ROLLBACK, rollbackActions.rollBackAction())
 
                 .and()
                 // Flight Booking
@@ -134,7 +134,7 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .state(ReservationState.FLIGHT_BOOKING_CANCELLED)
                     // Distributed Tx Rollback
                     .state(ReservationState.FLIGHT_BOOKING_ROLLBACK)
-                    .stateEntry(ReservationState.FLIGHT_BOOKING_ROLLBACK, rollbackActions.rentalRollBackAction())
+                    .stateEntry(ReservationState.FLIGHT_BOOKING_ROLLBACK, rollbackActions.rollBackAction())
 
                 .and()
                 // Payment and Invoice
@@ -152,7 +152,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     // Auto Transition Starts to complete the Reservation
                     .stateEntry(ReservationState.TRIP_CONFIRMED, actions.autoTransition())
                     // Rollback Starts with Trip Cancellation
-                    .stateEntry(ReservationState.TRIP_CANCELLED, rollbackActions.flightRollBackAction())
+                    .stateEntry(ReservationState.TRIP_CANCELLED, rollbackActions.startRollbackAction())
+                    .stateEntry(ReservationState.ROLLBACK_IN_PROGRESS, rollbackActions.startRollbackProcess())
         ;
     }
 
@@ -183,6 +184,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .source(ReservationState.RESERVATION_INITIALIZED).target(ReservationState.IN_PROGRESS)
                 .event(ReservationEvent.RESERVATION_INIT_EVENT)
             .and()
+
+            // Handling In-Progress with Various Services
             .withExternal()
                 .source(ReservationState.IN_PROGRESS).target(ReservationState.HOTEL_CHOICE)
                 .event(ReservationEvent.HOTEL_BOOKING_REQUEST_EVENT)
@@ -191,12 +194,17 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
             .withExternal()
                 .source(ReservationState.IN_PROGRESS).target(ReservationState.RENTAL_CHOICE)
                 .event(ReservationEvent.RENTAL_BOOKING_REQUEST_EVENT)
-                .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
+                .action(actions.rentalReservationRequestAction(), errorHandler.handleError())
             .and()
             .withExternal()
                 .source(ReservationState.IN_PROGRESS).target(ReservationState.FLIGHT_CHOICE)
                 .event(ReservationEvent.FLIGHT_BOOKING_REQUEST_EVENT)
-                .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
+                .action(actions.flightReservationRequestAction(), errorHandler.handleError())
+                .and()
+            .withExternal()
+                .source(ReservationState.IN_PROGRESS).target(ReservationState.PAYMENT_REQUEST_INIT)
+                .event(ReservationEvent.PAYMENT_REQUEST_EVENT)
+                .action(actions.paymentRequestAction(), errorHandler.handleError())
                 .and()
 
              // Hotel
@@ -220,8 +228,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .event(ReservationEvent.HOTEL_BOOKING_ROLLBACK_EVENT)
             .and()
             .withExternal()
-                .source(ReservationState.HOTEL_BOOKING_CONFIRMED).target(ReservationState.RENTAL_CHOICE)
-                .event(ReservationEvent.RENTAL_BOOKING_REQUEST_EVENT)
+                .source(ReservationState.HOTEL_BOOKING_CONFIRMED).target(ReservationState.IN_PROGRESS)
+                .event(ReservationEvent.HOTEL_BOOKING_COMPLETED_EVENT)
                 .action(actions.rentalReservationRequestAction(), errorHandler.handleError())
                 .and()
 
@@ -246,8 +254,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .event(ReservationEvent.RENTAL_BOOKING_ROLLBACK_EVENT)
                 .and()
                 .withExternal()
-                    .source(ReservationState.RENTAL_BOOKING_CONFIRMED).target(ReservationState.FLIGHT_CHOICE)
-                    .event(ReservationEvent.FLIGHT_BOOKING_REQUEST_EVENT)
+                    .source(ReservationState.RENTAL_BOOKING_CONFIRMED).target(ReservationState.IN_PROGRESS)
+                    .event(ReservationEvent.RENTAL_BOOKING_COMPLETED_EVENT)
                     .action(actions.flightReservationRequestAction(), errorHandler.handleError())
                     .and()
 
@@ -272,8 +280,8 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .event(ReservationEvent.FLIGHT_BOOKING_ROLLBACK_EVENT)
                 .and()
                 .withExternal()
-                    .source(ReservationState.FLIGHT_BOOKING_CONFIRMED).target(ReservationState.PAYMENT_REQUEST_INIT)
-                    .event(ReservationEvent.PAYMENT_REQUEST_EVENT)
+                    .source(ReservationState.FLIGHT_BOOKING_CONFIRMED).target(ReservationState.IN_PROGRESS)
+                    .event(ReservationEvent.FLIGHT_BOOKING_COMPLETED_EVENT)
                     .action(actions.paymentRequestAction(), errorHandler.handleError())
                     .and()
 
@@ -315,24 +323,40 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                     .event(ReservationEvent.AUTO_TRANSITION_EVENT)
                     .action(actions.reservationCompleted(), errorHandler.handleError())
 
-                // Rollback
+                // Rollback - In Progress
                 .and()
                 .withExternal()
-                    .source(ReservationState.TRIP_CANCELLED).target(ReservationState.FLIGHT_BOOKING_ROLLBACK)
+                    .source(ReservationState.TRIP_CANCELLED).target(ReservationState.ROLLBACK_IN_PROGRESS)
+                    .event(ReservationEvent.START_ROLLBACK_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.ROLLBACK_IN_PROGRESS).target(ReservationState.FLIGHT_BOOKING_ROLLBACK)
                     .event(ReservationEvent.FLIGHT_ROLLBACK_EVENT)
                 .and()
                 .withExternal()
-                    .source(ReservationState.FLIGHT_BOOKING_ROLLBACK).target(ReservationState.RENTAL_BOOKING_ROLLBACK)
+                    .source(ReservationState.ROLLBACK_IN_PROGRESS).target(ReservationState.RENTAL_BOOKING_ROLLBACK)
                     .event(ReservationEvent.RENTAL_ROLLBACK_EVENT)
                 .and()
                 .withExternal()
-                    .source(ReservationState.RENTAL_BOOKING_ROLLBACK).target(ReservationState.HOTEL_BOOKING_ROLLBACK)
+                    .source(ReservationState.ROLLBACK_IN_PROGRESS).target(ReservationState.HOTEL_BOOKING_ROLLBACK)
                     .event(ReservationEvent.HOTEL_ROLLBACK_EVENT)
                 .and()
+
+                // Final Rollback
                 .withExternal()
                     .source(ReservationState.HOTEL_BOOKING_ROLLBACK).target(ReservationState.ROLLBACK)
                     .event(ReservationEvent.ROLLBACK_EVENT)
                 .and()
+                .withExternal()
+                    .source(ReservationState.RENTAL_BOOKING_ROLLBACK).target(ReservationState.ROLLBACK)
+                    .event(ReservationEvent.ROLLBACK_EVENT)
+                .and()
+                .withExternal()
+                    .source(ReservationState.FLIGHT_BOOKING_ROLLBACK).target(ReservationState.ROLLBACK)
+                    .event(ReservationEvent.ROLLBACK_EVENT)
+                .and()
+
+                // Reservation Terminated
                 .withExternal()
                     .source(ReservationState.ROLLBACK).target(ReservationState.RESERVATION_TERMINATED)
                     .event(ReservationEvent.AUTO_TRANSITION_EVENT)

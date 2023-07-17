@@ -38,6 +38,9 @@ public enum ReservationState {
     RENTAL_BOOKING_ROLLBACK(158),
     FLIGHT_BOOKING_ROLLBACK(157),
 
+    ROLLBACK_IN_PROGRESS(150),
+
+
 
     SUSPENDED(190),
     ERROR(198),
