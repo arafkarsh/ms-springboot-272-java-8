@@ -1,0 +1,50 @@
+#!/bin/sh
+echo "Reservation State Machine Test"
+API_PREFIX=localhost:9090/ms-cache/api/v1/reservation/event/
+RESERVATION=3d256890-52bb-4b5f-afa5-c978fa6cabfd
+CUSTOMER=234
+# Check if the input is not null
+if [ -n "$1" ]; then
+    RESERVATION=$1
+fi
+SLEEP=1
+
+echo "RESET\n"
+curl -X 'POST' "http://localhost:9090/ms-cache/api/v1/reservation/reset/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+sleep $SLEEP
+
+echo "\nRESERVATION_VALIDATION_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RESERVATION_VALIDATION_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nRESERVATION_INIT_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}RESERVATION_INIT_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nHOTEL_BOOKING_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nHOTEL_BOOKING_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}HOTEL_BOOKING_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nPAYMENT_REQUEST_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PAYMENT_REQUEST_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nPAYMENT_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}PAYMENT_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nSEND_INVOICE_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}SEND_INVOICE_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nSEND_TRAVEL_DETAILS_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}SEND_TRAVEL_DETAILS_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP
+
+echo "\nTRIP_CONFIRMED_EVENT\n"
+curl -X 'POST' "http://${API_PREFIX}TRIP_CONFIRMED_EVENT/customer/${CUSTOMER}/reservation/${RESERVATION}" -H 'accept: application/json' -d ''
+#sleep $SLEEP

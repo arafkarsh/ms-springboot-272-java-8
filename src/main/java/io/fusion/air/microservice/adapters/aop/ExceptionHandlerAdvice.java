@@ -547,6 +547,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     private String getStackTraceAsString(Throwable e) {
         StringWriter stringWriter = new StringWriter();
         e.printStackTrace(new PrintWriter(stringWriter));
+        // Print Stack Trace to Std Out
+        e.printStackTrace();
         return stringWriter.toString();
     }
 }

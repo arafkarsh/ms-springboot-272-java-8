@@ -19,6 +19,7 @@ import io.fusion.air.microservice.adapters.repository.ReservationRepository;
 import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
+import io.fusion.air.microservice.domain.exceptions.DatabaseException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.ports.services.ReservationService;
 import io.fusion.air.microservice.domain.ports.services.ReservationStateMachineService;
@@ -72,7 +73,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public List<ReservationEntity> findAll() {
-        return (List<ReservationEntity>) reservationRepository.findAll();
+        try {
+            return (List<ReservationEntity>) reservationRepository.findAll();
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new DatabaseException("Error retrieving data!", e);
+        }
     }
 
     /**
@@ -84,7 +90,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public List<ReservationEntity> findByCustomerId(String customerId) {
-        return reservationRepository.findByCustomerId(customerId);
+        try {
+            return reservationRepository.findByCustomerId(customerId);
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new DatabaseException("Error retrieving data!", e);
+        }
     }
 
     /**

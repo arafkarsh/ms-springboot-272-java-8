@@ -187,6 +187,16 @@ public class ReservationStateMachineConfig extends EnumStateMachineConfigurerAda
                 .source(ReservationState.IN_PROGRESS).target(ReservationState.HOTEL_CHOICE)
                 .event(ReservationEvent.HOTEL_BOOKING_REQUEST_EVENT)
                 .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
+            .and()
+            .withExternal()
+                .source(ReservationState.IN_PROGRESS).target(ReservationState.RENTAL_CHOICE)
+                .event(ReservationEvent.RENTAL_BOOKING_REQUEST_EVENT)
+                .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
+            .and()
+            .withExternal()
+                .source(ReservationState.IN_PROGRESS).target(ReservationState.FLIGHT_CHOICE)
+                .event(ReservationEvent.FLIGHT_BOOKING_REQUEST_EVENT)
+                .action(actions.hotelReservationRequestAction(), errorHandler.handleError())
                 .and()
 
              // Hotel

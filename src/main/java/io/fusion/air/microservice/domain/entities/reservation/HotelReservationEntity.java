@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.domain.entities.reservation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.springdata.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
 
@@ -125,7 +126,7 @@ public class HotelReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the Start Date
+     * Rental Start Date
      * @return
      */
     public LocalDate getStartDate() {
@@ -133,7 +134,7 @@ public class HotelReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the End Dte
+     * Rental End Date
      * @return
      */
     public LocalDate getEndDate() {
