@@ -175,17 +175,7 @@ public class ReservationStateMachineRollbackActions {
             // Extract Reservation from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
-            // if(checkIfRollbackRequired(reservation, event)) {
                 sendMessage(event, reservation.getReservationId(), stateMachine, context);
-                /**
-                // Create Message for the Auto Transition Event
-                Message mesg = MessageBuilder.withPayload(event)
-                        .setHeader(ReservationConstants.RESERVATION_ID_HEADER, reservation.getReservationId())
-                        .build();
-                // Send Event to the State Machine
-                stateMachine.sendEvent(mesg);
-                logStateTransition(context, event.name()+" SEND!");
-                 */
             }
         } else {
             logStateTransition(context, "ERROR GETTING STATE MACHINE FROM THE CONTEXT!!!!!");

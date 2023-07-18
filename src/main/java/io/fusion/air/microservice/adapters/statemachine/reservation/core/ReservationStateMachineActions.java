@@ -56,7 +56,7 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION REQUEST EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Send To Request Using Kafka Topic: HOTEL BOOKING REQUEST
+            // Send Request Using Kafka Topic: HOTEL BOOKING REQUEST
         };
     }
 
@@ -93,7 +93,17 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON HOTEL RESERVATION ROLLBACK EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Received Event from Kafka Topic for HOTEL BOOKING ROLLBACK
+            // Send Event to Kafka Topic for HOTEL BOOKING ROLLBACK
+        };
+    }
+
+    @Bean(name = "Reservation-Hotel-Completed")
+    public Action<ReservationState, ReservationEvent> hotelReservationCompletedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON HOTEL RESERVATION COMPLETED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send Event to Kafka Topic for BOOKING Completed
         };
     }
 
@@ -105,7 +115,7 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON RENTAL RESERVATION REQUEST EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Send To Request Using Kafka Topic: RENTAL BOOKING REQUEST
+            // Send Request Using Kafka Topic: RENTAL BOOKING REQUEST
         };
     }
 
@@ -139,7 +149,17 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON RENTAL RESERVATION ROLLBACK EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Received Event from Kafka Topic for RENTAL BOOKING ROLLBACK
+            // Send Event To Kafka Topic for RENTAL BOOKING ROLLBACK
+        };
+    }
+
+    @Bean(name = "Reservation-Rental-Completed")
+    public Action<ReservationState, ReservationEvent> rentalReservationCompletedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION COMPLETED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send Event to Kafka Topic for BOOKING Completed
         };
     }
 
@@ -151,7 +171,7 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON FLIGHT RESERVATION REQUEST EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Send To Request Using Kafka Topic: FLIGHT BOOKING REQUEST
+            // Send Request Using Kafka Topic: FLIGHT BOOKING REQUEST
         };
     }
 
@@ -185,7 +205,17 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON FLIGHT RESERVATION ROLLBACK EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Received Event from Kafka Topic for FLIGHT BOOKING ROLLBACK
+            // Send Event to Kafka Topic for FLIGHT BOOKING ROLLBACK
+        };
+    }
+
+    @Bean(name = "Reservation-Flight-Completed")
+    public Action<ReservationState, ReservationEvent> flightReservationCompletedAction() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION COMPLETED EVENT");
+            // Add Business Logic to Handle Event
+            // ...
+            // Send Event to Kafka Topic for BOOKING Completed
         };
     }
 
@@ -233,7 +263,7 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON SEND INVOICE EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Send To Request Using Kafka Topic: SEND INVOICE
+            // Send Event Using Kafka Topic: SEND INVOICE
         };
     }
 
@@ -243,7 +273,7 @@ public class ReservationStateMachineActions {
             logStateTransition(context, "ACTION ON SEND TRAVEL DETAILS EVENT");
             // Add Business Logic to Handle Event
             // ...
-            // Received Event from Kafka Topic for SEND TRAVEL DETAILS
+            // Send Event to Kafka Topic for SEND TRAVEL DETAILS
         };
     }
 
