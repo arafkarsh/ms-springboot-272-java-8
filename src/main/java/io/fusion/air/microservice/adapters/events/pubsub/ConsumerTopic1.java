@@ -46,7 +46,7 @@ public class ConsumerTopic1 {
 
     /**
      * Kafka Consumer for Topic 1 (As per the Configuration in the Properties file)
-     * AutoStart is disabled to testing purpose ONLY.
+     * AutoStart is disabled for testing purpose ONLY.
      * In a real world scenario autostart will be TRUE
      *
      * There is KafkaListenerController to start and stop the @KafkaListener. This is
@@ -56,20 +56,17 @@ public class ConsumerTopic1 {
      * @param record
      * @param acknowledgment
      */
-    @KafkaListener(id = "fusionListenerT1", autoStartup = "false",
+    @KafkaListener(id = "fusionListenerT1", autoStartup = "true",
             topics = "#{kafkaConfig.getKafkaTopic1()}",
             groupId = "#{kafkaConfig.getKafkaConsumerGroup1()}",
             containerFactory = "kafkaListenerContainerFactory")
     public void listen(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         try {
             // 1. Read The message
-            System.out.println("Received message: " + record.value() + ", from partition/offset: " + record.partition() + "/" + record.offset());
-
+            System.out.println("T1>> Received message: " + record.value() + ", from partition/offset: " + record.partition() + "/" + record.offset());
             // 2. Do Message processing
-
             // 3. Ack the Message
             acknowledgment.acknowledge();
-
             // IF REQUIRED - FOR TESTING PURPOSE ONLY
             sendMessageToRestClients(record.value().toString());
         } catch (Exception e) {
