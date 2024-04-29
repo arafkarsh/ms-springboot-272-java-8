@@ -48,6 +48,7 @@ public class KafkaTopic2Creator {
 
     @Autowired
     private KafkaConfig kafkaConfig;
+    @Autowired
     private AdminClient adminClient;
 
     /**
@@ -56,9 +57,6 @@ public class KafkaTopic2Creator {
     @PostConstruct
     public void initialize() {
         if(kafkaConfig.isCreateKafkaTopic2()) {
-            Properties config = new Properties();
-            config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
-            this.adminClient = AdminClient.create(config);
             createTopic();
         }
     }

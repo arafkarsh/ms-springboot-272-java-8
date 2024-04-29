@@ -16,6 +16,8 @@
 package io.fusion.air.microservice.server.config;
 
 // Kafka
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -31,6 +33,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author: Araf Karsh Hamid
@@ -136,5 +139,15 @@ public class KafkaSetup {
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
+    }
+
+    /**
+     * Create Admin Client
+     */
+    @Bean
+    public AdminClient createAdminClient() {
+        Properties config = new Properties();
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        return AdminClient.create(config);
     }
 }

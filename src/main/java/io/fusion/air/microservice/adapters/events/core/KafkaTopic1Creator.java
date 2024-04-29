@@ -17,7 +17,6 @@ package io.fusion.air.microservice.adapters.events.core;
 
 import io.fusion.air.microservice.server.config.KafkaConfig;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
@@ -28,7 +27,6 @@ import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Set;
 
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -49,6 +47,7 @@ public class KafkaTopic1Creator {
 
     @Autowired
     private KafkaConfig kafkaConfig;
+    @Autowired
     private AdminClient adminClient;
 
     /**
@@ -57,9 +56,6 @@ public class KafkaTopic1Creator {
     @PostConstruct
     public void initialize() {
         if(kafkaConfig.isCreateKafkaTopic1()) {
-            Properties config = new Properties();
-            config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
-            this.adminClient = AdminClient.create(config);
             createTopic();
         }
     }
