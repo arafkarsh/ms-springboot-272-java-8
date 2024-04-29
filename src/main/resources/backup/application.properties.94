@@ -1,3 +1,8 @@
+# =======================================================================
+# MS-Cache Service Properties
+# =======================================================================
+build.number=95
+build.date=Mon Apr 29 15:38:46 IST 2024
 # ------------------------------------------------------------------------
 # Spring Profile
 # ------------------------------------------------------------------------
@@ -14,13 +19,13 @@ service.api.error.prefix=13
 service.container=ms-cache-service
 service.api.repository=https://github.com/arafkarsh/ms-springboot-272-java-8
 service.api.path=/${service.api.name}/${service.api.prefix}/${service.api.version}
-service.url=http://www.arafkarsh.com/
+service.url=http://www.metarivu.com/
 service.license=Apache 2 License
 # =======================================================================
 # Microservice Server Properties
 # =======================================================================
 server.port=9090
-server.version=0.5.10
+server.version=0.5.9
 server.restart=false
 server.leak.test=5
 server.resources.url=${service.url}${service.api.path}

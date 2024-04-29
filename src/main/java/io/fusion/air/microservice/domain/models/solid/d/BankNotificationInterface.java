@@ -27,9 +27,10 @@ package io.fusion.air.microservice.domain.models.solid.d;
  * The refactored Code has 1 Responsibility
  *      1. Deposit and Withdrawal
  *
- * The following responsibilities moved to respective classes
- *      2. Save Account Details
- *      3. Send Notification Details
+ * Finally, DIP ensures that both high-level and low-level modules depend on abstractions.
+ *  - Notification implementation is completely abstracted away.
+ *  - Notification is loaded based on the Conditions defined in the Property File.
+ *  - Check the BankNotificationConfiguration class for conditional loading.
  *
  * @author: Araf Karsh Hamid
  * @version:

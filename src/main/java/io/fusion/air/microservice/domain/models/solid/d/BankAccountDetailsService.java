@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * Finally, DIP ensures that both high-level and low-level modules depend on abstractions.
  *  - Notification implementation is completely abstracted away.
- *  - Notificaiton is loaded based on the Conditions defined in the Property File.
+ *  - Notification is loaded based on the Conditions defined in the Property File.
  *  - Check the BankNotificationConfiguration class for conditional loading.
  *
  *
