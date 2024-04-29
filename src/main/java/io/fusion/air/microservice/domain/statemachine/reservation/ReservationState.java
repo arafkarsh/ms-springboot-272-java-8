@@ -34,9 +34,14 @@ public enum ReservationState {
     RESERVATION_INITIALIZED (10),
 
     ROLLBACK(160),
-    HOTEL_BOOKING_ROLLBACK(159),
-    RENTAL_BOOKING_ROLLBACK(158),
-    FLIGHT_BOOKING_ROLLBACK(157),
+    ROLLBACK_ACK_IN_PROGRESS(161),
+    ROLLBACK_COMPLETED(162),
+
+
+
+    HOTEL_BOOKING_ROLLBACK(160),
+    RENTAL_BOOKING_ROLLBACK(160),
+    FLIGHT_BOOKING_ROLLBACK(160),
 
     ROLLBACK_IN_PROGRESS(150),
 
@@ -57,7 +62,7 @@ public enum ReservationState {
     HOTEL_BOOKING_REQUEST(13),
     HOTEL_BOOKING_CONFIRMED(43),
     HOTEL_BOOKING_DECLINED(15),
-    HOTEL_BOOKING_CANCELLED(17),
+    HOTEL_BOOKING_CANCELLED(160),
 
 
     // RENTAL BOOKING STATES
@@ -65,7 +70,7 @@ public enum ReservationState {
     RENTAL_BOOKING_REQUEST(23),
     RENTAL_BOOKING_CONFIRMED(24),
     RENTAL_BOOKING_DECLINED(25),
-    RENTAL_BOOKING_CANCELLED(27),
+    RENTAL_BOOKING_CANCELLED(160),
 
 
     // FLIGHT BOOKING STATES
@@ -73,7 +78,7 @@ public enum ReservationState {
     FLIGHT_BOOKING_REQUEST(33),
     FLIGHT_BOOKING_CONFIRMED(34),
     FLIGHT_BOOKING_DECLINED(35),
-    FLIGHT_BOOKING_CANCELLED(37),
+    FLIGHT_BOOKING_CANCELLED(160),
 
 
     // PAYMENT STATES
@@ -116,7 +121,7 @@ public enum ReservationState {
     public static ReservationState fromString(String state) {
         ReservationState foundState = lookup.get(state.trim().toLowerCase());
         if (foundState == null) {
-            throw new IllegalArgumentException("No OrderState with text " + state + " found");
+            throw new IllegalArgumentException("No ReservationState with text " + state + " found");
         }
         return foundState;
     }

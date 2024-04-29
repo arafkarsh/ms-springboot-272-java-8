@@ -50,7 +50,7 @@ public class ProductGlobalTableProcessor {
     public GlobalKTable<String, String> incrementVersionAndCreateGlobalTable(StreamsBuilder streamsBuilder) {
         String inputTopic2 = kafkaStreamsConfig.getStreamTopic2();
         String outputTopic3 = kafkaStreamsConfig.getStreamTopic3();
-
+        System.out.println("GLOBAL KTable >>>>> 1");
         KStream<String, String> inputStream = streamsBuilder.stream(inputTopic2, Consumed.with(Serdes.String(), Serdes.String()));
         KTable<String, String> kTable = inputStream.groupByKey().aggregate(
                 () -> null,
@@ -64,7 +64,7 @@ public class ProductGlobalTableProcessor {
                         } else {
                             newObjectB.put("version", 1);
                         }
-                        System.out.println(">>> GT = "+newObjectB);
+                        System.out.println("GLOBAL KTable >>> GT = "+newObjectB);
                         return newObjectB.toString();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -72,9 +72,11 @@ public class ProductGlobalTableProcessor {
                     }
                 }
         );
+        System.out.println("GLOBAL KTable >>>>> 2 outputTopic3");
         // Convert the KTable back to a KStream and then send to a new topic
         kTable.toStream().to(outputTopic3);
 
+        System.out.println("GLOBAL KTable >>>>> 3 globalKTable");
         // Create a GlobalKTable using the new output topic
         GlobalKTable<String, String> globalKTable = streamsBuilder
                 .globalTable(outputTopic3, Materialized.as("products-store"));

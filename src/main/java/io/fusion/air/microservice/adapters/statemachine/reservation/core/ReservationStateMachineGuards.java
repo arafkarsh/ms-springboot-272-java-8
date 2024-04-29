@@ -19,7 +19,6 @@ import io.fusion.air.microservice.domain.entities.reservation.ReservationEntity;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationConstants;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationEvent;
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
-import io.fusion.air.microservice.utils.Utils;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.statemachine.guard.Guard;
@@ -42,12 +41,12 @@ public class ReservationStateMachineGuards {
     private static final Logger log = getLogger(lookup().lookupClass());
 
     @Bean
-    public Guard<ReservationState, ReservationEvent> checkOrderValidity() {
+    public Guard<ReservationState, ReservationEvent> checkReservationValidity() {
         return context -> {
             // Extract ReservationEntity from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
-                log.info("Reservation = " + Utils.toJsonString(reservation));
+                log.info("Reservation Reservation Validity = " + reservation.isValidReservations());
                 // Returns TRUE if the Reservation is valid
                 return reservation.isValidReservations();
             }
@@ -62,7 +61,7 @@ public class ReservationStateMachineGuards {
             // Extract ReservationEntity from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
-                log.info("Reservation = " + Utils.toJsonString(reservation));
+                log.info("Reservation Hotel Booking = " + reservation.isHotelReservationRequired());
                 // Returns TRUE if the Hotel Reservation is valid
                 return reservation.isHotelReservationRequired();
             }
@@ -77,7 +76,7 @@ public class ReservationStateMachineGuards {
             // Extract ReservationEntity from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
-                log.info("Reservation = " + Utils.toJsonString(reservation));
+                log.info("Reservation Rental Booking = " + reservation.isRentalReservationRequired());
                 // Returns TRUE if the Rental Reservation is valid
                 return reservation.isRentalReservationRequired();
             }
@@ -92,9 +91,25 @@ public class ReservationStateMachineGuards {
             // Extract ReservationEntity from the Extended State
             ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
             if(reservation != null) {
-                log.info("Reservation = " + Utils.toJsonString(reservation));
+                log.info("Reservation Flight Booking = " + reservation.isFlightReservationRequired());
                 // Returns TRUE if the Flight Reservation is valid
                 return reservation.isFlightReservationRequired();
+            }
+            // Flight Booking Not Required
+            return false;
+        };
+    }
+
+    @Bean
+    public Guard<ReservationState, ReservationEvent> isAllAcksReceived() {
+        return context -> {
+            System.out.println("[][][][][][][] ========== GUARD >> isAllAcksReceived()");
+            // Extract ReservationEntity from the Extended State
+            ReservationEntity reservation = context.getExtendedState().get(ReservationConstants.RESERVATION_HEADER, ReservationEntity.class);
+            if(reservation != null) {
+                log.info("Reservation ALL ACKS Received = " + reservation.isAllAcksReceived());
+                // Returns TRUE if the Flight Reservation is valid
+                return reservation.isAllAcksReceived();
             }
             // Flight Booking Not Required
             return false;

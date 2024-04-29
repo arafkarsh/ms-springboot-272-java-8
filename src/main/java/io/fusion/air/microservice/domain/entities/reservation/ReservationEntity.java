@@ -20,12 +20,9 @@ import io.fusion.air.microservice.domain.statemachine.reservation.ReservationRes
 import io.fusion.air.microservice.domain.statemachine.reservation.ReservationState;
 // Java & Persistence
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.ColumnDefault;
 
 /**
  * Reservation Entity
@@ -74,8 +71,14 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     @Enumerated(EnumType.STRING)
     private ReservationResult result;
     @Column(name = "rollbackOnFailure")
-    // @ColumnDefault("false")
     private Boolean rollbackOnFailure;
+
+    @Column(name = "totalBookings")
+    private Integer totalBookings;
+
+    @Column(name = "totalRollbacks")
+    private Integer totalRollbacks;
+
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservation_id")
@@ -97,6 +100,11 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
             }
         }
          */
+        // Disable Rollback
+        rollbackOnFailure = false;
+        totalRollbacks = 0;
+
+        // Calculate the Total value
         totalValue += Optional.ofNullable(hotelReservationList)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -114,6 +122,11 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
                 .stream()
                 .mapToInt(FlightReservationEntity::getTotalCost)
                 .sum();
+
+        // Calculate the Total Types of Bookings
+        totalBookings += isHotelBookingAvailable() ? 1 : 0;
+        totalBookings += isRentalBookingAvailable() ? 1 : 0;
+        totalBookings += isFlightBookingAvailable() ? 1 : 0;
 
         System.out.println("Reservation Customer ID = "+ getCustomerId() +" Total Value = "+ totalValue);
         return totalValue;
@@ -243,6 +256,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     /**
      * ONLY TO DEMO/TEST VARIOUS DOMAIN EVENTS
      */
+    @JsonIgnore
     public void resetState() {
         initializeOrder();
         reservationHistory.clear();
@@ -257,6 +271,7 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
         reservationState = ReservationState.RESERVATION_REQUEST_RECEIVED;
         result = ReservationResult.IN_PROGRESS;
         rollbackOnFailure = false;
+        totalRollbacks = 0;
     }
 
     /**
@@ -353,14 +368,6 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     }
 
     /**
-     * Returns the Reservation Builder
-     * @return
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Return True if the Rollback mode is on.
      * @return
      */
@@ -375,6 +382,49 @@ public class ReservationEntity extends AbstractBaseEntityWithUUID {
     public void enableRollback() {
         rollbackOnFailure = true;
     }
+
+    /**
+     * Returns Total Hotel Booking Types (Hotel, Rental, Flight)
+     * @return
+     */
+    public Integer getTotalBookings() {
+        return totalBookings;
+    }
+
+    /**
+     * Returns Total Rollback Acks received
+     * @return
+     */
+    public Integer getTotalRollbacks() {
+        return totalRollbacks;
+    }
+
+    /**
+     * Returns TRUE if TotalBookings == Total Acks Received
+     * @return
+     */
+    public boolean isAllAcksReceived() {
+        System.out.println("Total Bookings = "+totalBookings+" Rollbacks = "+totalRollbacks);
+        return (Objects.equals(totalBookings, totalRollbacks));
+    }
+
+    /**
+     * Acknowledge Rollbacks
+     */
+    @JsonIgnore
+    public void acknowledgeRollbacks() {
+        // This could be improved with more Business logic
+        totalRollbacks++;
+    }
+
+    /**
+     * Returns the Reservation Builder
+     * @return
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
 
     public static class Builder {
         private final ReservationEntity reservation;

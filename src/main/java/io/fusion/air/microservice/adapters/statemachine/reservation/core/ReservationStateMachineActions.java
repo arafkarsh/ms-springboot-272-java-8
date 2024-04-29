@@ -97,6 +97,16 @@ public class ReservationStateMachineActions {
         };
     }
 
+    @Bean(name = "Reservation-Hotel-Rollback-Ack")
+    public Action<ReservationState, ReservationEvent> hotelReservationRollbackAck() {
+        return context -> {
+            logStateTransition(context, "ACTION ON HOTEL RESERVATION ROLLBACK ACK ");
+            // Add Business Logic to Handle Event
+            // ...
+            // Receive Event from Kafka Topic for ROLLBACK Acknowledgement
+        };
+    }
+
     @Bean(name = "Reservation-Hotel-Completed")
     public Action<ReservationState, ReservationEvent> hotelReservationCompletedAction() {
         return context -> {
@@ -153,6 +163,16 @@ public class ReservationStateMachineActions {
         };
     }
 
+    @Bean(name = "Reservation-Rental-Rollback-Ack")
+    public Action<ReservationState, ReservationEvent> rentalReservationRollbackAck() {
+        return context -> {
+            logStateTransition(context, "ACTION ON RENTAL RESERVATION ROLLBACK ACK ");
+            // Add Business Logic to Handle Event
+            // ...
+            // Receive Event from Kafka Topic for ROLLBACK Acknowledgement
+        };
+    }
+
     @Bean(name = "Reservation-Rental-Completed")
     public Action<ReservationState, ReservationEvent> rentalReservationCompletedAction() {
         return context -> {
@@ -206,6 +226,16 @@ public class ReservationStateMachineActions {
             // Add Business Logic to Handle Event
             // ...
             // Send Event to Kafka Topic for FLIGHT BOOKING ROLLBACK
+        };
+    }
+
+    @Bean(name = "Reservation-Flight-Rollback-Ack")
+    public Action<ReservationState, ReservationEvent> flightReservationRollbackAck() {
+        return context -> {
+            logStateTransition(context, "ACTION ON FLIGHT RESERVATION ROLLBACK ACK ");
+            // Add Business Logic to Handle Event
+            // ...
+            // Receive Event from Kafka Topic for ROLLBACK Acknowledgement
         };
     }
 

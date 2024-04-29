@@ -29,9 +29,8 @@ public enum ReservationEvent {
 
     START_ROLLBACK_EVENT,
     ROLLBACK_EVENT,
-    FLIGHT_ROLLBACK_EVENT,
-    RENTAL_ROLLBACK_EVENT,
-    HOTEL_ROLLBACK_EVENT,
+
+    ROLLBACK_COMPLETE_EVENT,
 
     RESERVATION_VALIDATION_EVENT,
     RESERVATION_INIT_EVENT,
@@ -41,23 +40,30 @@ public enum ReservationEvent {
 
     HOTEL_BOOKING_CONFIRMED_EVENT,
     HOTEL_BOOKING_DECLINED_EVENT,
-    HOTEL_BOOKING_ROLLBACK_EVENT,
+    HOTEL_ROLLBACK_EVENT,
+    HOTEL_BOOKING_CANCELLED_EVENT,
     HOTEL_BOOKING_COMPLETED_EVENT,
+    HOTEL_ROLLBACK_ACK_EVENT,
+
 
     // RENTAL
     RENTAL_BOOKING_REQUEST_EVENT,
     RENTAL_BOOKING_CONFIRMED_EVENT,
     RENTAL_BOOKING_DECLINED_EVENT,
-    RENTAL_BOOKING_ROLLBACK_EVENT,
+    RENTAL_ROLLBACK_EVENT,
+    RENTAL_BOOKING_CANCELLED_EVENT,
     RENTAL_BOOKING_COMPLETED_EVENT,
+    RENTAL_ROLLBACK_ACK_EVENT,
 
 
     // FLIGHT
     FLIGHT_BOOKING_REQUEST_EVENT,
     FLIGHT_BOOKING_CONFIRMED_EVENT,
     FLIGHT_BOOKING_DECLINED_EVENT,
-    FLIGHT_BOOKING_ROLLBACK_EVENT,
+    FLIGHT_ROLLBACK_EVENT,
+    FLIGHT_BOOKING_CANCELLED_EVENT,
     FLIGHT_BOOKING_COMPLETED_EVENT,
+    FLIGHT_ROLLBACK_ACK_EVENT,
 
 
     // PAYMENT
@@ -89,7 +95,7 @@ public enum ReservationEvent {
     public static ReservationEvent fromString(String event) {
         ReservationEvent foundState = lookup.get(event.trim().toLowerCase());
         if (foundState == null) {
-            throw new IllegalArgumentException("No OrderEvent with text " + event + " found");
+            throw new IllegalArgumentException("No ReservationEvent with text " + event + " found");
         }
         return foundState;
     }

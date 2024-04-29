@@ -124,7 +124,7 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
      */
     @Override
     public void hotelBookingRollback(ReservationEntity reservation) {
-        sendEvent(ReservationEvent.HOTEL_BOOKING_ROLLBACK_EVENT, reservation);
+        sendEvent(ReservationEvent.HOTEL_ROLLBACK_EVENT, reservation);
     }
 
     /**
@@ -164,7 +164,7 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
      */
     @Override
     public void rentalBookingRollback(ReservationEntity reservation) {
-        sendEvent(ReservationEvent.RENTAL_BOOKING_ROLLBACK_EVENT, reservation);
+        sendEvent(ReservationEvent.RENTAL_ROLLBACK_EVENT, reservation);
     }
 
     /**
@@ -204,7 +204,7 @@ public class ReservationStateMachineManager implements ReservationStateMachineSe
      */
     @Override
     public void flightBookingRollback(ReservationEntity reservation) {
-        sendEvent(ReservationEvent.FLIGHT_BOOKING_ROLLBACK_EVENT, reservation);
+        sendEvent(ReservationEvent.FLIGHT_ROLLBACK_EVENT, reservation);
     }
 
     /**

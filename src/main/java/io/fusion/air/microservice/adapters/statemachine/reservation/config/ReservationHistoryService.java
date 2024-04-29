@@ -50,8 +50,8 @@ public class ReservationHistoryService {
 
     @Transactional
     public void saveReservationHistory(ReservationState source, ReservationState target, ReservationEvent event,
-                                       ReservationEntity order, ReservationNotes errorObj) {
-        if(!validateInputs(source, target, event, order)) {
+                                       ReservationEntity reservation, ReservationNotes errorObj) {
+        if(!validateInputs(source, target, event, reservation)) {
             return;
         }
         if(source.name().equalsIgnoreCase(target.name())) {
@@ -69,22 +69,40 @@ public class ReservationHistoryService {
         if(result == null) {
             result = ReservationResult.fromString(target.name());
         }
-        ReservationStateHistoryEntity history = new ReservationStateHistoryEntity(source, target, event, order.getVersion() + 1, notes);
-        order.addReservationStateHistory(history);
-        order.setState(target);
+        ReservationStateHistoryEntity history = new ReservationStateHistoryEntity(source, target, event, reservation.getVersion() + 1, notes);
+        reservation.addReservationStateHistory(history);
+        reservation.setState(target);
         // If Results Available then Set the Result in Reservation Object
         if(result != null) {
-            order.setReservationResult(result);
+            reservation.setReservationResult(result);
+        }
+        // Acknowledge the Rollback Events
+        if(eventsInRollbackAck(event)) {
+            reservation.enableRollback();
+            reservation.acknowledgeRollbacks();
         }
         // Save the Reservation with the History Details
-        if(target.getRank() >= order.getReservationState().getRank()) {
-            reservationRepository.save(order);
+        if(target.getRank() >= reservation.getReservationState().getRank()) {
+            reservationRepository.save(reservation);
         } else {
-            log.info("Reservation HISTORY NOT SAVED TARGET RANK IS {} < {} Reservation STATE RANK! ", target.getRank(),order.getReservationState().getRank());
+            log.info("Reservation HISTORY NOT SAVED TARGET RANK IS {} < {} Reservation STATE RANK! ", target.getRank(),reservation.getReservationState().getRank());
         }
     }
 
-    private boolean validateInputs(ReservationState source, ReservationState target, ReservationEvent event, ReservationEntity order) {
+    private boolean eventsInRollbackAck(ReservationEvent event) {
+        switch(event) {
+            case HOTEL_ROLLBACK_ACK_EVENT:
+                return true;
+            case RENTAL_ROLLBACK_ACK_EVENT:
+                return true;
+            case FLIGHT_ROLLBACK_ACK_EVENT:
+                return true;
+        }
+        return false;
+    }
+
+    private boolean validateInputs(ReservationState source, ReservationState target,
+                                   ReservationEvent event, ReservationEntity reservation) {
         boolean status = true;
         if(source == null) {
             log.error("Invalid (NULL) source!");
@@ -98,7 +116,7 @@ public class ReservationHistoryService {
             log.error("Invalid (NULL) event!");
             status = false;
         }
-        if(order == null) {
+        if(reservation == null) {
             log.error("Invalid (NULL) Reservation!");
             status = false;
         }
