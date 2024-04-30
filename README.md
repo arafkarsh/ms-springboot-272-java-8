@@ -87,7 +87,15 @@ Without generated application.properties file the service will NOT be running. T
 #### MS Cache Swagger UI Docs for Testing
 ![Swagger Docs](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/MS-Cache-Swagger-UI.jpg)
 
-## 2. Kafka Setup 
+## 2. CRUD Examples
+
+1. Setting up Postman with REST Endpoints for Testing
+2. CRUD Examples 
+3. JWT Token Examples
+
+Check the <a href="https://github.com/arafkarsh/ms-springboot-272-java-8/blob/main/CRUD_Examples.md">CRUD_Examples.md</a>
+
+## 3. Kafka Setup 
 
 Install the latest version of Kafka. This version is tested with Kafka 3.7.0
 
@@ -110,7 +118,7 @@ echo $KAFKAPATH
 ![Kafka Config Streams](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Config-Streams.jpg)
 
 
-### 2.1 Start Kafka
+### 3.1 Start Kafka
 
 1. start Zookeeper Server 
 ```
@@ -125,14 +133,14 @@ $ kafka-scripts/start-ka.sh
 $ kafka-scripts/start-kc.sh
 ```
 
-### 2.2 Start the Server 
+### 3.2 Start the Server 
 
 1. run (to test with H2 In-Memory Database)
 2. run prod (to test with PostgreSQL Database) Check the application-prod.properties for PostgreSQL Config
 
-### 2.3 Kafka Pub / Sub Examples
+### 3.3 Kafka Pub / Sub Examples
 
-#### 2.3.1 Kafka Consumer to handle Topic 1 and Topic 2
+#### 3.3.1 Kafka Consumer to handle Topic 1 and Topic 2
 
 | Topic Name   | Partitions | Replica | Acks  | Consumer Group |
 |--------------|-----------|---------|------|----------------|
@@ -147,7 +155,7 @@ You can programatically Start and Stop the listeners (Consumers) using REST Endp
 
 ![Kafka Listener APIs](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Listener-APIs.jpg)
 
-#### 2.3.2 Kafka Producer to handle Topic 1 and Topic 2
+#### 3.3.2 Kafka Producer to handle Topic 1 and Topic 2
 
 Kafka Producer 1 to send messages to Topic 1 (fusionTopic1)
 
@@ -157,12 +165,8 @@ REST Endpoint to send messages to Topic 1
 
 ![Kafka Producer-API](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Producer-APIs.jpg)
 
-## 3. State Machine Example
+## 4. State Machine Example
 <todo>
-
-## 4. CRUD Examples
-
-Check the <a href="https://github.com/arafkarsh/ms-springboot-272-java-8/blob/main/CRUD_Examples.md">CRUD_Examples.md</a>
 
 ## 5. Docker Container Setup
 
