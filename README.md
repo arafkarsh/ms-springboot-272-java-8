@@ -130,7 +130,15 @@ $ kafka-scripts/start-kc.sh
 1. run (to test with H2 In-Memory Database)
 2. run prod (to test with PostgreSQL Database) Check the application-prod.properties for PostgreSQL Config
 
-### 2.3 Testing Kafka Examples
+### 2.3 Kafka Pub / Sub Examples
+
+#### 2.3.1 Kafka Consumer to handle Topic 1 and Topic 2
+
+| Topic Name   | Partitions | Replica | Acks  | Consumer Group |
+|--------------|-----------|---------|------|----------------|
+| fusionTopic1 | 1           |1         | 1      | fusionGroup1   |
+| fusionTopic2 | 1           |1         | 1      | fusionGroup2   |
+
 
 Ensure that Kafka Consumers are enabled (autostart = true) For Consumer Topic 1 and Topic 2
 
