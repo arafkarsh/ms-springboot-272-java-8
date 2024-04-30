@@ -165,6 +165,15 @@ REST Endpoint to send messages to Topic 1
 
 ![Kafka Producer-API](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Producer-APIs.jpg)
 
+#### 3.3.3 Server Side Events using REST Endpoints. 
+
+Demo of Server Side Events using Kafka Listener (Topic 1). Ideally Web Sockets should be used instead of REST Endpoints.
+Spring provides the SseEmitter class which is useful for sending SSE events to clients. It can be returned from a controller 
+method to handle the stream of server-sent events.
+
+![Kafka SSE](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-SSE-Result.jpg)
+
+
 ## 4. State Machine Example
 <todo>
 
