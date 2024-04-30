@@ -54,7 +54,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/reservation")
 @RequestScope
-@Tag(name = "Reservation API", description = "To Manage Hotel/Rental/Flight booking.")
+@Tag(name = "State Machine Example: Reservation API", description = "To Manage Hotel/Rental/Flight booking.")
 public class ReservationProcessControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
