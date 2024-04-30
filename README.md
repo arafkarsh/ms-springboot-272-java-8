@@ -139,7 +139,6 @@ $ kafka-scripts/start-kc.sh
 | fusionTopic1 | 1           |1         | 1      | fusionGroup1   |
 | fusionTopic2 | 1           |1         | 1      | fusionGroup2   |
 
-
 Ensure that Kafka Consumers are enabled (autostart = true) For Consumer Topic 1 and Topic 2
 
 ![Kafka Consumer](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Listener-1.jpg)
@@ -148,7 +147,15 @@ You can programatically Start and Stop the listeners (Consumers) using REST Endp
 
 ![Kafka Listener APIs](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Listener-APIs.jpg)
 
+#### 2.3.2 Kafka Producer to handle Topic 1 and Topic 2
 
+Kafka Producer 1 to send messages to Topic 1 (fusionTopic1)
+
+![Kafka Producer](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Producer-1.jpg)
+
+REST Endpoint to send messages to Topic 1
+
+![Kafka Producer-API](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Producer-APIs.jpg)
 
 ## 3. State Machine Example
 <todo>

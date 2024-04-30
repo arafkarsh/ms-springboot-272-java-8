@@ -30,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.HashMap;
+
 /**
  * Kafka Producer Controller
  *
@@ -50,7 +52,7 @@ public class KafkaProducerController extends AbstractController {
     private ProducerTopic1 kafkaProducerTopic1;
 
     @Autowired
-    private ProducerTopic2 producerTopic2;
+    private ProducerTopic2 kafkaProducerTopic2;
 
 
     @Operation(summary = "Send the Message to Kafka Fusion Topic 1")
@@ -66,6 +68,9 @@ public class KafkaProducerController extends AbstractController {
     public ResponseEntity<StandardResponse>  sendMessage2Topic1(@PathVariable("message") String _message) {
         kafkaProducerTopic1.sendMessage(_message);
         StandardResponse stdResponse = createSuccessResponse("Message Send to Topic 1");
+        HashMap<String,String> data = new HashMap<String, String>();
+        data.put("msg", _message);
+        stdResponse.setPayload(data);
         return ResponseEntity.ok(stdResponse);
     }
 
@@ -80,8 +85,11 @@ public class KafkaProducerController extends AbstractController {
     })
     @PostMapping("/topic2/{message}")
     public ResponseEntity<StandardResponse>  sendMessage2Topic2(@PathVariable("message") String _message) {
-        producerTopic2.sendMessage(_message);
+        kafkaProducerTopic2.sendMessage(_message);
         StandardResponse stdResponse = createSuccessResponse("Message Send to Topic 2");
+        HashMap<String,String> data = new HashMap<String, String>();
+        data.put("msg", _message);
+        stdResponse.setPayload(data);
         return ResponseEntity.ok(stdResponse);
     }
 }
