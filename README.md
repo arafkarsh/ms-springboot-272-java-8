@@ -92,6 +92,23 @@ Without generated application.properties file the service will NOT be running. T
 Install the latest version of Kafka. This version is tested with Kafka 3.7.0
 
 1. change the envkafka.sh in the kafka-scripts folder to set the Kafka Path
+```
+$ cd kafka-scripts
+$ vi envkafka.sh OR nano envkafka.sh
+```
+Change the Kafka Path 
+```
+#!/bin/sh
+KV=-3.7.0
+KAFKAPATH=~/Softwares/kafka$KV
+echo $KAFKAPATH
+```
+### Kafka Pub / Sub Configurations 
+![Kafka Config PubSub](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Config-PubSub.jpg)
+
+### Kafka Streams Configuration
+![Kafka Config Streams](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Config-Streams.jpg)
+
 
 ### 2.1 Start Kafka
 
