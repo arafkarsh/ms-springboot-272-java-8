@@ -112,7 +112,7 @@ Install the latest version of Kafka. This version is tested with Kafka 3.7.0
 
 ## 4. CRUD Examples
 
-Check the CRUD_Examples.md
+Check the <a href="https://github.com/arafkarsh/ms-springboot-272-java-8/blob/main/CRUD_Examples.md">CRUD_Examples.md</a>
 
 ## 5. Docker Container Setup
 
