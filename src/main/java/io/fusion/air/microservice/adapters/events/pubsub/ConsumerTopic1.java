@@ -63,7 +63,8 @@ public class ConsumerTopic1 {
     public void listen(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         try {
             // 1. Read The message
-            System.out.println("T1>> Received message: " + record.value() + ", from partition/offset: " + record.partition() + "/" + record.offset());
+            System.out.println("T1>> Received message: " + record.value()
+                    + ", from partition/offset: " + record.partition() + "/" + record.offset());
             // 2. Do Message processing
             // 3. Ack the Message
             acknowledgment.acknowledge();
