@@ -128,7 +128,7 @@ $ kafka-scripts/start-zc.sh
 ```
 $ kafka-scripts/start-ka.sh
 ```
-3. start Kafka Connect
+3. start Kafka Connect (java 17+)
 ```
 $ kafka-scripts/start-kc.sh
 ```
@@ -173,6 +173,29 @@ method to handle the stream of server-sent events.
 
 ![Kafka SSE](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-SSE-Result.jpg)
 
+### 3.4 Kafka Connect 
+
+PostgreSQL Debezium driver is already available in kafka-connect directory.
+
+To install the debezium drivers for any database, Download the driver from <a href="https://debezium.io/documentation/reference/stable/install.html">debezium site.</a>
+
+1. Install these under plugins directory in the Kafka installation
+2. Open the config connect-distributed.properties and add following towards the end of the file
+3. plugin.path=/kafka/plugins (The directory you have downloaded the debezium driver)
+
+Kafka Connect requires Java 17+
+
+To Start the Kafka Connect Server
+```
+$ kafka-scripts/start-kc.sh
+```
+
+#### 3.4.1 Kafka Connect Configuration for PostgreSQL Database with Products Table
+
+#### 3.4.2 Test the Debezium Driver with Kafka Connect. 
+
+
+### 3.5 Kafka Streams 
 
 ## 4. State Machine Example
 <todo>
