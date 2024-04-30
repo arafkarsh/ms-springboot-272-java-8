@@ -112,9 +112,18 @@ echo $KAFKAPATH
 
 ### 2.1 Start Kafka
 
-1. start Zookeeper Server $ kafka-scripts/start-zc.sh
-2. start Kafka Broker $ kafka-scripts/start-ka.sh
-3. start Kafka Connect $ kafka-scripts/start-kc.sh
+1. start Zookeeper Server 
+```
+$ kafka-scripts/start-zc.sh
+```
+2. start Kafka Broker 
+```
+$ kafka-scripts/start-ka.sh
+```
+3. start Kafka Connect
+```
+$ kafka-scripts/start-kc.sh
+```
 
 ### 2.2 Start the Server 
 
@@ -122,7 +131,10 @@ echo $KAFKAPATH
 2. run prod (to test with PostgreSQL Database) Check the application-prod.properties for PostgreSQL Config
 
 ### 2.3 Testing Kafka Examples
-<todo>
+
+Ensure that Kafka Consumers are enabled (autostart = true) For Topic 1 and Topic 2
+![Kafka Consumer](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Listener-1.jpg)
+
 
 ## 3. State Machine Example
 <todo>
