@@ -34,15 +34,16 @@
 6. Spring State Machine Examples (Reservation API)
 7. Spring Pagination Example (Country API)
 8. CRUD Examples (Product API)
-9. SOLID Design Pattern Examples 
-10. JWT Tokens Example (Secured Payments API )
-11. Spring Profiles works with H2 DB on Dev and PostgreSQL in Staging / Prod mode 
-12. H2 In Memory Database & PostgreSQL Database Support 
-13. Open API 3 Ex, 
-14. Spring Actuator, 
-15. Spring Sleuth and 
-16. POM File with (SpringBoot) Fat and Thin (Maven) jar file creation and 
-17. Dockerfile for containerisation.
+9. Specification Design Pattern Example (Product API)
+10. SOLID Design Pattern Examples 
+11. JWT Tokens Example (Secured Payments API )
+12. Spring Profiles works with H2 DB on Dev and PostgreSQL in Staging / Prod mode 
+13. H2 In Memory Database & PostgreSQL Database Support 
+14. Open API 3 Ex, 
+15. Spring Actuator, 
+16. Spring Sleuth and 
+17. POM File with (SpringBoot) Fat and Thin (Maven) jar file creation and 
+18. Dockerfile for containerisation.
 
 ## 1. Setting up the Template
 

@@ -260,6 +260,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updateProduct(ProductEntity product) {
+        product.activateProduct();
         productRepository.saveAndFlush(product);
         return product;
     }
@@ -273,6 +274,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductEntity updatePrice(ProductEntity product) {
         ProductEntity productUpdate = getProductById(product.getUuid()) ;
         productUpdate.setProductPrice(product.getProductPrice());
+        product.activateProduct();
         productRepository.saveAndFlush(productUpdate);
         return productUpdate;
     }
@@ -289,6 +291,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productUpdate = getProductById(product.getUuid()) ;
         productUpdate.setProductName(product.getProductName());
         productUpdate.setProductDetails(product.getProductDetails());
+        product.activateProduct();
         productRepository.saveAndFlush(productUpdate);
         return productUpdate;
     }
