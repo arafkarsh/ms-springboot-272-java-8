@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.cdc;
+package io.fusion.air.microservice.server.config;
 
 import io.fusion.air.microservice.domain.exceptions.MessagingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -61,7 +62,10 @@ import java.util.Map;
  * @date:
  */
 @Service
-public class KafkaCDCPostgreSQLService {
+public class KafkaConnectSetup {
+
+    @Autowired
+    private KafkaConnectConfig kafkaConnect;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -70,8 +74,8 @@ public class KafkaCDCPostgreSQLService {
      * @return
      */
     public String[] listAllConnectors() {
-        String uri = "http://localhost:8083/connectors";
-        String[] connectors = restTemplate.getForObject(uri, String[].class);
+        // String uri = "http://localhost:8083/connectors";
+        String[] connectors = restTemplate.getForObject(kafkaConnect.getConnectUrl(), String[].class);
         System.out.println(Arrays.toString(connectors));
         return connectors;
     }
@@ -83,7 +87,8 @@ public class KafkaCDCPostgreSQLService {
      * @return
      */
     public String deleteConnector(String _connectorName) {
-        String uri = "http://localhost:8083/connectors/"+_connectorName;
+        // String uri = "http://localhost:8083/connectors/"+_connectorName;
+        String uri = kafkaConnect.getConnectUrl() + _connectorName;
         String status = "Connector ("+_connectorName+") deleted successfully";
         try {
             restTemplate.delete(uri);
@@ -101,14 +106,53 @@ public class KafkaCDCPostgreSQLService {
      * @return
      */
     public String createPostgresConnectorForProduct() {
-        String kafkaConnectUri = "http://localhost:8083/connectors"; // replace with your Kafka Connect URI
+        Map<String, Object> config = new HashMap<>();
+        config.put("connector.class", kafkaConnect.getConnectClass());                      // Debezium Connector Class
+        config.put("database.hostname", kafkaConnect.getConnectDBHost());               // replace with your DB hostname
+        config.put("database.port", kafkaConnect.getConnectDBPort()+"");                 // replace with your DB port
+        config.put("database.user", kafkaConnect.getConnectDBUser());                    // replace with your DB user
+        config.put("database.password", kafkaConnect.getConnectDBPassword());         // replace with your DB password
+        config.put("database.dbname", kafkaConnect.getConnectDBName());               // replace with your DB name
+        config.put("database.server.name", kafkaConnect.getConnectDBServerName());
+        config.put("table.include.list", kafkaConnect.getConnectDBTableList());
+        config.put("topic.creation.default.replication.factor", kafkaConnect.getConnectTopicReplica() + "");
+        config.put("topic.creation.default.partitions", kafkaConnect.getConnectTopicPartition() + "");
+        config.put("slot.name", kafkaConnect.getConnectSlotName());
+        config.put("plugin.name", "pgoutput");
+        config.put("snapshot.mode", "initial");
+        config.put("decimal.handling.mode", "string");
+        config.put("topic.prefix", kafkaConnect.getConnectTopicPrefix());                  // adding the topic.prefix value
+        config.put("transforms", "unwrap");
+        config.put("transforms.unwrap.type", "io.debezium.transforms.ExtractNewRecordState");
+        config.put("transforms.unwrap.drop.tombstones", "false");
 
+        Map<String, Object> connectorPayload = new HashMap<>();
+        connectorPayload.put("name", "ms-272-products");
+        connectorPayload.put("config", config);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(connectorPayload, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                kafkaConnect.getConnectUrl(), HttpMethod.POST, entity, String.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Connector created successfully");
+            return response.getStatusCode() + " Connector created successfully";
+        }
+        System.out.println("Failed to create connector: " + response.getBody());
+        return "Failed to create connector: " + response.getBody();
+    }
+
+    /**
+    public String createPostgresConnectorForProductOld() {
+        String kafkaConnectUri = "http://localhost:8083/connectors"; // replace with your Kafka Connect URI
         Map<String, Object> config = new HashMap<>();
         config.put("connector.class", "io.debezium.connector.postgresql.PostgresConnector");
         config.put("database.hostname", "localhost");               // replace with your DB hostname
         config.put("database.port", "5433");                        // replace with your DB port
         config.put("database.user", "postgres");                    // replace with your DB user
-        config.put("database.password", "2023.Sigma");              // replace with your DB password
+        config.put("database.password", "password");              // replace with your DB password
         config.put("database.dbname", "ms_cache_272");              // replace with your DB name
         config.put("database.server.name", "ms_cache");
         config.put("table.include.list", "ms_schema.products_m");
@@ -139,4 +183,5 @@ public class KafkaCDCPostgreSQLService {
         System.out.println("Failed to create connector: " + response.getBody());
         return "Failed to create connector: " + response.getBody();
     }
+     */
 }

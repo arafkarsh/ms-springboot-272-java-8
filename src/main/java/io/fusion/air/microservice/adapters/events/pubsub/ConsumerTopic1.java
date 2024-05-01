@@ -17,7 +17,7 @@ package io.fusion.air.microservice.adapters.events.pubsub;
 
 import io.fusion.air.microservice.adapters.controllers.KafkaListenerController;
 import io.fusion.air.microservice.domain.exceptions.MessagingException;
-import io.fusion.air.microservice.server.config.KafkaConfig;
+import io.fusion.air.microservice.server.config.KafkaPubSubConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ConsumerTopic1 {
 
     @Autowired
-    private KafkaConfig kafkaConfig;
+    private KafkaPubSubConfig kafkaPubSubConfig;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
@@ -57,8 +57,8 @@ public class ConsumerTopic1 {
      * @param acknowledgment
      */
     @KafkaListener(id = "fusionListenerT1", autoStartup = "true",
-            topics = "#{kafkaConfig.getKafkaTopic1()}",
-            groupId = "#{kafkaConfig.getKafkaConsumerGroup1()}",
+            topics = "#{kafkaPubSubConfig.getKafkaTopic1()}",
+            groupId = "#{kafkaPubSubConfig.getKafkaConsumerGroup1()}",
             containerFactory = "kafkaListenerContainerFactory")
     public void listen(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         try {

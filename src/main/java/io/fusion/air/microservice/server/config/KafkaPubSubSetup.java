@@ -42,10 +42,10 @@ import java.util.Properties;
  */
 
 @Configuration
-public class KafkaSetup {
+public class KafkaPubSubSetup {
 
     @Autowired
-    private KafkaConfig kafkaConfig;
+    private KafkaPubSubConfig kafkaPubSubConfig;
 
     /**
      * Create Kafka Producer Factory ACK By Leader
@@ -63,7 +63,7 @@ public class KafkaSetup {
     public ProducerFactory<String, String> producerFactoryAckByAll() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.ACKS_CONFIG, "all"); // ACKS By ALL (Leader + Followers
@@ -78,7 +78,7 @@ public class KafkaSetup {
     public ProducerFactory<String, String> producerFactoryByLeader() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.ACKS_CONFIG, "1"); // ACKS By Leader
@@ -94,7 +94,7 @@ public class KafkaSetup {
     public ProducerFactory<String, String> producerFactoryByNone() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.ACKS_CONFIG, "0"); // ACKS By NONE
@@ -120,8 +120,8 @@ public class KafkaSetup {
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.getKafkaConsumerGroup1());
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaPubSubConfig.getKafkaConsumerGroup1());
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -147,7 +147,7 @@ public class KafkaSetup {
     @Bean
     public AdminClient createAdminClient() {
         Properties config = new Properties();
-        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
         return AdminClient.create(config);
     }
 }

@@ -16,7 +16,7 @@
 package io.fusion.air.microservice.adapters.events.core;
 
 // SpringBoot
-import io.fusion.air.microservice.server.config.KafkaConfig;
+import io.fusion.air.microservice.server.config.KafkaPubSubConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +42,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 public class KafkaProducerConfig {
 
     @Autowired
-    private KafkaConfig kafkaConfig;
+    private KafkaPubSubConfig kafkaPubSubConfig;
 
     /**
      * Create Kafka Template with Acks from All the Replicas
@@ -113,7 +113,7 @@ public class KafkaProducerConfig {
     private ProducerFactory<String, String> createProducerFactory(String acks) {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getKafkaServers());
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaPubSubConfig.getKafkaServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.ACKS_CONFIG, acks);

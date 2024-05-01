@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
-import io.fusion.air.microservice.adapters.cdc.KafkaCDCPostgreSQLService;
+import io.fusion.air.microservice.server.config.KafkaConnectSetup;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,7 +48,7 @@ import java.io.IOException;
 public class KafkaCDCController extends AbstractController {
 
     @Autowired
-    private KafkaCDCPostgreSQLService kafkaDBConnectService;
+    private KafkaConnectSetup kafkaDBConnectService;
 
 
     @Operation(summary = "List All Connectors Registered with Kafka Connect")

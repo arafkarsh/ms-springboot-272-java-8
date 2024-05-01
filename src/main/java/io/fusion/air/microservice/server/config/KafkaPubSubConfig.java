@@ -38,7 +38,7 @@ import java.io.Serializable;
 		// Expects the file in src/main/resources folder
 		// value = "classpath:application.properties")
 		// value = "classpath:application2.properties,file:./application.properties")
-public class KafkaConfig implements Serializable {
+public class KafkaPubSubConfig implements Serializable {
 
 	// KAFKA Configurations
 

@@ -40,7 +40,7 @@ import java.io.Serializable;
 		// Expects the file in src/main/resources folder
 		// value = "classpath:application.properties")
 		// value = "classpath:application2.properties,file:./application.properties")
-public class KafkaStreamsConfig extends KafkaConfig implements Serializable {
+public class KafkaStreamsConfig extends KafkaPubSubConfig implements Serializable {
 
 	// KAFKA Streams Configurations
 	@Value("${spring.kafka.streams.auto-startup:true}")

@@ -175,6 +175,9 @@ method to handle the stream of server-sent events.
 
 ### 3.4 Kafka Connect 
 
+#### 3.4.1 Setup Debezium Drivers 
+
+Step 1:
 PostgreSQL Debezium driver is already available in kafka-connect directory.
 
 To install the debezium drivers for any database, Download the driver from <a href="https://debezium.io/documentation/reference/stable/install.html">debezium site.</a>
@@ -183,17 +186,75 @@ To install the debezium drivers for any database, Download the driver from <a hr
 2. Open the config connect-distributed.properties and add following towards the end of the file
 3. plugin.path=/kafka/plugins (The directory you have downloaded the debezium driver)
 
+#### 3.4.2 Kafka Connect Configuration for PostgreSQL Database with Products Table
+
+Step 2:
+Modify the PostgreSQL configuration files (postgresql.conf) to enable logical replication:
+```
+#------------------------------------------------------------------------------
+# Kafka Connect Settings
+#------------------------------------------------------------------------------
+# REPLICATION
+wal_level = logical
+max_wal_senders = 4
+max_replication_slots = 4
+```
+
+Step 3:
+Allow Replication Connections:
+Modify the pg_hba.conf file to allow the Debezium user to connect for replication purposes:
+
+```
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     trust
+local   all             postgres                                trust
+local   all             youruser                               trust
+
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+local   replication     all                                     trust
+host    replication     all             127.0.0.1/32            trust
+host    replication     all             ::1/128                 trust
+
+```
+Step 4:
+
+Create Role in the PostgreSQL Database
+```
+CREATE ROLE name WITH REPLICATION LOGIN PASSWORD 'password';
+```
+
+Step 5:
+Restart the PostgreSQL database. 
+
+#### 3.4.3 Start the Kafka Connect Server
+
 Kafka Connect requires Java 17+
 
+Step 6:
 To Start the Kafka Connect Server
 ```
 $ kafka-scripts/start-kc.sh
 ```
 
-#### 3.4.1 Kafka Connect Configuration for PostgreSQL Database with Products Table
+#### 3.4.4 Kafka Connect Configurations
 
-#### 3.4.2 Test the Debezium Driver with Kafka Connect. 
+Kafka Connect Configuration
+![Kafka Connect-Config](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Config-Connect.jpg)
 
+Kafka Connect Setup
+![Kafka Connect-Setup](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Connect-API.jpg)
+
+#### 3.4.5 Test the Debezium Driver with Kafka Connect. 
+
+Kafka Connect to PostgreSQL
+![Kafka Connect-Create](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Connect-Setup-1.jpg)
+
+Kafka Connect - List the Connectors
+![Kafka Connect-Create](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Connect-Setup-2.jpg)
 
 ### 3.5 Kafka Streams 
 

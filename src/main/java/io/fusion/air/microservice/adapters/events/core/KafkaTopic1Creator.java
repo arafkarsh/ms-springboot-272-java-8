@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.events.core;
 
-import io.fusion.air.microservice.server.config.KafkaConfig;
+import io.fusion.air.microservice.server.config.KafkaPubSubConfig;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -46,7 +46,7 @@ public class KafkaTopic1Creator {
     private static final Logger log = getLogger(lookup().lookupClass());
 
     @Autowired
-    private KafkaConfig kafkaConfig;
+    private KafkaPubSubConfig kafkaPubSubConfig;
     @Autowired
     private AdminClient adminClient;
 
@@ -55,7 +55,7 @@ public class KafkaTopic1Creator {
      */
     @PostConstruct
     public void initialize() {
-        if(kafkaConfig.isCreateKafkaTopic1()) {
+        if(kafkaPubSubConfig.isCreateKafkaTopic1()) {
             createTopic();
         }
     }
@@ -65,17 +65,17 @@ public class KafkaTopic1Creator {
      */
     private void createTopic() {
         try {
-            log.info("Creating Kafka Topic Name="+ kafkaConfig.getKafkaTopic1()
-                    + " Partitions="+ kafkaConfig.getKafkaTopic1Partitions()
-                    + " Replicas="+ kafkaConfig.getKafkaTopic1Replica()
+            log.info("Creating Kafka Topic Name="+ kafkaPubSubConfig.getKafkaTopic1()
+                    + " Partitions="+ kafkaPubSubConfig.getKafkaTopic1Partitions()
+                    + " Replicas="+ kafkaPubSubConfig.getKafkaTopic1Replica()
             );
             ListTopicsResult listTopics = adminClient.listTopics();
             Set<String> names = listTopics.names().get();
-            if (!names.contains(kafkaConfig.getKafkaTopic1())) {
+            if (!names.contains(kafkaPubSubConfig.getKafkaTopic1())) {
                 NewTopic newTopic = new NewTopic(
-                                        kafkaConfig.getKafkaTopic1(),             // Topic Name
-                                        kafkaConfig.getKafkaTopic1Partitions(),   // No. of Partitions
-                                        kafkaConfig.getKafkaTopic1Replica()       // No. of Replicas
+                                        kafkaPubSubConfig.getKafkaTopic1(),             // Topic Name
+                                        kafkaPubSubConfig.getKafkaTopic1Partitions(),   // No. of Partitions
+                                        kafkaPubSubConfig.getKafkaTopic1Replica()       // No. of Replicas
                 );
                 adminClient.createTopics(Collections.singletonList(newTopic));
             }

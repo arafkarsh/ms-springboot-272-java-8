@@ -17,7 +17,7 @@ package io.fusion.air.microservice.adapters.events.pubsub;
 
 import io.fusion.air.microservice.adapters.events.core.KafkaProducerService;
 import io.fusion.air.microservice.adapters.events.core.KafkaProducerTemplate;
-import io.fusion.air.microservice.server.config.KafkaConfig;
+import io.fusion.air.microservice.server.config.KafkaPubSubConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class ProducerTopic2 {
     private KafkaProducerTemplate kafkaTemplate;
 
     @Autowired
-    private KafkaConfig kafkaConfig;
+    private KafkaPubSubConfig kafkaPubSubConfig;
 
 
     private KafkaProducerService getKafkaTemplate(String _ackType) {
@@ -48,8 +48,8 @@ public class ProducerTopic2 {
      * @param _message
      */
     public void sendMessage(String _message) {
-        getKafkaTemplate(kafkaConfig.getKafkaTopic2AckType())
-                .sendMessage(kafkaConfig.getKafkaTopic2(), null, _message);
+        getKafkaTemplate(kafkaPubSubConfig.getKafkaTopic2AckType())
+                .sendMessage(kafkaPubSubConfig.getKafkaTopic2(), null, _message);
     }
 
 
@@ -61,7 +61,7 @@ public class ProducerTopic2 {
      * @param _message
      */
     public void sendMessage(String _key, String _message) {
-        getKafkaTemplate(kafkaConfig.getKafkaTopic2AckType())
-                .sendMessage(kafkaConfig.getKafkaTopic2(), _key, _message);
+        getKafkaTemplate(kafkaPubSubConfig.getKafkaTopic2AckType())
+                .sendMessage(kafkaPubSubConfig.getKafkaTopic2(), _key, _message);
     }
 }
