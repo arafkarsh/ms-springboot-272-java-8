@@ -308,13 +308,14 @@ Kafka Connect - List the Connectors
 ### 3.5 Kafka Streams 
 
 Following Steps involved in Testing the Kafka Connect and Streams.
+- Create a Product Using REST Endpoint and the Record is created in PostgreSQL Database 
+- Kafka Connect immediately sends the record to Kafka Topic 
+- Query all the records from Kafka Streams using Global Table 
+- Query a Specific Record by UUID of that Record from Kafka Streams Global Table 
+- Update the record in Product DB using Update Product REST Endpoint 
+- Query the same record again using UUID from Kafka Streams Global Table
 
-1. Create a Product Using REST Endpoint and the Record is created in PostgreSQL Database
-2. Kafka Connect immediately sends the record to Kafka Topic 
-3. Query all the records from Kafka Streams using Global Table
-4. Query a Specific Record by UUID of that Record from Kafka Streams Global Table
-5. Update the record in Product DB using Update Product REST Endpoint
-6. Query the same record again using UUID from Kafka Streams Global Table
+#### 3.5.1 Kafka Streams and Global Table Example
 
 1. Create Product (REST Endpoint in  Product API)
 ![Kafka Streams-Create-1](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Create.jpg)
