@@ -177,7 +177,7 @@ method to handle the stream of server-sent events.
 
 #### 3.4.1 Setup Debezium Drivers 
 
-Step 1:
+##### Step 1:
 PostgreSQL Debezium driver is already available in kafka-connect directory.
 
 To install the debezium drivers for any database, Download the driver from <a href="https://debezium.io/documentation/reference/stable/install.html">debezium site.</a>
@@ -188,7 +188,7 @@ To install the debezium drivers for any database, Download the driver from <a hr
 
 #### 3.4.2 Kafka Connect Configuration for PostgreSQL Database with Products Table
 
-How Debezium Connects to PostgreSQL
+##### How Debezium Connects to PostgreSQL
 1. Logical Replication Setup:
 Debezium leverages PostgreSQL's logical replication feature, which allows changes to the database
 (DML statements) to be streamed in real-time to external systems. Logical replication works by 
@@ -205,7 +205,7 @@ On first run, Debezium can perform an initial snapshot of the entire database (o
 exporting existing records before it starts streaming changes. This is useful for initializing the 
 Kafka topics with the current state of the database.
 
-Components Installed on PostgreSQL Server
+##### Components Installed on PostgreSQL Server
 
 To enable Debezium to capture changes from PostgreSQL (running on Machine C), you need to 
 configure several components:
@@ -220,7 +220,7 @@ configure several components:
 3. Publication (For PostgreSQL 10+):
 - Publications aren't strictly necessary for Debezium but are part of PostgreSQL's logical replication capabilities, allowing control over which tables are replicated
 
-How Inserts, Updates, and Deletes Are Handled
+##### How Inserts, Updates, and Deletes Are Handled
 
 1. Capture of Changes:
 As changes occur in the PostgreSQL database:
@@ -237,7 +237,7 @@ delete) can be configured to go to the same or different topics based on the set
 The events are serialized (commonly using JSON or Avro formats) and include metadata such as 
 the source database, table, and timestamp, along with the actual data change.
 
-Step 2:
+##### Step 2:
 Modify the PostgreSQL configuration files (postgresql.conf) to enable logical replication:
 ```
 #------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ max_wal_senders = 4
 max_replication_slots = 4
 ```
 
-Step 3:
+##### Step 3:
 Allow Replication Connections:
 Modify the pg_hba.conf file to allow the Debezium user to connect for replication purposes:
 
@@ -269,21 +269,21 @@ host    replication     all             127.0.0.1/32            trust
 host    replication     all             ::1/128                 trust
 
 ```
-Step 4:
+##### Step 4:
 
 Create Role in the PostgreSQL Database
 ```
 CREATE ROLE name WITH REPLICATION LOGIN PASSWORD 'password';
 ```
 
-Step 5:
+##### Step 5:
 Restart the PostgreSQL database. 
 
 #### 3.4.3 Start the Kafka Connect Server
 
 Kafka Connect requires Java 17+
 
-Step 6:
+##### Step 6:
 To Start the Kafka Connect Server
 ```
 $ kafka-scripts/start-kc.sh
