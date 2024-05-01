@@ -307,6 +307,32 @@ Kafka Connect - List the Connectors
 
 ### 3.5 Kafka Streams 
 
+Following Steps involved in Testing the Kafka Connect and Streams.
+
+1. Create a Product Using REST Endpoint and the Record is created in PostgreSQL Database
+2. Kafka Connect immediately sends the record to Kafka Topic 
+3. Query all the records from Kafka Streams using Global Table
+4. Query a Specific Record by UUID of that Record from Kafka Streams Global Table
+5. Update the record in Product DB using Update Product REST Endpoint
+6. Query the same record again using UUID from Kafka Streams Global Table
+
+1. Create Product (REST Endpoint in  Product API)
+![Kafka Streams-Create-1](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Create.jpg)
+![Kafka Streams-Create-2](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Create-2.jpg)
+
+2. Kafka Connect immediately sends the record to Kafka Topic
+3. Query all the records from Kafka Streams using Global Table
+![Kafka Streams-Query-1](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Query-All.jpg)
+
+4. Query a Specific Record by UUID of that Record from Kafka Streams Global Table
+![Kafka Streams-Query-2](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Query.jpg)
+
+5. Update the record in Product DB using Update Product REST Endpoint
+![Kafka Streams-Update](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Update.jpg)
+
+6. Query the same record again using UUID from Kafka Streams Global Table
+![Kafka Streams-Update](https://raw.githubusercontent.com/arafkarsh/ms-springboot-272-java-8/master/diagrams/kafka/Kafka-Streams-Product-Query-2.jpg)
+
 ## 4. State Machine Example
 <todo>
 
