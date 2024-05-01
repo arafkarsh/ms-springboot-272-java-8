@@ -66,6 +66,7 @@ public class ProductGTQueryService {
         while (range.hasNext()) {
             KeyValue<String, String> next = range.next();
             JsonNode product = objectMapper.readTree(next.value);
+            System.out.println("GT >> Key = "+next.key+" Value = "+next.value);
             result = product.get("uuid").toString().replace("\"", "");
             // System.out.println("Match Input UUID ("+uuid+") with Result UUID = ("+result+")");
             if(result.equalsIgnoreCase(uuid)) {
