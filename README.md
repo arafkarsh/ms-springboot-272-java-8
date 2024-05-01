@@ -188,6 +188,55 @@ To install the debezium drivers for any database, Download the driver from <a hr
 
 #### 3.4.2 Kafka Connect Configuration for PostgreSQL Database with Products Table
 
+How Debezium Connects to PostgreSQL
+1. Logical Replication Setup:
+Debezium leverages PostgreSQL's logical replication feature, which allows changes to the database
+(DML statements) to be streamed in real-time to external systems. Logical replication works by 
+decoding the write-ahead log (WAL) of PostgreSQL, which records all changes to the database's data.
+
+2. Replication Slot:
+Debezium establishes a replication slot on PostgreSQL, which is a stable store for WAL changes 
+that the database maintains until the consuming application (Debezium) confirms their processing. 
+This ensures that all changes can be captured without loss, even if the consuming application 
+temporarily disconnects.
+
+4. Snapshot (Initial Sync):
+On first run, Debezium can perform an initial snapshot of the entire database (or specific tables), 
+exporting existing records before it starts streaming changes. This is useful for initializing the 
+Kafka topics with the current state of the database.
+
+Components Installed on PostgreSQL Server
+
+To enable Debezium to capture changes from PostgreSQL (running on Machine C), you need to 
+configure several components:
+
+1. PostgreSQL Configuration Changes:
+- wal_level set to logical to enable logical decoding.
+- max_wal_senders and max_replication_slots set to appropriate values to handle connections and replication slots.
+
+3. Replication User:
+- A dedicated database user with replication privileges.
+
+3. Publication (For PostgreSQL 10+):
+- Publications aren't strictly necessary for Debezium but are part of PostgreSQL's logical replication capabilities, allowing control over which tables are replicated
+
+How Inserts, Updates, and Deletes Are Handled
+
+1. Capture of Changes:
+As changes occur in the PostgreSQL database:
+- Inserts generate new WAL entries, which are then converted into Create events.
+- Updates are converted into Update events, capturing the old and new values (depending on the configuration).
+- Deletes produce Delete events, with options to include the deleted data in the event payload.
+
+2. Streaming to Kafka:
+Debezium reads these events from the replication slot and sends them to Kafka Connect, which in 
+turn publishes them onto Kafka topics (running on Machine B). Each type of change (insert, update, 
+delete) can be configured to go to the same or different topics based on the setup.
+
+3. Serialization:
+The events are serialized (commonly using JSON or Avro formats) and include metadata such as 
+the source database, table, and timestamp, along with the actual data change.
+
 Step 2:
 Modify the PostgreSQL configuration files (postgresql.conf) to enable logical replication:
 ```
