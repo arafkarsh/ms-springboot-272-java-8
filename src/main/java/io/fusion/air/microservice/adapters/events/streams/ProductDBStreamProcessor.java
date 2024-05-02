@@ -62,6 +62,9 @@ public class ProductDBStreamProcessor {
                 .stream(kafkaStreamsConfig.getStreamTopic1(),
                 Consumed.with(Serdes.String(), Serdes.String()));
 
+        // Topic 1 >> ms_cache_272.ms_schema.products_m
+        // From the Raw data Extract the Payload (Product Record) and Store
+        // Store it in Stream Topic 2 >> ms_cache_272.ms_schema.products_data
         KStream<String, String> outputStream = inputStream.mapValues(value -> {
             try {
                 JsonNode jsonNode = objectMapper.readTree(value);
@@ -75,6 +78,7 @@ public class ProductDBStreamProcessor {
                 throw new StreamException("Unable to Parse Raw Product JSON > ",e);
             }
         });
+        // Store the Extracted data in Stream Topic 2 >> ms_cache_272.ms_schema.products_data
         outputStream.to(kafkaStreamsConfig.getStreamTopic2());
 
         return outputStream;

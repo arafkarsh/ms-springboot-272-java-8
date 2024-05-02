@@ -57,21 +57,14 @@ public class ProductGTQueryService {
         // Query the store
         ReadOnlyKeyValueStore<String, String> keyValueStore = streamsBuilderFactoryBean
                         .getKafkaStreams()
-                        .store(StoreQueryParameters
-                                .fromNameAndType(storeName, QueryableStoreTypes.keyValueStore()));
-        String result = null;
-        // This code to be fixed with Storing UUID as the key
-        // And Avoid Full Table Scan
-        KeyValueIterator<String, String> range = keyValueStore.all();
-        while (range.hasNext()) {
-            KeyValue<String, String> next = range.next();
-            JsonNode product = objectMapper.readTree(next.value);
-            System.out.println("GT >> Key = "+next.key+" Value = "+next.value);
-            result = product.get("uuid").toString().replace("\"", "");
-            // System.out.println("Match Input UUID ("+uuid+") with Result UUID = ("+result+")");
-            if(result.equalsIgnoreCase(uuid)) {
-                return product;
-            }
+                        .store(
+                                StoreQueryParameters.fromNameAndType(storeName, QueryableStoreTypes.keyValueStore())
+                        );
+        // Retrieve the Product based on UUID from the KeyValueStore
+        String result = keyValueStore.get(uuid);
+        if(result != null) {
+            System.out.println("GTQ>> Match Input UUID ("+uuid+") with Result UUID = ("+result+")");
+            return objectMapper.readTree(result);
         }
         throw new DataNotFoundException("Data Not Found for Product UUID = "+uuid);
     }
@@ -96,8 +89,7 @@ public class ProductGTQueryService {
         while (range.hasNext()) {
             KeyValue<String, String> next = range.next();
             JsonNode product = objectMapper.readTree(next.value);
-            // System.out.println(">>>KEY>> "+next.key);
-            // System.out.println("<<<VAL<< "+product);
+            // System.out.println("GTQ >> Key = "+next.key+" Value = "+next.value);
             allProducts.add(product);
         }
         range.close();
@@ -105,5 +97,32 @@ public class ProductGTQueryService {
         return allProducts;
     }
 
+    /**
+     public JsonNode queryByUUIDOld(String uuid) throws JsonProcessingException {
+     String storeName = "products-store";
+
+     // Query the store
+     ReadOnlyKeyValueStore<String, String> keyValueStore = streamsBuilderFactoryBean
+     .getKafkaStreams()
+     .store(
+     StoreQueryParameters.fromNameAndType(storeName, QueryableStoreTypes.keyValueStore())
+     );
+     String result = null;
+     // This code to be fixed with Storing UUID as the key
+     // And Avoid Full Table Scan
+     KeyValueIterator<String, String> range = keyValueStore.all();
+     while (range.hasNext()) {
+     KeyValue<String, String> next = range.next();
+     JsonNode product = objectMapper.readTree(next.value);
+     System.out.println("GT >> Key = "+next.key+" Value = "+next.value);
+     result = product.get("uuid").toString().replace("\"", "");
+     // System.out.println("Match Input UUID ("+uuid+") with Result UUID = ("+result+")");
+     if(result.equalsIgnoreCase(uuid)) {
+     return product;
+     }
+     }
+     throw new DataNotFoundException("Data Not Found for Product UUID = "+uuid);
+     }
+     */
 
 }
